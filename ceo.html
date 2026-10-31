@@ -108,12 +108,11 @@
 <tr><td>#KR-8838</td><td>Dealer Sam API <span class="badge badge-dealer">API DEALER</span></td><td>AFA Registration<br><small style="color:#555">AFA</small></td><td>024XXXX</td><td><span class="badge badge-user">Processing</span></td><td><button class="btn-dark">Monitor</button></td></tr>
 </table>
 </div>
-<div class="card">
-<h4>⚠️ Pending Agent / Dealer Approval <span style="color:#FFD700">CEO ONLY</span></h4>
-<table class="table">
-<tr><td>addophilisa32@gmail.com<br><small style="color:#777">Sales: GHS 12k</small></td><td><span class="badge badge-agent">Wants AGENT</span></td><td><button class="btn-gold">Approve to AGENT Price</button></td></tr>
-<tr><td>mike@dealergh.com<br><small style="color:#777">Sales: GHS 45k + Wants API</small></td><td><span class="badge badge-dealer">Wants DEALER + API</span></td><td><button class="btn-gold">Approve to DEALER + API Key</button></td></tr>
-</table>
+<div class="card" style="border:2px solid #FFD700">
+<h4>⚠️ Pending Agent / Dealer Approval <span style="color:#FFD700">CEO ONLY - LIVE</span></h4>
+<div id="pendingAgentList" style="display:flex;flex-direction:column;gap:8px">Loading real USERs from database...</div>
+<button class="btn-gold" style="margin-top:12px" onclick="loadPendingApprovals()">🔄 Refresh List</button>
+</div>
 <h4 style="margin-top:18px">📊 Top Performers</h4>
 <table class="table">
 <tr><td>1. Kojo MTN Hub <span class="badge badge-dealer">DEALER</span></td><td>GHS 89k sales</td></tr>
@@ -151,8 +150,48 @@ function ceoLogin(){
     document.getElementById('errorMsg').style.display='block';
   }
 }
+ function loadPendingApprovals(){
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  let box=document.getElementById('pendingAgentList');
+  if(!box) return;
+  let html=''; let count=0;
+  Object.keys(users).forEach(email=>{
+    let u=users[email];
+    if((u.tier||'USER')==='USER'){
+      count++;
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#111;padding:10px;border-radius:8px;border:1px solid #222;margin-bottom:6px">
+        <div><b style="color:#FFD700">${email}</b><br><span style="font-size:10px;color:#888">${u.created||''} • USER</span></div>
+        <div style="display:flex;gap:6px">
+          <button style="padding:6px 12px;font-size:11px;background:#FFD700;border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveUser('${email}','AGENT')">Approve AGENT</button>
+          <button style="padding:6px 12px;font-size:11px;background:linear-gradient(90deg,#FFD700,#FFC700);border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveUser('${email}','DEALER')">DEALER</button>
+          <button style="padding:6px 8px;font-size:11px;background:#222;color:#fff;border:1px solid #333;border-radius:6px;cursor:pointer" onclick="removeUser('${email}')">X</button>
+        </div>
+      </div>`;
+    }
+  });
+  if(count===0) html='<div style="color:#2ecc71;padding:20px;text-align:center">✅ No pending USERs — All approved! New signups will appear here.</div>';
+  else html='<div style="color:#FFD700;font-size:11px;margin-bottom:8px">'+count+' USER(s) waiting for CEO approval:</div>'+html;
+  box.innerHTML=html;
+}
+function approveUser(email,newTier){
+  if(!confirm('CEO ADMIN: Approve '+email+' to '+newTier+'?')) return;
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  if(users[email]){
+    users[email].tier=newTier;
+    localStorage.setItem('kratis_users',JSON.stringify(users));
+    alert('✅ APPROVED! '+email+' is now '+newTier+'!');
+    loadPendingApprovals();
+  }
+}
+function removeUser(email){
+  if(!confirm('Remove '+email+'?')) return;
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  delete users[email];
+  localStorage.setItem('kratis_users',JSON.stringify(users));
+  loadPendingApprovals();
+} 
 function logoutCEO(){localStorage.removeItem('kratis_ceo_logged');location.reload();}
-window.onload = function(){if(localStorage.getItem('kratis_ceo_logged')==='yes'){document.getElementById('loginOverlay').style.display='none';document.getElementById('dashboardContent').style.display='block';}}
+window.onload = function(){if(localStorage.getItem('kratis_ceo_logged')==='yes'){document.getElementById('loginOverlay').style.display='none';document.getElementById('dashboardContent').style.display='block';} setTimeout(loadPendingApprovals, 800);};
 </script>
 </body>
 </html>
