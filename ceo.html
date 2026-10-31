@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CEO ADMIN LOGIN - KratisData</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000 0%,#1a1700 100%);display:flex;align-items:center;justify-content:center;padding:20px}#loginBox{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.8)}#loginBox img{height:50px;border-radius:6px}#loginBox h2{margin-top:14px;font-size:22px;font-weight:900}#loginBox h2 span{color:#FFD700}#loginBox p{color:#666;font-size:12px;margin-top:6px}.field{margin-top:16px}.field label{font-size:10px;letter-spacing:1px;color:#888;text-transform:uppercase}.field input{width:100%;margin-top:6px;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none}.field input:focus{border-color:#FFD700}.btn{width:100%;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}.btn:hover{box-shadow:0 10px 30px rgba(255,215,0,0.35)}#errorMsg{margin-top:12px;color:#ff6b6b;font-size:11px;display:none;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);padding:8px;border-radius:8px}/* Dashboard styles below */.sidebar{width:260px;background:#0f0f0f;border-right:1px solid #222;padding:20px;position:fixed;height:100vh;overflow-y:auto}.main{margin-left:260px;flex:1;padding:20px;background:radial-gradient(circle at top left,rgba(255,215,0,0.08),transparent 40%)}.topbar{display:flex;justify-content:space-between;align-items:center;background:#121212;border:1px solid #222;border-radius:14px;padding:12px 18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.stat{background:#121212;border:1px solid #222;border-radius:14px;padding:16px}.grid2{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:14px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th{color:#555;text-align:left;padding:10px 8px;border-bottom:1px solid #222;font-size:10px}.table td{padding:10px 8px;border-bottom:1px solid #151515}.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}.badge-agent{background:rgba(255,215,0,0.15);color:#FFD700;border:1px solid rgba(255,215,0,0.3)}.badge-dealer{background:rgba(0,255,136,0.15);color:#00ff88;border:1px solid rgba(0,255,136,0.3)}.badge-user{background:rgba(100,100,255,0.15);color:#8a8aff;border:1px solid rgba(100,100,255,0.2)}.badge-pending{background:rgba(255,100,100,0.15);color:#ff6b6b;border:1px solid rgba(255,100,100,0.3)}.btn-gold{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer}.menu a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#888;text-decoration:none;font-size:13px;margin-bottom:4px}.menu a.active{background:#1a1a1a;color:#FFD700;border:1px solid #222}#dashboardContent{display:none}
-</style></head>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO ADMIN - KratisData SPECIAL</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}body{background:#080808;color:#fff}
+#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000 0%,#1a1700 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+#loginBox{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.8)}
+#loginBox img{height:50px;border-radius:6px}
+#loginBox h2{margin-top:14px;font-size:22px;font-weight:900}#loginBox h2 span{color:#FFD700}
+.field{margin-top:16px}.field label{font-size:10px;letter-spacing:1px;color:#888;text-transform:uppercase}.field input{width:100%;margin-top:6px;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none}.field input:focus{border-color:#FFD700}
+.btn{width:100%;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}
+#errorMsg{margin-top:12px;color:#ff6b6b;font-size:11px;display:none;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);padding:8px;border-radius:8px}
+.sidebar{width:260px;background:#0f0f0f;border-right:1px solid #222;padding:20px;position:fixed;height:100vh;overflow-y:auto}
+.main{margin-left:260px;flex:1;padding:20px;background:radial-gradient(circle at top left,rgba(255,215,0,0.08),transparent 40%)}
+.topbar{display:flex;justify-content:space-between;align-items:center;background:#121212;border:1px solid #222;border-radius:14px;padding:12px 18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.stat{background:#121212;border:1px solid #222;border-radius:14px;padding:16px}
+.stat small{color:#666;font-size:10px;letter-spacing:1px;text-transform:uppercase}.stat h2{margin-top:6px;font-size:22px}.stat p{font-size:11px;color:#555;margin-top:4px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.kpi div{background:#0a0a0a;border:1px dashed #222;border-radius:10px;padding:10px;text-align:center}
+.kpi b{color:#FFD700}
+.grid2{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:14px}
+.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px}
+.card h4{font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between}
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{color:#555;text-align:left;padding:10px 8px;border-bottom:1px solid #222;font-size:10px;letter-spacing:1px}
+.table td{padding:10px 8px;border-bottom:1px solid #151515}
+.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge-user{background:rgba(100,100,255,0.15);color:#8a8aff;border:1px solid rgba(100,100,255,0.2)}
+.badge-agent{background:rgba(255,215,0,0.15);color:#FFD700;border:1px solid rgba(255,215,0,0.3)}
+.badge-dealer{background:rgba(0,255,136,0.15);color:#00ff88;border:1px solid rgba(0,255,136,0.3)}
+.badge-pending{background:rgba(255,100,100,0.15);color:#ff6b6b;border:1px solid rgba(255,100,100,0.3)}
+.btn-gold{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer}
+.btn-dark{background:#222;color:#999;border:1px solid #333;padding:7px 12px;border-radius:8px;font-size:11px;cursor:pointer}
+.filter{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter button{padding:6px 12px;border-radius:20px;border:1px solid #222;background:#0a0a0a;color:#777;font-size:11px;cursor:pointer}
+.filter button.active{background:#FFD700;color:#000;border-color:#FFD700}
+.menu a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#888;text-decoration:none;font-size:13px;margin-bottom:4px;cursor:pointer}
+.menu a.active,.menu a:hover{background:#1a1a1a;color:#FFD700;border:1px solid #222}
+#dashboardContent{display:none}
+@media(max-width:900px){.sidebar{width:70px}.sidebar span,.menu h5{display:none}.main{margin-left:70px}.stats,.grid2,.kpi{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
 <div id="loginOverlay">
 <div id="loginBox">
 <div style="display:flex;align-items:center;gap:10px"><img src="logo.png"><div><b style="font-size:11px;letter-spacing:2px">DATA.COM<br><span style="background:#FFD700;color:#000;padding:1px 5px;border-radius:4px;font-size:8px">CEO SPECIAL LOGIN</span></b></div></div>
-<h2>CEO <span>Secure Login</span></h2>
-<p>Enter CEO email & password to access SUPER ADMIN. You can do all manager jobs.</p>
-<div class="field"><label>Email Address</label><input type="email" id="ceoEmail" placeholder="ceo@kratisdata.com"></div>
+<h2 style="margin-top:14px">CEO <span style="color:#FFD700">Secure Login</span></h2>
+<p style="color:#666;font-size:12px;margin-top:6px">Enter CEO email & password to access SUPER ADMIN.</p>
+<div class="field"><label>Email Address</label><input type="email" id="ceoEmail" placeholder="ceo@kratisdata.com" value="ceo@kratisdata.com"></div>
 <div class="field"><label>Password</label><input type="password" id="ceoPass" placeholder="••••••••"></div>
 <div id="errorMsg">❌ Wrong email or password! Try again.</div>
 <button class="btn" onclick="ceoLogin()">Login to CEO Dashboard →</button>
-<p style="margin-top:14px;font-size:10px;color:#555;text-align:center">Default: ceo@kratisdata.com / KratisCEO2025! <br>You can change this in code.</p>
+<p style="margin-top:14px;font-size:10px;color:#555;text-align:center">Default: ceo@kratisdata.com / KratisCEO2025!</p>
 </div>
 </div>
 
@@ -26,36 +68,78 @@
 <a><i class="fa-solid fa-users"></i><span>All Users / Agents / Dealers</span></a>
 <a><i class="fa-solid fa-list-check"></i><span>All Orders (All Networks)</span></a>
 <div style="font-size:10px;color:#555;letter-spacing:2px;margin:18px 0 8px">MANAGER CONTROLS</div>
-<a><i class="fa-solid fa-comments"></i><span>Complaints</span></a>
-<a><i class="fa-solid fa-money-bill-transfer"></i><span>Transactions</span></a>
-<a><i class="fa-solid fa-lightbulb"></i><span>ECG & Prepaid</span></a>
-<a><i class="fa-solid fa-id-card"></i><span>AFA & WASSCE</span></a>
-<a><i class="fa-solid fa-signal"></i><span>Data & Airtime</span></a>
-<a><i class="fa-solid fa-gift"></i><span>Gift & Gaming Cards</span></a>
-<a href="#" onclick="logoutCEO()" style="margin-top:10px;color:#ff6b6b"><i class="fa-solid fa-right-from-bracket"></i><span>Logout CEO</span></a>
+<a><i class="fa-solid fa-comments"></i><span>Complaints - Manager View</span></a>
+<a><i class="fa-solid fa-money-bill-transfer"></i><span>Transactions (Topup/Withdraw)</span></a>
+<a><i class="fa-solid fa-lightbulb"></i><span>ECG & Prepaid Manager</span></a>
+<a><i class="fa-solid fa-id-card"></i><span>AFA & WASSCE Manager</span></a>
+<a><i class="fa-solid fa-signal"></i><span>Data & Airtime Manager</span></a>
+<a><i class="fa-solid fa-gift"></i><span>Gift & Gaming Cards Manager</span></a>
+<div style="font-size:10px;color:#555;letter-spacing:2px;margin:18px 0 8px">SYSTEM</div>
+<a><i class="fa-solid fa-gear"></i><span>Product Price Setup</span></a>
+<a onclick="logoutCEO()" style="color:#ff6b6b"><i class="fa-solid fa-right-from-bracket"></i><span>Logout CEO</span></a>
 </div>
 </div>
 <div class="main">
-<div class="topbar"><div><b>CEO ADMIN:</b> Philisam • <span style="color:#22c55e;font-size:11px">● SUPER ACCESS</span></div><div style="display:flex;gap:12px;font-size:11px"><span>Today Profit: <b style="color:#FFD700">GHS 340.50</b></span><span style="background:#FFD700;color:#000;padding:4px 8px;border-radius:6px;font-weight:800">Manual Place Order</span></div></div>
+<div class="topbar"><div><b>CEO ADMIN: Philisam</b> • <span style="color:#22c55e;font-size:11px">● You have SUPER ACCESS - You can do all Manager jobs</span></div><div style="display:flex;gap:12px;font-size:11px"><span>Today Profit: <b style="color:#FFD700">GHS 340.50</b></span><span style="background:#FFD700;color:#000;padding:4px 8px;border-radius:6px;font-weight:800">Manual Place Order</span></div></div>
+
 <div class="stats">
-<div class="stat"><small>Today Sales</small><h2 style="margin-top:6px;font-size:22px">GHS 4,820 <span style="color:#22c55e;font-size:12px">+12%</span></h2><p style="font-size:11px;color:#555">124 Orders • Profit: GHS 340.5</p></div>
-<div class="stat"><small>Weekly Sales</small><h2 style="margin-top:6px;font-size:22px">GHS 28,400</h2><p style="font-size:11px;color:#555">Weekly Profit: GHS 2,120</p></div>
-<div class="stat"><small>Monthly Sales</small><h2 style="margin-top:6px;font-size:22px">GHS 124,000</h2><p style="font-size:11px;color:#555">Monthly Profit: GHS 9,800</p></div>
-<div class="stat"><small>Yearly Sales</small><h2 style="margin-top:6px;font-size:22px;color:#FFD700">GHS 1.4M</h2><p style="font-size:11px;color:#555">Yearly Profit: GHS 110k • 4,500+ Agents</p></div>
+<div class="stat"><small>Today Sales</small><h2>GHS 4,820 <span style="color:#22c55e;font-size:12px">+12%</span></h2><p>124 Orders • Profit: GHS 340.5</p></div>
+<div class="stat"><small>Weekly Sales</small><h2>GHS 28,400</h2><p>Weekly Profit: GHS 2,120</p></div>
+<div class="stat"><small>Monthly Sales</small><h2>GHS 124,000</h2><p>Monthly Profit: GHS 9,800</p></div>
+<div class="stat"><small>Yearly Sales</small><h2 style="color:#FFD700">GHS 1.4M</h2><p>Yearly Profit: GHS 110k • 4,500+ Agents</p></div>
 </div>
-<div class="card" style="margin-top:14px"><h4>🔥 All Network Orders - CEO View</h4>
-<table class="table"><tr><th>Order ID</th><th>User / Tier</th><th>Product (Category)</th><th>Status</th><th>Action</th></tr>
-<tr><td>#KR-8841</td><td>Kojo Mensah <span class="badge badge-agent">AGENT</span></td><td>MTN GB 5GB <br><small style="color:#555">GHANA_GB</small></td><td><span class="badge badge-pending">API Failed</span></td><td><button class="btn-gold">Place Manually & Confirm</button></td></tr>
-<tr><td>#KR-8840</td><td>Sarah A. <span class="badge badge-dealer">DEALER</span></td><td>Intl Airtime $10 <br><small style="color:#555">INTL_AIRTIME</small></td><td><span class="badge badge-user">Delivered</span></td><td>View</td></tr>
-<tr><td>#KR-8839</td><td>Yaw O. <span class="badge badge-user">USER</span></td><td>ECG Prepaid 100 GHS <br><small style="color:#555">ECG_GH - NO API</small></td><td><span class="badge badge-pending">Need Token</span></td><td><button class="btn-gold">Send Token</button></td></tr>
+
+<div class="kpi">
+<div><small style="color:#666;font-size:10px">USERS</small><br><b style="font-size:18px;color:#fff">3,200</b><br><small style="color:#888">Normal Price</small></div>
+<div><small style="color:#666;font-size:10px">AGENTS</small><br><b style="font-size:18px;color:#FFD700">1,100</b><br><small style="color:#888">Discount - Profit</small></div>
+<div><small style="color:#666;font-size:10px">DEALERS</small><br><b style="font-size:18px;color:#00ff88">200</b><br><small style="color:#888">More Discount + API</small></div>
+<div><small style="color:#666;font-size:10px">PENDING APPROVAL</small><br><b style="font-size:18px;color:#ff6b6b">42</b><br><small style="color:#888">Agents/Dealers waiting</small></div>
+</div>
+
+<div class="grid2">
+<div class="card">
+<h4>🔥 All Network Orders - CEO View <span style="font-size:10px;color:#777">You can manually confirm if API fails</span></h4>
+<div class="filter"><button class="active">All</button><button>MTN GB (Ghana)</button><button>AirtelTigo GB</button><button>Telecel GB</button><button>Intl Bundle</button><button>Intl Airtime</button><button>ECG Prepaid</button><button>AFA</button><button>WASSCE</button><button>Gift Cards</button></div>
+<table class="table">
+<tr><th>Order ID</th><th>User / Tier</th><th>Product (Category)</th><th>Phone</th><th>Status</th><th>Action</th></tr>
+<tr><td>#KR-8841</td><td>Kojo Mensah <span class="badge badge-agent">AGENT</span></td><td>MTN GB 5GB<br><small style="color:#555">GHANA_GB</small></td><td>055XXXX123</td><td><span class="badge badge-pending">API Failed - Need Manual</span></td><td><button class="btn-gold">Place Manually & Confirm</button></td></tr>
+<tr><td>#KR-8840</td><td>Sarah A. <span class="badge badge-dealer">DEALER</span></td><td>Intl Airtime $10 USA<br><small style="color:#555">INTL_AIRTIME</small></td><td>+1XXX</td><td><span class="badge badge-user">Delivered</span></td><td><button class="btn-dark">View</button></td></tr>
+<tr><td>#KR-8839</td><td>Yaw O. <span class="badge badge-user">USER</span></td><td>ECG Prepaid 100 GHS<br><small style="color:#555">ECG_GH - NO API</small></td><td>Meter: 54XXXX</td><td><span class="badge badge-pending">Need Token</span></td><td><button class="btn-gold">Send Token + Upload Receipt</button></td></tr>
+<tr><td>#KR-8838</td><td>Dealer Sam API <span class="badge badge-dealer">API DEALER</span></td><td>AFA Registration<br><small style="color:#555">AFA</small></td><td>024XXXX</td><td><span class="badge badge-user">Processing</span></td><td><button class="btn-dark">Monitor</button></td></tr>
+</table>
+</div>
+<div class="card">
+<h4>⚠️ Pending Agent / Dealer Approval <span style="color:#FFD700">CEO ONLY</span></h4>
+<table class="table">
+<tr><td>addophilisa32@gmail.com<br><small style="color:#777">Sales: GHS 12k</small></td><td><span class="badge badge-agent">Wants AGENT</span></td><td><button class="btn-gold">Approve to AGENT Price</button></td></tr>
+<tr><td>mike@dealergh.com<br><small style="color:#777">Sales: GHS 45k + Wants API</small></td><td><span class="badge badge-dealer">Wants DEALER + API</span></td><td><button class="btn-gold">Approve to DEALER + API Key</button></td></tr>
+</table>
+<h4 style="margin-top:18px">📊 Top Performers</h4>
+<table class="table">
+<tr><td>1. Kojo MTN Hub <span class="badge badge-dealer">DEALER</span></td><td>GHS 89k sales</td></tr>
+<tr><td>2. Sarah Data <span class="badge badge-agent">AGENT</span></td><td>GHS 42k sales</td></tr>
+<tr><td>3. User John <span class="badge badge-user">USER</span></td><td>GHS 3k sales</td></tr>
 </table>
 </div>
 </div>
+
+<div class="card" style="margin-top:12px">
+<h4>💰 Product Prices Setup (GHANA GB vs INTERNATIONAL - CEO Controls All 3 Prices)</h4>
+<table class="table">
+<tr><th>Product Category</th><th>User Price (Normal)</th><th>Agent Price (Discount)</th><th>Dealer Price (More Discount)</th><th>Your Cost</th><th>Profit/User</th></tr>
+<tr><td><b>MTN GB 1GB</b><br><small style="color:#FFD700">GHANA_GB</small></td><td>GHS 5.00</td><td>GHS 4.20</td><td>GHS 3.80</td><td>GHS 3.50</td><td>GHS 1.50 / 0.70 / 0.30</td></tr>
+<tr><td><b>MTN Normal Bundle 2GB</b><br><small>GHANA_NORMAL</small></td><td>GHS 12.00</td><td>GHS 10.50</td><td>GHS 9.80</td><td>GHS 9.00</td><td>GHS 3.00 / 1.50 / 0.80</td></tr>
+<tr><td><b>Intl Bundle USA 1GB</b><br><small style="color:#00ff88">INTL_BUNDLE</small></td><td>GHS 25.00</td><td>GHS 22.00</td><td>GHS 20.00</td><td>GHS 18.00</td><td>GHS 7.00</td></tr>
+<tr><td><b>Intl Airtime $5</b><br><small style="color:#00ff88">INTL_AIRTIME</small></td><td>GHS 80.00</td><td>GHS 75.00</td><td>GHS 70.00</td><td>GHS 65.00</td><td>GHS 15.00</td></tr>
+</table>
+<p style="font-size:10px;color:#555;margin-top:10px">✅ CEO Note: Ghana GB bundles (MTN GB, Telecel GB, AirtelTigo GB) are DIFFERENT from International All Network bundles & International All Network Airtime. They have separate tables as you said.</p>
+</div>
+
+</div>
 </div>
 <script>
-const CEO_EMAIL = "ceo@kratisdata.com"; // CHANGE YOUR EMAIL HERE
-const CEO_PASS = "KratisCEO2025!"; // CHANGE YOUR PASSWORD HERE
-
+const CEO_EMAIL = "ceo@kratisdata.com";
+const CEO_PASS = "KratisCEO2025!";
 function ceoLogin(){
   const email = document.getElementById('ceoEmail').value.trim();
   const pass = document.getElementById('ceoPass').value.trim();
@@ -67,16 +151,8 @@ function ceoLogin(){
     document.getElementById('errorMsg').style.display='block';
   }
 }
-function logoutCEO(){
-  localStorage.removeItem('kratis_ceo_logged');
-  location.reload();
-}
-window.onload = function(){
-  if(localStorage.getItem('kratis_ceo_logged')==='yes'){
-    document.getElementById('loginOverlay').style.display='none';
-    document.getElementById('dashboardContent').style.display='block';
-  }
-}
+function logoutCEO(){localStorage.removeItem('kratis_ceo_logged');location.reload();}
+window.onload = function(){if(localStorage.getItem('kratis_ceo_logged')==='yes'){document.getElementById('loginOverlay').style.display='none';document.getElementById('dashboardContent').style.display='block';}}
 </script>
 </body>
 </html>
