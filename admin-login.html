@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin Login - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{min-height:100vh;background:radial-gradient(circle at top left,rgba(255,215,0,0.12),transparent 40%),#080808;display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:430px;box-shadow:0 20px 60px rgba(0,0,0,0.8)}.box img{height:50px;border-radius:6px}.field{margin-top:16px}.field label{font-size:10px;letter-spacing:1px;color:#888;text-transform:uppercase}.field input{width:100%;margin-top:6px;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none}.field input:focus{border-color:#FFD700}.btn{width:100%;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#errorMsg{display:none;margin-top:12px;color:#ff6b6b;background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.2);padding:8px;border-radius:8px;font-size:11px}.role{margin-top:16px;background:#0a0a0a;border:1px dashed #222;border-radius:10px;padding:12px;font-size:10px;color:#777;line-height:1.8}.role b{color:#FFD700}</style></head>
+<body>
+<div class="box">
+<div style="display:flex;gap:10px;align-items:center"><img src="logo.png"><div><b style="font-size:11px;letter-spacing:2px">DATA.COM<br><span style="background:#FFD700;color:#000;padding:1px 5px;border-radius:4px;font-size:8px">MANAGERS LOGIN</span></b></div></div>
+<h2 style="margin-top:14px;font-size:22px;font-weight:900">Manager <span style="color:#FFD700">Role Login</span></h2>
+<p style="color:#666;font-size:12px;margin-top:6px">System auto-detects your role. CEO keeps his own login at ceo.html</p>
+<div class="field"><label>Email Address</label><input type="email" id="email" placeholder="e.g. data@kratisdata.com" value="data@kratisdata.com"></div>
+<div class="field"><label>Password</label><input type="password" id="pass" placeholder="••••••••"></div>
+<div id="errorMsg">❌ Wrong credentials</div>
+<button class="btn" onclick="login()">Login → Auto-Detect & Go To Dashboard</button>
+<div class="role">
+<b>6 MANAGER LOGINS (Keep for now):</b><br>
+📧 complaint@kratisdata.com / Complaint2025!<br>
+📧 transaction@kratisdata.com / Transaction2025!<br>
+📧 ecg@kratisdata.com / ECG2025!<br>
+📧 afa@kratisdata.com / AFA2025!<br>
+📧 data@kratisdata.com / Data2025!<br>
+📧 gift@kratisdata.com / Gift2025!<br><br>
+CEO login is separate: ceo.html
+</div>
+</div>
+<script>
+const USERS = {
+ "complaint@kratisdata.com": {pass:"Complaint2025!", page:"complaint-manager.html"},
+ "transaction@kratisdata.com": {pass:"Transaction2025!", page:"transaction-manager.html"},
+ "ecg@kratisdata.com": {pass:"ECG2025!", page:"ecg-manager.html"},
+ "afa@kratisdata.com": {pass:"AFA2025!", page:"afa-manager.html"},
+ "data@kratisdata.com": {pass:"Data2025!", page:"data-manager.html"},
+ "gift@kratisdata.com": {pass:"Gift2025!", page:"gift-manager.html"}
+};
+function login(){
+ const email=document.getElementById('email').value.trim().toLowerCase();
+ const pass=document.getElementById('pass').value.trim();
+ const u=USERS[email];
+ if(u && u.pass===pass){localStorage.setItem('kratis_role',email);location.href=u.page;}else{document.getElementById('errorMsg').style.display='block';}
+}
+</script>
+</body>
+</html>
