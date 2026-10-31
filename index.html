@@ -1,31 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KratisData.com - Dashboard</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}body{background:#0a0a0a;color:#fff}.top{position:sticky;top:0;z-index:10;background:#0f0f0f;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center;padding:12px 20px}.top img{height:42px;border-radius:5px}.wallet{background:#18181b;border:1px solid #27272a;border-radius:12px;padding:8px 14px;display:flex;gap:15px;font-size:12px}.wallet b{color:#FFD700}.wrap{max-width:1200px;margin:20px auto;padding:0 20px}.hi{margin:15px 0}.hi h2{font-size:24px;font-weight:900}.hi h2 span{color:#FFD700}.hi p{color:#777;font-size:12px;margin-top:4px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#18181b;border:1px solid #27272a;border-radius:16px;padding:16px}.card small{color:#888;font-size:10px;letter-spacing:1px;text-transform:uppercase}.card h3{margin-top:6px;font-size:22px}.card h3.yellow{color:#FFD700}.card p{font-size:11px;color:#555;margin-top:4px}.services{margin-top:22px}.services h4{font-size:14px;margin-bottom:12px;letter-spacing:1px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.item{background:#18181b;border:1px solid #27272a;border-radius:14px;padding:16px;text-align:center;transition:0.2s;cursor:pointer}.item:hover{border-color:#FFD700;transform:translateY(-3px);box-shadow:0 10px 20px rgba(255,215,0,0.1)}.item i{font-size:20px;color:#FFD700;margin-bottom:8px}.item b{display:block;font-size:12px}.item span{font-size:10px;color:#777}.live{margin-top:20px;background:#09090b;border:1px dashed #27272a;border-radius:10px;padding:10px;display:flex;justify-content:space-between;font-size:10px;color:#666}.btn{margin-top:15px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:10px;padding:12px 20px;font-weight:900;cursor:pointer}</style></head>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kratis Premium Data - Dashboard</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}
+body{background:#060606;color:#fff;display:flex;min-height:100vh}
+.sidebar{width:270px;background:#0f0f0f;border-right:1px solid #1e1e1e;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow:auto}
+.logo-area{padding:18px;border-bottom:1px solid #1a1a1a;display:flex;gap:12px;align-items:center}
+.logo-area img{height:46px;border-radius:10px}
+.logo-area b{font-size:11px;letter-spacing:2px;line-height:1.1}
+.motto{margin:10px 14px;background:linear-gradient(90deg,rgba(255,215,0,0.12),transparent);border-left:3px solid #FFD700;padding:8px 12px;border-radius:0 12px 12px 0;font-size:11px;color:#FFD700;font-weight:800;font-style:italic}
+.menu{padding:10px 10px 100px}
+.menu h5{font-size:9px;letter-spacing:2px;color:#444;text-transform:uppercase;margin:16px 8px 6px}
+.menu button{width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:12px;padding:11px 12px;color:#777;font-size:12px;font-weight:600;display:flex;gap:10px;align-items:center;cursor:pointer;transition:0.2s;margin-top:2px}
+.menu button:hover{background:#151515;color:#bbb;border-color:#222}
+.menu button.active{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border-color:#FFD700;font-weight:900;box-shadow:0 6px 18px rgba(255,215,0,0.2)}
+.menu button .badge{margin-left:auto;background:#222;color:#999;font-size:8px;padding:2px 6px;border-radius:20px}
+.main{margin-left:270px;flex:1;min-width:0}
+.topbar{background:rgba(18,18,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid #1e1e1e;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:90}
+.tier-switch{display:flex;gap:6px;background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:5px}
+.tier-switch button{padding:7px 14px;border-radius:9px;border:1px solid transparent;background:transparent;color:#666;font-weight:800;font-size:10px;cursor:pointer}
+.tier-switch button.active{background:#FFD700;color:#000}
+.wallet{display:flex;gap:12px;align-items:center;background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:8px 14px;font-size:12px}
+.wallet b{color:#FFD700}
+.btn-gold{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:10px;padding:8px 14px;font-weight:900;font-size:11px;cursor:pointer}
+.content{padding:22px;max-width:1200px}
+.hero{display:grid;grid-template-columns:1.2fr 0.8fr;gap:14px}
+.hero-card{background:radial-gradient(circle at top left,rgba(255,215,0,0.18),transparent 50%),#121212;border:1px solid #222;border-radius:22px;padding:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{background:#0a0a0a;border:1px solid #181818;border-radius:14px;padding:12px}
+.stat b{font-size:18px}
+.stat span{font-size:10px;color:#666;display:block;margin-top:2px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.filters select,.filters input{background:#0a0a0a;border:1px solid #222;border-radius:10px;padding:9px 12px;color:#fff;font-size:11px;outline:none;min-width:160px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.card{background:#121212;border:1px solid #1f1f1f;border-radius:18px;padding:14px;transition:0.2s}
+.card:hover{border-color:rgba(255,215,0,0.3);transform:translateY(-2px)}
+.tag{font-size:7.5px;padding:3px 7px;border-radius:20px;font-weight:900;letter-spacing:0.5px;display:inline-block;margin-bottom:6px;border:1px solid}
+.card h4{font-size:13px;font-weight:800}
+.card p{font-size:10px;color:#666;margin-top:3px}
+.priceBox{margin-top:10px;background:#0a0a0a;border:1px solid #151515;border-radius:12px;padding:8px}
+.priceBox div{display:flex;justify-content:space-between;font-size:10px;padding:2px 0}
+.priceBox div.active b{color:#FFD700}
+.buy{width:100%;margin-top:10px;border-radius:10px;padding:10px;font-weight:900;font-size:11px;cursor:pointer;border:1px solid #2a2a2a;background:#222;color:#fff}
+.buy.active{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border-color:#FFD700}
+.hidden{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
+.modal-box{background:#121212;border:1px solid #222;border-radius:22px;padding:20px;width:100%;max-width:460px;max-height:85vh;overflow:auto}
+.input{width:100%;background:#09090b;border:1px solid #222;border-radius:12px;padding:12px;color:#fff;margin-top:8px;outline:none}
+.tabs{display:flex;gap:6px;background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:5px;width:fit-content;margin:12px 0}
+.tabs button{padding:7px 14px;border-radius:9px;border:none;background:transparent;color:#666;font-weight:700;font-size:11px;cursor:pointer}
+.tabs button.active{background:#222;color:#fff}
+.list-item{background:#0a0a0a;border:1px solid #151515;border-radius:12px;padding:10px;margin-top:8px;font-size:12px}
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.hero{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
-<div class="top">
-<div style="display:flex;align-items:center;gap:10px"><img src="logo.png"><div><b style="font-size:12px;letter-spacing:3px">DATA.COM <span style="background:#FFD700;color:#000;padding:2px 6px;border-radius:4px;font-size:8px">SPECIAL</span></b><div style="font-size:10px;color:#666">Kratis Premium</div></div></div>
-<div class="wallet"><span>Wallet: <b>GHS 1.10</b></span><span>Orders: <b style="color:#fff">42</b></span><span style="color:#22c55e">● 4,500+ Agents Online</span><a href="login.html" style="color:#FFD700;text-decoration:none;font-size:11px">Logout</a></div>
+<div class="sidebar">
+<div class="logo-area"><img src="logo.png"><div><b>KRATIS PREMIUM<br><span style="color:#FFD700">DATA.COM</span></b><div style="font-size:8px;color:#555;margin-top:2px">MANAGERS: admin-login.html</div></div></div>
+<div class="motto">“ Successful Operation Is Our Goal ”</div>
+<div class="menu">
+<h5>Main</h5>
+<button id="m-dashboard" class="active" onclick="go('dashboard')"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+<button onclick="go('ghana_gb')"><i class="fa-solid fa-signal"></i> Ghana GB <span class="badge">MTN GB • Telecel GB • AT GB</span></button>
+<button onclick="go('intl')"><i class="fa-solid fa-globe"></i> International Bundle & Airtime <span class="badge">Normal Bundles + Airtime For All Countries</span></button>
+<button onclick="go('gift')"><i class="fa-solid fa-gift"></i> Gift Cards <span class="badge">Gaming Inside</span></button>
+<button onclick="go('utility')"><i class="fa-solid fa-bolt"></i> Utility Payments <span class="badge">Different from ECG</span></button>
+<button onclick="go('ecg')"><i class="fa-solid fa-plug"></i> ECG Prepaid</button>
+<button onclick="go('vouchers')"><i class="fa-solid fa-ticket"></i> Vouchers <span class="badge">WASSCE • BECE</span></button>
+<button onclick="go('afa')"><i class="fa-solid fa-id-card"></i> AFA Registration</button>
+
+<h5>Growth & Support</h5>
+<button onclick="go('services')"><i class="fa-solid fa-bolt"></i> Services & Offers <span class="badge">WhatsApp</span></button>
+<button onclick="go('referral')"><i class="fa-solid fa-users"></i> Referral • Earn Commission</button>
+<button onclick="go('manual')"><i class="fa-solid fa-book"></i> USER Manual</button>
+<button onclick="go('agent')"><i class="fa-solid fa-user-tie"></i> Agent Program • Apply</button>
+
+<h5>Account</h5>
+<button onclick="go('history')"><i class="fa-solid fa-clock-rotate-left"></i> History • Everything</button>
+<button onclick="go('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
+<button id="apiBtn" onclick="go('api')" class="hidden"><i class="fa-solid fa-code"></i> API Management <span class="badge">AGENT/DEALER ONLY</span></button>
+<button onclick="go('topup')"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
 </div>
-<div class="wrap">
-<div class="hi"><h2>Good Morning, <span>Philisam!</span> 👋</h2><p>Welcome back — From MTN, Telecel, AirtelTigo bundles to ECG Prepaid, WASSCE, AFA & Gift Cards — All services live.</p></div>
-<div class="cards">
-<div class="card"><small>Wallet Balance</small><h3 class="yellow">GHS 1.10</h3><p>Tap to Top-up via MoMo</p><button class="btn">+ Top Up Wallet</button></div>
-<div class="card"><small>Total Orders Today</small><h3>42 Orders</h3><p>12 Pending • 30 Delivered</p></div>
-<div class="card"><small>VIP Bonus Earned</small><h3 class="yellow">5% OFF Active</h3><p>Free 1GB on 10GB orders</p></div>
 </div>
-<div class="services"><h4>🔥 OUR SPECIAL SERVICES</h4><div class="grid">
-<div class="item"><i class="fa-solid fa-signal"></i><b>MTN Bundle</b><span>Instant - Auto</span></div>
-<div class="item"><i class="fa-solid fa-wifi"></i><b>Telecel Bundle</b><span>GB Bundles</span></div>
-<div class="item"><i class="fa-solid fa-bolt"></i><b>AirtelTigo</b><span>Normal & GB</span></div>
-<div class="item"><i class="fa-solid fa-phone"></i><b>Airtime All</b><span>Nations Using Networks</span></div>
-<div class="item"><i class="fa-solid fa-id-card"></i><b>AFA Registration</b><span>Instant</span></div>
-<div class="item"><i class="fa-solid fa-graduation-cap"></i><b>WASSCE Voucher</b><span>BECE & WASSCE</span></div>
-<div class="item"><i class="fa-solid fa-lightbulb"></i><b>ECG Prepaid</b><span>Postpaid & Prepaid</span></div>
-<div class="item"><i class="fa-solid fa-gift"></i><b>Gift Cards</b><span>All Countries</span></div>
-<div class="item"><i class="fa-solid fa-gamepad"></i><b>Gaming Cards</b><span>Xbox, PS, Steam</span></div>
-<div class="item"><i class="fa-solid fa-file-invoice"></i><b>Postpaid Bills</b><span>Pay Bills</span></div>
+
+<div class="main">
+<div class="topbar">
+<div style="display:flex;gap:12px;align-items:center">
+<div class="tier-switch">
+<button id="t-user" class="active" onclick="setTier('USER')">USER</button>
+<button id="t-agent" onclick="setTier('AGENT')">AGENT • 1100</button>
+<button id="t-dealer" onclick="setTier('DEALER')">DEALER • 200</button>
+</div>
+<span id="tierBadge" style="font-size:10px;background:#222;border:1px solid #333;padding:4px 8px;border-radius:20px">USER MODE</span>
+</div>
+<div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('topup')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button></div>
+</div>
+
+<div class="content">
+<!-- DASHBOARD -->
+<div id="view-dashboard">
+<div class="hero">
+<div class="hero-card">
+<h2 style="font-size:24px;font-weight:900">Welcome to <span style="color:#FFD700">Kratis Premium</span><br>Dashboard</h2>
+<p style="font-size:12px;color:#888;margin-top:6px">Ghana GB different from International! Utility different from ECG! Gift Cards has Gaming inside!</p>
+<div class="stats">
+<div class="stat"><b id="s-orders">0</b><span>Orders</span></div>
+<div class="stat"><b style="color:#FFD700" id="s-wallet">GHS 0</b><span>Wallet Balance</span></div>
+<div class="stat"><b id="s-ref">GHS 0</b><span>Referral Earnings</span></div>
+</div>
+<div style="margin-top:14px;display:flex;gap:8px"><button class="btn-gold" onclick="go('ghana_gb')">Buy Ghana GB</button><button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('intl')">International</button></div>
+</div>
+<div class="hero-card">
+<h4 style="font-size:13px">🔥 Quick Actions</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+<button class="buy active" onclick="go('gift')">🎁 Gift + Gaming</button>
+<button class="buy active" onclick="go('utility')">💡 Utility Payments</button>
+<button class="buy active" onclick="go('vouchers')">🎓 Vouchers</button>
+<button class="buy active" onclick="go('services')">💬 Services via WhatsApp</button>
+</div>
+<div style="margin-top:12px;background:#0a0a0a;border:1px dashed #222;border-radius:12px;padding:10px;font-size:11px;color:#666"><b style="color:#FFD700">Note:</b> Normal Bundles & Airtime = International Bundle & Airtime for all countries. Ghana GB is separate MTN GB, Telecel GB, AirtelTigo GB!</div>
+</div>
+</div>
+<div id="dash-grid" class="grid" style="margin-top:18px"></div>
+</div>
+
+<!-- DYNAMIC VIEWS -->
+<div id="view-ghana_gb" class="hidden"><h3>🇬🇭 Ghana GB — MTN GB, Telecel GB, AirtelTigo GB (Different from International!)</h3><div class="tabs"><button class="active" onclick="filterGB('all',this)">All GB</button><button onclick="filterGB('MTN GB',this)">MTN GB</button><button onclick="filterGB('Telecel GB',this)">Telecel GB</button><button onclick="filterGB('AirtelTigo GB',this)">AirtelTigo GB</button></div><div id="grid-ghana_gb" class="grid"></div></div>
+
+<div id="view-intl" class="hidden"><h3>🌍 International Bundle & Airtime = Normal Bundles & Airtime For All Countries</h3><div class="filters"><select id="f-intl-country" onchange="renderIntl()"><option value="all">All Countries (Shows All)</option><option>Ghana</option><option>Nigeria</option><option>USA</option><option>UK</option><option>Canada</option><option>South Africa</option><option>Kenya</option><option>Cameroon</option><option>Togo</option><option>Benin</option><option>Ivory Coast</option><option>Germany</option><option>France</option></select><select id="f-intl-type" onchange="renderIntl()"><option value="all">All Types (Bundle + Airtime)</option><option value="Bundle">Normal Bundle Only</option><option value="Airtime">Airtime Only</option></select></div><div id="grid-intl" class="grid"></div></div>
+
+<div id="view-gift" class="hidden"><h3>🎁 Gift Cards — Gaming Cards Inside Gift Cards</h3><div class="filters"><select id="f-gift-country" onchange="renderGift()"><option value="all">All Countries (All countries name listed)</option><option>USA</option><option>UK</option><option>Nigeria</option><option>Ghana</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>South Africa</option><option>Kenya</option><option>UAE</option></select><select id="f-gift-cat" onchange="renderGift()"><option value="all">All Categories (Shows All)</option><option>Payment Cards</option><option>Software</option><option>Gaming</option><option>Entertainment</option><option>Shopping</option><option>Crypto</option><option>Travel</option><option>Charity</option></select></div><div id="grid-gift" class="grid"></div><div style="margin-top:10px;font-size:11px;color:#666">When click Gaming category → Shows Gaming Cards like Steam, Xbox, PlayStation, Roblox, etc.</div></div>
+
+<div id="view-utility" class="hidden"><h3>💧 Utility Payments — Different from ECG Prepaid!</h3><div class="filters"><select id="f-biller" onchange="renderUtility()"><option value="all">All Biller Types (Shows All)</option><option>Electricity Bill Payments</option><option>TV Bill Payments</option><option>Water Bill Payments</option><option>Internet Bill Payments</option></select><select id="f-service" onchange="renderUtility()"><option value="all">All Service Types (Shows All)</option><option>Prepaid</option><option>Postpaid</option></select></div><div id="grid-utility" class="grid"></div></div>
+
+<div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="grid-ecg" class="grid"></div></div>
+
+<div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all',this)">All Vouchers</button><button onclick="filterVoucher('WASSCE',this)">WASSCE Results Voucher</button><button onclick="filterVoucher('BECE',this)">BECE Results Voucher</button></div><div id="grid-vouchers" class="grid"></div></div>
+
+<div id="view-afa" class="hidden"><h3>🎓 AFA Registration</h3><div id="grid-afa" class="grid"></div></div>
+
+<div id="view-services" class="hidden"><div class="hero-card"><h3>🚀 Services & Offers — Discover Deals & Launch via WhatsApp</h3><p style="font-size:12px;color:#888;margin-top:6px">Click any service to launch request directly through WhatsApp to our managers.</p><div id="grid-services" class="grid" style="margin-top:12px"></div></div></div>
+
+<div id="view-referral" class="hidden"><div class="hero-card"><h3>👥 Referral — Refer Friends & Earn Commission</h3><p style="font-size:12px;color:#888">Your referral link: <b id="refLink" style="color:#FFD700">https://kratispremium.github.io/Kratis-Data/?ref=USER123</b></p><div class="stats" style="margin-top:12px"><div class="stat"><b>24</b><span>Friends Referred</span></div><div class="stat"><b style="color:#00ff88">GHS 186.00</b><span>Commission Earned</span></div><div class="stat"><b>5%</b><span>Per Transaction</span></div></div><button class="btn-gold" style="margin-top:12px" onclick="copyRef()">Copy Link</button></div></div>
+
+<div id="view-manual" class="hidden"><div class="hero-card"><h3>📖 USER Manual — How to Use Website</h3><div style="font-size:12px;color:#bbb;line-height:1.8;margin-top:10px"><b>1. Wallet Top-up:</b> Click Top-up → MoMo → Transaction Manager confirms<br><b>2. Ghana GB:</b> MTN GB, Telecel GB, AirtelTigo GB is different from International!<br><b>3. International:</b> Normal Bundles & Airtime for all countries<br><b>4. Gift Cards:</b> Click Gift Cards → Filter by All Countries + All Categories → Gaming inside<br><b>5. Utility Payments:</b> Different from ECG! Filter by Biller Types & Service Types<br><b>6. Vouchers:</b> WASSCE & BECE inside Vouchers<br><b>7. History:</b> Click History to see everything you did<br><b>8. Agent Program:</b> USER can apply to become Agent<br><b>9. Complaint:</b> Use Complaint button to attach image & get reply</div></div></div>
+
+<div id="view-agent" class="hidden"><div class="hero-card"><h3>🤝 Agent Program — USER Can Apply to Become Agent (1,100 Agents)</h3><p style="font-size:11px;color:#888">Get lower prices: AGENT price & DEALER price (200 Dealers lowest)</p><input id="agentName" class="input" placeholder="Full Name"><input id="agentPhone" class="input" placeholder="WhatsApp Number"><input id="agentLoc" class="input" placeholder="Location"><select id="agentTier" class="input"><option value="AGENT">Apply as AGENT • Lower Price</option><option value="DEALER">Apply as DEALER • Lowest Price (200 slots)</option></select><button class="btn-gold" style="width:100%;margin-top:12px" onclick="applyAgent()">Apply Now via WhatsApp</button></div></div>
+
+<div id="view-history" class="hidden"><h3>📜 History — Everything You Did</h3><div class="tabs"><button class="active" onclick="filterHistory('all',this)">All History</button><button onclick="filterHistory('orders',this)">Orders</button><button onclick="filterHistory('deposits',this)">Deposits / Top-ups</button><button onclick="filterHistory('refunds',this)">Refunds</button><button onclick="filterHistory('afa',this)">AFA Registration</button><button onclick="filterHistory('vouchers',this)">Voucher Purchases</button></div><div id="historyList"></div></div>
+
+<div id="view-settings" class="hidden"><div class="hero-card"><h3>⚙️ Settings</h3><div class="tabs"><button class="active" onclick="tabSet('appearance',this)">Appearance</button><button onclick="tabSet('notifications',this)">Notifications</button><button onclick="tabSet('privacy',this)">Privacy & Security</button></div><div id="set-appearance" class="set-panel"><p style="font-size:12px;margin-top:10px">Theme: <select class="input" style="max-width:200px"><option>Dark Premium (Default)</option><option>Light</option><option>Midnight</option></select></p></div><div id="set-notifications" class="set-panel hidden"><p style="font-size:12px;margin-top:10px">Email Notifications: <input type="checkbox" checked> Order updates<br>WhatsApp Alerts: <input type="checkbox" checked></p></div><div id="set-privacy" class="set-panel hidden"><p style="font-size:12px;margin-top:10px">Change Password • 2FA • Privacy policy<br><button class="buy" style="max-width:200px;margin-top:10px" onclick="alert('Logout')">Logout All Devices</button></p></div></div></div>
+
+<div id="view-api" class="hidden"><div class="hero-card"><h3>🔌 API Management — AGENT/DEALER ONLY (Not for USER)</h3><div class="tabs"><button class="active" onclick="tabApi('keys',this)">API Keys</button><button onclick="tabApi('playground',this)">API Playground</button><button onclick="tabApi('docs',this)">API Docs</button><button onclick="tabApi('config',this)">API Configuration</button></div><div id="api-keys" class="api-panel"><div class="list-item">Live Key: <b>kratis_live_xxx...xxxx</b> <button class="btn-gold" style="padding:4px 8px;font-size:10px" onclick="alert('Copied')">Copy</button><br>Test Key: <b>kratis_test_xxx...xxxx</b></div></div><div id="api-playground" class="api-panel hidden"><div class="list-item">Test endpoint: POST /api/v1/data/mtn_gb<br>Response: {status: success, order_id: KR-...}</div></div><div id="api-docs" class="api-panel hidden"><div class="list-item">Docs: Ghana GB API, International Bundle API, Gift Cards API, Utility Payments API, Vouchers API... Full docs at /docs</div></div><div id="api-config" class="api-panel hidden"><div class="list-item">Webhook URL: <input class="input" placeholder="https://yourdomain.com/webhook"><br>IP Whitelist: <input class="input" placeholder="0.0.0.0"></div></div></div></div>
+
+<div id="view-topup" class="hidden"><div class="hero-card"><h3>💰 Wallet Top-up</h3><input id="topupAmt" type="number" class="input" placeholder="Amount e.g. 100"><button class="btn-gold" style="width:100%;margin-top:12px" onclick="doTopup()">Request Top-up • Transaction Manager Confirms</button><div style="margin-top:12px;font-size:11px;color:#666">History: <span id="topupHistory">No deposits yet</span></div></div></div>
+</div>
+</div>
+
+<!-- BUY MODAL -->
+<div id="buyModal" class="modal"><div class="modal-box">
+<h3 id="buyTitle"></h3><p id="buyMeta" style="font-size:11px;color:#666;margin-top:4px"></p>
+<input id="buyRecipient" class="input" placeholder="Number / Meter / Email / Customer ID">
+<div style="margin-top:10px;background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:10px;font-size:12px">Pay: <b id="buyPay" style="color:#FFD700"></b> • Tier: <b id="buyTier"></b> • Wallet: <b id="buyBal"></b></div>
+<div style="display:flex;gap:8px;margin-top:12px"><button onclick="closeM('buyModal')" style="flex:1;background:#222;color:#fff;border-radius:12px;padding:12px;border:1px solid #333">Cancel</button><button onclick="confirmBuy()" style="flex:1;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border-radius:12px;padding:12px;font-weight:900;border:none">Pay Now</button></div>
 </div></div>
-<div class="live"><span>🟢 System Online - All Networks Stable</span><span>KratisData.com powers 4,500+ agents & dealers nationwide</span><span>© 2025</span></div>
-</div>
+
+<script>
+let TIER=localStorage.getItem('kratis_tier')||'USER';
+let WALLET=parseFloat(localStorage.getItem('kratis_wallet')||'0');
+let ORDERS=JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+let CUR=null;
+let CUR_GB='all', CUR_V='all', CUR_H='all';
+
+const PRODUCTS=[
+ {id:'mtn_gb_1',cat:'GHANA_GB',sub:'MTN GB',name:'MTN GB 1GB',desc:'30 Days',country:'Ghana',prices:{USER:6,AGENT:5,DEALER:4.5}},
+ {id:'mtn_gb_5',cat:'GHANA_GB',sub:'MTN GB',name:'MTN GB 5GB',desc:'Best Seller Ghana GB',country:'Ghana',prices:{USER:22,AGENT:20,DEALER:18}},
+ {id:'mtn_gb_10',cat:'GHANA_GB',sub:'MTN GB',name:'MTN GB 10GB',desc:'MTN GB',country:'Ghana',prices:{USER:38,AGENT:35,DEALER:32}},
+ {id:'tele_gb_10',cat:'GHANA_GB',sub:'Telecel GB',name:'Telecel GB 10GB',desc:'Telecel Ghana GB',country:'Ghana',prices:{USER:36,AGENT:33,DEALER:30}},
+ {id:'at_gb_10',cat:'GHANA_GB',sub:'AirtelTigo GB',name:'AirtelTigo GB 10GB',desc:'AT Ghana GB',country:'Ghana',prices:{USER:35,AGENT:32,DEALER:29}},
+
+ {id:'gh_normal_2',cat:'INTL',sub:'Bundle',name:'Ghana MTN Normal 2GB',desc:'Normal Bundle For All Countries',country:'Ghana',type:'Bundle',prices:{USER:12,AGENT:10,DEALER:9}},
+ {id:'gh_air_5',cat:'INTL',sub:'Airtime',name:'Ghana Airtime GHS 5',desc:'Ghana Airtime',country:'Ghana',type:'Airtime',prices:{USER:5,AGENT:4.9,DEALER:4.8}},
+ {id:'ng_mtn_5',cat:'INTL',sub:'Bundle',name:'Nigeria MTN 5GB',desc:'Normal Bundle Nigeria',country:'Nigeria',type:'Bundle',prices:{USER:30,AGENT:28,DEALER:26}},
+ {id:'ng_air_1000',cat:'INTL',sub:'Airtime',name:'Nigeria Airtime NGN 1000',desc:'Nigeria Airtime',country:'Nigeria',type:'Airtime',prices:{USER:15,AGENT:14,DEALER:13}},
+ {id:'usa_bundle_5',cat:'INTL',sub:'Bundle',name:'USA T-Mobile 5GB',desc:'International Bundle USA',country:'USA',type:'Bundle',prices:{USER:45,AGENT:42,DEALER:40}},
+ {id:'usa_air_10',cat:'INTL',sub:'Airtime',name:'USA Airtime $10',desc:'International Airtime USA',country:'USA',type:'Airtime',prices:{USER:160,AGENT:155,DEALER:150}},
+ {id:'uk_bundle_10',cat:'INTL',sub:'Bundle',name:'UK Vodafone 10GB',desc:'International Bundle UK',country:'UK',type:'Bundle',prices:{USER:60,AGENT:55,DEALER:52}},
+
+ {id:'gift_amazon_25',cat:'GIFT',sub:'Shopping',name:'Amazon Gift $25',desc:'Gift Card USA',country:'USA',giftCat:'Shopping',prices:{USER:410,AGENT:400,DEALER:395}},
+ {id:'gift_google_10',cat:'GIFT',sub:'Payment Cards',name:'Google Play $10',desc:'Payment Cards',country:'USA',giftCat:'Payment Cards',prices:{USER:165,AGENT:160,DEALER:158}},
+ {id:'gift_steam_20',cat:'GIFT',sub:'Gaming',name:'Steam Wallet $20',desc:'Gaming Card - Gaming',country:'USA',giftCat:'Gaming',prices:{USER:330,AGENT:320,DEALER:315}},
+ {id:'gift_xbox_25',cat:'GIFT',sub:'Gaming',name:'Xbox Gift $25',desc:'Gaming Card',country:'USA',giftCat:'Gaming',prices:{USER:410,AGENT:400,DEALER:395}},
+ {id:'gift_ps_50',cat:'GIFT',sub:'Gaming',name:'PlayStation $50',desc:'Gaming Card',country:'USA',giftCat:'Gaming',prices:{USER:820,AGENT:800,DEALER:790}},
+ {id:'gift_netflix',cat:'GIFT',sub:'Entertainment',name:'Netflix Gift $30',desc:'Entertainment',country:'USA',giftCat:'Entertainment',prices:{USER:490,AGENT:480,DEALER:475}},
+ {id:'gift_btc_100',cat:'GIFT',sub:'Crypto',name:'Binance Crypto $100',desc:'Crypto',country:'USA',giftCat:'Crypto',prices:{USER:1650,AGENT:1620,DEALER:1600}},
+ {id:'gift_airbnb',cat:'GIFT',sub:'Travel',name:'Airbnb $50',desc:'Travel',country:'USA',giftCat:'Travel',prices:{USER:820,AGENT:800,DEALER:790}},
+ {id:'gift_charity',cat:'GIFT',sub:'Charity',name:'Charity Donation $10',desc:'Charity',country:'USA',giftCat:'Charity',prices:{USER:165,AGENT:160,DEALER:158}},
+
+ {id:'util_elec_pre',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Prepaid',name:'Ghana Electricity Prepaid',desc:'Electricity Prepaid',country:'Ghana',prices:{USER:100,AGENT:100,DEALER:100}},
+ {id:'util_elec_post',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Postpaid',name:'Nigeria Electricity Postpaid',desc:'Electricity Postpaid',country:'Nigeria',prices:{USER:100,AGENT:100,DEALER:100}},
+ {id:'util_tv_gotv',cat:'UTILITY',sub:'TV Bill Payments',service:'Prepaid',name:'GOtv Subscription',desc:'TV Bill',country:'Ghana',prices:{USER:80,AGENT:78,DEALER:77}},
+ {id:'util_water',cat:'UTILITY',sub:'Water Bill Payments',service:'Postpaid',name:'Ghana Water Bill',desc:'Water Bill',country:'Ghana',prices:{USER:50,AGENT:50,DEALER:50}},
+ {id:'util_internet',cat:'UTILITY',sub:'Internet Bill Payments',service:'Prepaid',name:'MTN Fibre Internet',desc:'Internet Bill',country:'Ghana',prices:{USER:120,AGENT:118,DEALER:115}},
+
+ {id:'ecg_50',cat:'ECG',sub:'ECG',name:'ECG Prepaid GHS 50',desc:'Ghana ECG Only - Manual Token',country:'Ghana',prices:{USER:50,AGENT:50,DEALER:50}},
+ {id:'ecg_100',cat:'ECG',sub:'ECG',name:'ECG Prepaid GHS 100',desc:'Ghana ECG Only',country:'Ghana',prices:{USER:100,AGENT:100,DEALER:100}},
+
+ {id:'wassce',cat:'VOUCHER',sub:'WASSCE',name:'WASSCE Result Checker',desc:'WASSCE Voucher',prices:{USER:18,AGENT:17,DEALER:16}},
+ {id:'bece',cat:'VOUCHER',sub:'BECE',name:'BECE Result Checker',desc:'BECE Voucher',prices:{USER:15,AGENT:14,DEALER:13}},
+
+ {id:'afa_reg',cat:'AFA',sub:'AFA',name:'AFA Registration',desc:'AFA Smart Card',prices:{USER:35,AGENT:33,DEALER:32}},
+];
+
+const SERVICES=[
+ {name:'Business Registration',desc:'Register business - Launch via WhatsApp',wa:'I want Business Registration'},
+ {name:'Passport Application',desc:'Passport help - Launch via WhatsApp',wa:'I want Passport Application'},
+ {name:'Car Insurance Deal',desc:'Special Offer - Launch via WhatsApp',wa:'I want Car Insurance Offer'},
+];
+
+function go(view){
+ document.querySelectorAll('[id^="view-"]').forEach(v=>v.classList.add('hidden'));
+ document.getElementById('view-'+view).classList.remove('hidden');
+ document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+ const btn=document.getElementById('m-'+view); if(btn) btn.classList.add('active');
+ if(view==='dashboard') renderDashboard();
+ if(view==='ghana_gb') renderGB();
+ if(view==='intl') renderIntl();
+ if(view==='gift') renderGift();
+ if(view==='utility') renderUtility();
+ if(view==='ecg') renderECG();
+ if(view==='vouchers') renderVouchers();
+ if(view==='afa') renderAFA();
+ if(view==='services') renderServices();
+ if(view==='history') renderHistory();
+}
+function setTier(t){TIER=t; localStorage.setItem('kratis_tier',t); updateTierUI(); renderAll();}
+function updateTierUI(){
+ document.querySelectorAll('.tier-switch button').forEach(b=>b.classList.remove('active'));
+ document.getElementById('t-'+TIER.toLowerCase()).classList.add('active');
+ document.getElementById('tierBadge').innerText=TIER+' MODE';
+ document.getElementById('bal').innerText='GHS '+WALLET.toFixed(2);
+ document.getElementById('s-wallet').innerText='GHS '+WALLET.toFixed(2);
+ const apiBtn=document.getElementById('apiBtn');
+ if(TIER==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
+}
+
+function makeCard(p){
+ const price=p.prices[TIER];
+ return `<div class="card"><span class="tag" style="border-color:#222;color:#FFD700;background:rgba(255,215,0,0.08)">${p.sub} • ${p.country||''}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="priceBox"><div class="${TIER==='USER'?'active':''}"><span>USER</span><b>GHS ${p.prices.USER}</b></div><div class="${TIER==='AGENT'?'active':''}"><span>AGENT</span><b>GHS ${p.prices.AGENT}</b></div><div class="${TIER==='DEALER'?'active':''}"><span>DEALER</span><b>GHS ${p.prices.DEALER}</b></div></div><button class="buy active" onclick="openBuy('${p.id}')">Buy • GHS ${price}</button></div>`;
+}
+
+function renderDashboard(){
+ document.getElementById('s-orders').innerText=ORDERS.length;
+ document.getElementById('dash-grid').innerHTML=PRODUCTS.slice(0,8).map(p=>makeCard(p)).join('');
+}
+function renderGB(){
+ let list=PRODUCTS.filter(p=>p.cat==='GHANA_GB');
+ if(CUR_GB!=='all') list=list.filter(p=>p.sub===CUR_GB);
+ document.getElementById('grid-ghana_gb').innerHTML=list.map(p=>makeCard(p)).join('');
+}
+function filterGB(sub,el){CUR_GB=sub; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderGB();}
+
+function renderIntl(){
+ const c=document.getElementById('f-intl-country').value;
+ const t=document.getElementById('f-intl-type').value;
+ let list=PRODUCTS.filter(p=>p.cat==='INTL');
+ if(c!=='all') list=list.filter(p=>p.country===c);
+ if(t!=='all') list=list.filter(p=>p.type===t);
+ document.getElementById('grid-intl').innerHTML=list.map(p=>makeCard(p)).join('');
+}
+function renderGift(){
+ const c=document.getElementById('f-gift-country').value;
+ const cat=document.getElementById('f-gift-cat').value;
+ let list=PRODUCTS.filter(p=>p.cat==='GIFT');
+ if(c!=='all') list=list.filter(p=>p.country===c);
+ if(cat!=='all') list=list.filter(p=>p.giftCat===cat);
+ document.getElementById('grid-gift').innerHTML=list.map(p=>makeCard(p)).join('');
+}
+function renderUtility(){
+ const b=document.getElementById('f-biller').value;
+ const s=document.getElementById('f-service').value;
+ let list=PRODUCTS.filter(p=>p.cat==='UTILITY');
+ if(b!=='all') list=list.filter(p=>p.sub===b);
+ if(s!=='all') list=list.filter(p=>p.service===s);
+ document.getElementById('grid-utility').innerHTML=list.map(p=>makeCard(p)).join('');
+}
+function renderECG(){document.getElementById('grid-ecg').innerHTML=PRODUCTS.filter(p=>p.cat==='ECG').map(p=>makeCard(p)).join('');}
+function renderVouchers(){
+ let list=PRODUCTS.filter(p=>p.cat==='VOUCHER');
+ if(CUR_V!=='all') list=list.filter(p=>p.sub===CUR_V);
+ document.getElementById('grid-vouchers').innerHTML=list.map(p=>makeCard(p)).join('');
+}
+function filterVoucher(sub,el){CUR_V=sub; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderVouchers();}
+function renderAFA(){document.getElementById('grid-afa').innerHTML=PRODUCTS.filter(p=>p.cat==='AFA').map(p=>makeCard(p)).join('');}
+function renderServices(){document.getElementById('grid-services').innerHTML=SERVICES.map(s=>`<div class="card"><h4>${s.name}</h4><p>${s.desc}</p><button class="buy active" onclick="window.open('https://wa.me/233000000000?text=${encodeURIComponent(s.wa)}','_blank')">Launch via WhatsApp</button></div>`).join('');}
+
+function renderHistory(){
+ let list=ORDERS;
+ if(CUR_H!=='all'){
+   if(CUR_H==='orders') list=ORDERS.filter(o=>!['DEPOSIT','REFUND','AFA','VOUCHER'].includes(o.hist));
+   if(CUR_H==='deposits') list=ORDERS.filter(o=>o.hist==='DEPOSIT');
+   if(CUR_H==='refunds') list=ORDERS.filter(o=>o.hist==='REFUND');
+   if(CUR_H==='afa') list=ORDERS.filter(o=>o.cat==='AFA');
+   if(CUR_H==='vouchers') list=ORDERS.filter(o=>o.cat==='VOUCHER');
+ }
+ let html=list.length?'':'<div class="list-item" style="color:#666">No history yet. Everything you do will appear here: orders, refunds, deposits, afa registration, voucher purchases.</div>';
+ list.slice().reverse().forEach(o=>{html+=`<div class="list-item"><b>${o.id}</b> • ${o.name} • ${o.recipient||''}<br><span style="color:${o.status.includes('Pending')?'#FFD700':'#00ff88'}">${o.status}</span> • GHS ${o.amount} • ${o.date} • Type: ${o.hist||o.cat}</div>`});
+ document.getElementById('historyList').innerHTML=html;
+ document.getElementById('topupHistory').innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
+}
+function filterHistory(type,el){CUR_H=type; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderHistory();}
+
+function tabSet(id,el){document.querySelectorAll('.set-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('set-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
+function tabApi(id,el){document.querySelectorAll('.api-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('api-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
+
+function openBuy(id){
+ CUR=PRODUCTS.find(p=>p.id===id);
+ document.getElementById('buyTitle').innerText=CUR.name;
+ document.getElementById('buyMeta').innerText=CUR.cat+' • '+CUR.sub+' • '+(CUR.country||'')+' • '+CUR.desc;
+ document.getElementById('buyPay').innerText='GHS '+CUR.prices[TIER];
+ document.getElementById('buyTier').innerText=TIER;
+ document.getElementById('buyBal').innerText='GHS '+WALLET.toFixed(2);
+ document.getElementById('buyModal').style.display='flex';
+}
+function closeM(id){document.getElementById(id).style.display='none';}
+function confirmBuy(){
+ const rec=document.getElementById('buyRecipient').value.trim();
+ if(!rec){alert('Enter recipient');return;}
+ const amt=CUR.prices[TIER];
+ if(WALLET<amt){alert('Insufficient wallet! Top-up first.');go('topup');closeM('buyModal');return;}
+ WALLET-=amt; localStorage.setItem('kratis_wallet',WALLET);
+ const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,amount:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
+ ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
+ closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
+}
+function doTopup(){
+ const amt=parseFloat(document.getElementById('topupAmt').value);
+ if(!amt||amt<1){alert('Enter valid amount');return;}
+ WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
+ const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',amount:amt,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
+ ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
+ updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
+}
+function applyAgent(){
+ const n=document.getElementById('agentName').value.trim();
+ const p=document.getElementById('agentPhone').value.trim();
+ if(!n||!p){alert('Enter name and WhatsApp number');return;}
+ const tier=document.getElementById('agentTier').value;
+ window.open(`https://wa.me/233000000000?text=${encodeURIComponent('AGENT APPLICATION: Name:'+n+' Phone:'+p+' Wants:'+tier+' Tier')}`,'_blank');
+}
+function copyRef(){navigator.clipboard.writeText(document.getElementById('refLink').innerText); alert('Referral link copied!');}
+function renderAll(){renderDashboard(); renderGB(); renderIntl(); renderGift(); renderUtility(); renderECG(); renderVouchers(); renderAFA(); renderServices(); renderHistory();}
+updateTierUI(); renderAll();
+</script>
 </body>
 </html>
