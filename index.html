@@ -247,15 +247,52 @@ function go(view){
  if(view==='services') renderServices();
  if(view==='history') renderHistory();
 }
-function setTier(t){TIER=t; localStorage.setItem('kratis_tier',t); updateTierUI(); renderAll();}
+function setTier(t){
+ let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+ let loggedEmail=localStorage.getItem('kratis_logged_user');
+ let realTier = users[loggedEmail]?.tier || 'USER';
+ if(t==='AGENT' && realTier==='USER'){
+   alert('🔒 AGENT Mode Locked! You are USER mode. Apply in Agent Program and wait for CEO ADMIN approval.');
+   return;
+ }
+ if(t==='DEALER' && realTier!=='DEALER'){
+   alert('🔒 DEALER Mode Locked! CEO approval required for 200 dealers only!');
+   return;
+ }
+ TIER=t; 
+ localStorage.setItem('kratis_tier',t); 
+ updateTierUI(); 
+ renderAll();
+}
 function updateTierUI(){
  document.querySelectorAll('.tier-switch button').forEach(b=>b.classList.remove('active'));
- document.getElementById('t-'+TIER.toLowerCase()).classList.add('active');
- document.getElementById('tierBadge').innerText=TIER+' MODE';
+ let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+ let loggedEmail=localStorage.getItem('kratis_logged_user');
+ let realTier = users[loggedEmail]?.tier || 'USER';
+ TIER = realTier;
+ localStorage.setItem('kratis_tier',realTier);
+ document.getElementById('t-user').classList.add('active');
+ if(realTier==='AGENT' || realTier==='DEALER') {
+   document.getElementById('t-user').classList.remove('active');
+   document.getElementById('t-'+realTier.toLowerCase()).classList.add('active');
+ }
+ // Visual lock
+ const agentBtn=document.getElementById('t-agent');
+ const dealerBtn=document.getElementById('t-dealer');
+ if(realTier==='USER'){
+   agentBtn.innerHTML='AGENT • 1100 🔒'; dealerBtn.innerHTML='DEALER • 200 🔒';
+   agentBtn.style.opacity='0.6'; dealerBtn.style.opacity='0.6';
+ } else {
+   agentBtn.innerHTML='AGENT • 1100'; dealerBtn.innerHTML='DEALER • 200';
+   agentBtn.style.opacity='1'; dealerBtn.style.opacity='1';
+   if(realTier==='AGENT') dealerBtn.innerHTML='DEALER • 200 🔒', dealerBtn.style.opacity='0.6';
+ }
+ document.getElementById('tierBadge').innerText=realTier+' MODE';
+ if(realTier==='USER') document.getElementById('tierBadge').innerText='USER MODE - CEO Approval Needed';
  document.getElementById('bal').innerText='GHS '+WALLET.toFixed(2);
  document.getElementById('s-wallet').innerText='GHS '+WALLET.toFixed(2);
  const apiBtn=document.getElementById('apiBtn');
- if(TIER==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
+ if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
 
 function makeCard(p){
