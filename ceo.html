@@ -150,14 +150,12 @@ function ceoLogin(){
     document.getElementById('errorMsg').style.display='block';
   }
 }
- function loadPendingApprovals(){
+function loadPendingApprovals(){
   let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
   let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
   let box=document.getElementById('pendingAgentList');
   if(!box) return;
   let html=''; let count=0;
-  
-  // Show USERs
   Object.keys(users).forEach(email=>{
     let u=users[email];
     if((u.tier||'USER')==='USER'){
@@ -167,73 +165,84 @@ function ceoLogin(){
       let phone = app ? app.phone : (u.phone||'No Phone');
       let loc = app ? app.location : '';
       html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#111;padding:10px;border-radius:8px;border:1px solid #222;margin-bottom:6px">
-        <div><b style="color:#FFD700">${email}</b><br><span style="font-size:11px;color:#fff">${name} • ${phone}</span><br><span style="font-size:10px;color:#888">${loc} • ${u.created||''} • USER</span></div>
+        <div><b style="color:#FFD700">${email}</b><br><span style="font-size:11px;color:#fff">${name} • ${phone}</span><br><span style="font-size:10px;color:#888">${loc} • ${u.created||''}</span></div>
         <div style="display:flex;gap:6px;flex-direction:column">
-          <button style="padding:6px 12px;font-size:11px;background:#FFD700;border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveUser('${email}','AGENT')">Approve AGENT</button>
-          <button style="padding:4px 8px;font-size:10px;background:#222;color:#2ecc71;border:1px solid #333;border-radius:6px;cursor:pointer" onclick="window.open('https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=Hello ${name}','_blank')">Chat WA</button>
+          <button style="padding:6px 12px;font-size:11px;background:#FFD700;border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveUser('${email}','AGENT')">Approve AGENT ♾️</button>
+          <button style="padding:6px 12px;font-size:11px;background:#222;color:#FFD700;border:1px solid #FFD700;border-radius:6px;cursor:pointer" onclick="approveUser('${email}','DEALER')">Approve DEALER ♾️</button>
         </div>
       </div>`;
     }
   });
-  // Show Guest Applications (like Alex Addo who applied without login)
   apps.forEach(a=>{
-    if(a.status==='PENDING' && (!users[a.email] || users[a.email].tier==='USER')){
-      if(!Object.keys(users).includes(a.email)){
-        count++;
-        html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#1a1a00;padding:10px;border-radius:8px;border:1px solid #FFD700;margin-bottom:6px">
-          <div><b style="color:#FFD700">${a.name} - ${a.email}</b><br><span style="font-size:11px;color:#fff">${a.phone} • ${a.location}</span><br><span style="font-size:10px;color:#aaa">${a.date} • APPLICATION</span></div>
-          <div style="display:flex;gap:6px;flex-direction:column">
-            <button style="padding:6px 12px;font-size:11px;background:#FFD700;border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveGuest('${a.phone}','${a.name}','${a.email}')">Approve AGENT</button>
-            <button style="padding:4px 8px;font-size:10px;background:#222;color:#2ecc71;border:1px solid #333;border-radius:6px;cursor:pointer" onclick="window.open('https://wa.me/${a.phone.replace(/[^0-9]/g,'')}?text=Hello ${a.name}','_blank')">Chat WA</button>
-          </div>
-        </div>`;
-      }
+    if(a.status==='PENDING' && !users[a.email]){
+      count++;
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#1a1a00;padding:10px;border-radius:8px;border:1px solid #FFD700;margin-bottom:6px">
+        <div><b style="color:#FFD700">${a.name} - ${a.email}</b><br><span style="font-size:11px;color:#fff">${a.phone} • ${a.location}</span><br><span style="font-size:10px;color:#aaa">${a.date}</span></div>
+        <div style="display:flex;gap:6px;flex-direction:column">
+          <button style="padding:6px 12px;font-size:11px;background:#FFD700;border:none;border-radius:6px;font-weight:900;cursor:pointer" onclick="approveGuest('${a.phone}','${a.name}','${a.email}')">Approve AGENT ♾️</button>
+        </div>
+      </div>`;
     }
   });
-  if(count===0) html='<div style="color:#2ecc71;padding:20px;text-align:center">✅ No pending USERs — All approved! New Agent Applications will appear here.</div>';
-  else html='<div style="color:#FFD700;font-size:11px;margin-bottom:8px">'+count+' USER(s) / Applications waiting:</div>'+html;
+  if(count===0) html='<div style="color:#2ecc71;padding:20px;text-align:center">✅ No pending — All approved! Agent is now 2 ♾️ UNLIMITED!</div>';
   box.innerHTML=html;
-}
-function approveGuest(phone,name,email){
-  let msg=`🎉 CONGRATS ${name}! You are now APPROVED as AGENT in KRATIS PREMIUM DATA!%0A%0A✅ Your Mode: AGENT MODE%0A✅ Login: https://kratispremium.github.io/Kratis-Data/%0A✅ WhatsApp: ${phone}%0A%0AYou now get LOWER PRICES!%0AStart selling now!%0A- CEO KRATIS`;
-  let cleanPhone=phone.replace(/[^0-9]/g,'');
-  if(cleanPhone.startsWith('0')) cleanPhone='233'+cleanPhone.substring(1);
-  if(confirm('Approve '+name+' ('+phone+') as AGENT?\\n\\nSend WhatsApp Congrats now?')){
-    window.open('https://wa.me/'+cleanPhone+'?text='+msg,'_blank');
-    let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
-    users[email]={tier:'AGENT', created:new Date().toISOString(), name:name, phone:phone};
-    localStorage.setItem('kratis_users',JSON.stringify(users));
-    let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
-    apps.forEach(a=>{if(a.email===email) a.status='APPROVED_AGENT';});
-    localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
-    alert('✅ APPROVED! '+name+' is now AGENT!');
-    loadPendingApprovals();
-  }
+  updateTierLimits();
 }
 function approveUser(email,newTier){
   let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
   let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
-  let applicant = apps.find(a=>a.email===email);
-  let phone = applicant ? applicant.phone : '';
-  let name = applicant ? applicant.name : email.split('@')[0];
-  if(!confirm('CEO ADMIN: Approve '+email+' to '+newTier+'?')) return;
+  if(!confirm('CEO UNLIMITED ♾️: Approve '+email+' to '+newTier+'? No limit!')) return;
   if(users[email]){
     users[email].tier=newTier;
     localStorage.setItem('kratis_users',JSON.stringify(users));
     apps.forEach(a=>{if(a.email===email) a.status='APPROVED_'+newTier;});
     localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
-    let waMsg=`🎉 CONGRATS ${name}! You are now APPROVED as ${newTier} in KRATIS PREMIUM DATA!%0A%0A✅ Your Mode: ${newTier} MODE%0A✅ Login: https://kratispremium.github.io/Kratis-Data/%0A✅ Email: ${email}%0A%0AYou now get LOWER PRICES!%0A- CEO KRATIS`;
-    if(phone){
-      let cleanPhone=phone.replace(/[^0-9]/g,'');
-      if(cleanPhone.startsWith('0')) cleanPhone='233'+cleanPhone.substring(1);
-      if(confirm('✅ APPROVED! '+email+' is now '+newTier+'!\\n\\nSend WhatsApp Congrats to '+phone+' now?')){
-        window.open('https://wa.me/'+cleanPhone+'?text='+waMsg,'_blank');
-      }
-    }else{
-      alert('✅ APPROVED! '+email+' is now '+newTier+'! No phone found.');
-    }
+    alert('✅ UNLIMITED APPROVED! '+email+' is now '+newTier+'! ♾️ Total Agents: '+(Object.values(users).filter(u=>u.tier==='AGENT').length));
     loadPendingApprovals();
   }
+}
+function approveGuest(phone,name,email){
+  if(!confirm('CEO UNLIMITED ♾️: Approve '+name+' ('+phone+') as AGENT? No limit!')) return;
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  users[email]={tier:'AGENT', created:new Date().toISOString(), name:name, phone:phone};
+  localStorage.setItem('kratis_users',JSON.stringify(users));
+  let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
+  apps.forEach(a=>{if(a.email===email) a.status='APPROVED_AGENT';});
+  localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
+  let cleanPhone=phone.replace(/[^0-9]/g,''); if(cleanPhone.startsWith('0')) cleanPhone='233'+cleanPhone.substring(1);
+  if(confirm('✅ Approved! Send WhatsApp congrats to '+phone+'?')) window.open('https://wa.me/'+cleanPhone+'?text=🎉 CONGRATS '+name+'! You are now APPROVED as AGENT in KRATIS PREMIUM DATA! ♾️ UNLIMITED! Login: https://kratispremium.github.io/Kratis-Data/','_blank');
+  loadPendingApprovals();
+}
+function updateTierLimits(){
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  let all=Object.values(users);
+  let agentCount=all.filter(u=> (u.tier||'USER')==='AGENT').length;
+  let dealerCount=all.filter(u=> (u.tier||'USER')==='DEALER').length;
+  let totalCount=all.length;
+  let bar=document.getElementById('limitBar');
+  if(!bar){
+    bar=document.createElement('div'); bar.id='limitBar';
+    bar.style.cssText='display:flex;gap:10px;margin:10px 0;padding:10px;background:#111;border:1px solid #222;border-radius:10px;flex-wrap:wrap';
+    let pendingBox=document.getElementById('pendingAgentList');
+    if(pendingBox && pendingBox.parentElement) pendingBox.parentElement.insertBefore(bar, pendingBox);
+  }
+  bar.innerHTML=`
+    <div style="flex:1;min-width:140px;background:#0a0a0a;padding:10px;border-radius:8px;border-left:3px solid #2ecc71">
+      <div style="font-size:10px;color:#888">AGENT • UNLIMITED ♾️</div>
+      <div style="font-size:18px;font-weight:900;color:#2ecc71">${agentCount} AGENTS</div>
+      <div style="font-size:9px;color:#aaa;margin-top:4px">You said 2 • No limit • Unlimited</div>
+    </div>
+    <div style="flex:1;min-width:140px;background:#0a0a0a;padding:10px;border-radius:8px;border-left:3px solid #FFD700">
+      <div style="font-size:10px;color:#888">DEALER • UNLIMITED ♾️</div>
+      <div style="font-size:18px;font-weight:900;color:#FFD700">${dealerCount} DEALERS</div>
+      <div style="font-size:9px;color:#aaa;margin-top:4px">200 limit removed • Unlimited</div>
+    </div>
+    <div style="flex:0.6;min-width:100px;background:#0a0a0a;padding:10px;border-radius:8px;border-left:3px solid #fff">
+      <div style="font-size:10px;color:#888">TOTAL USERS</div>
+      <div style="font-size:18px;font-weight:900;color:#fff">${totalCount}</div>
+    </div>
+  `;
+  return {agentCount, dealerCount};
 }
 function removeUser(email){
   if(!confirm('Remove '+email+'?')) return;
@@ -242,6 +251,7 @@ function removeUser(email){
   localStorage.setItem('kratis_users',JSON.stringify(users));
   loadPendingApprovals();
 }
+setTimeout(()=>{ updateTierLimits(); loadPendingApprovals(); }, 800);
 function logoutCEO(){localStorage.removeItem('kratis_ceo_logged');location.reload();}
 window.onload = function(){if(localStorage.getItem('kratis_ceo_logged')==='yes'){document.getElementById('loginOverlay').style.display='none';document.getElementById('dashboardContent').style.display='block';} setTimeout(loadPendingApprovals, 800);};
 </script>
