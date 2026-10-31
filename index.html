@@ -158,7 +158,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 
 <div id="view-manual" class="hidden"><div class="hero-card"><h3>📖 USER Manual — How to Use Website</h3><div style="font-size:12px;color:#bbb;line-height:1.8;margin-top:10px"><b>1. Wallet Top-up:</b> Click Top-up → MoMo → Transaction Manager confirms<br><b>2. Ghana GB:</b> MTN GB, Telecel GB, AirtelTigo GB is different from International!<br><b>3. International:</b> Normal Bundles & Airtime for all countries<br><b>4. Gift Cards:</b> Click Gift Cards → Filter by All Countries + All Categories → Gaming inside<br><b>5. Utility Payments:</b> Different from ECG! Filter by Biller Types & Service Types<br><b>6. Vouchers:</b> WASSCE & BECE inside Vouchers<br><b>7. History:</b> Click History to see everything you did<br><b>8. Agent Program:</b> USER can apply to become Agent<br><b>9. Complaint:</b> Use Complaint button to attach image & get reply</div></div></div>
 
-<div id="view-agent" class="hidden"><div class="hero-card"><h3>🤝 Agent Program — USER Can Apply to Become Agent (1,100 Agents)</h3><p style="font-size:11px;color:#888">Get lower prices: AGENT price & DEALER price (200 Dealers lowest)</p><input id="agentName" class="input" placeholder="Full Name"><input id="agentPhone" class="input" placeholder="WhatsApp Number"><input id="agentLoc" class="input" placeholder="Location"><select id="agentTier" class="input"><option value="AGENT">Apply as AGENT • Lower Price</option><option value="DEALER">Apply as DEALER • Lowest Price (200 slots)</option></select><button class="btn-gold" style="width:100%;margin-top:12px" onclick="applyAgent()">Apply Now via WhatsApp</button></div></div>
+<div id="v-agent" class="hidden"><div class="hero-card"><h3>🤝 Agent Program — USER Can Apply to Become Agent (1,100 Agents)</h3><p style="font-size:11px;color:#888">Fill form → CEO will see you in ceo.html Pending List → CEO Approves → You become AGENT!</p><div style="display:flex;flex-direction:column;gap:10px;margin-top:12px"><input id="agentFullName" placeholder="Full Name - e.g. Kofi Mensah" style="padding:12px;background:#111;border:1px solid #333;border-radius:8px;color:#fff"><input id="agentWhatsApp" placeholder="WhatsApp Number - e.g. 0551234567" style="padding:12px;background:#111;border:1px solid #333;border-radius:8px;color:#fff"><input id="agentLocation" placeholder="Location - e.g. Accra, Kumasi" style="padding:12px;background:#111;border:1px solid #333;border-radius:8px;color:#fff"><button onclick="applyAsAgent()" style="padding:14px;background:linear-gradient(90deg,#FFD700,#FFC700);border:none;border-radius:10px;font-weight:900;cursor:pointer;color:#000">Apply as AGENT - Lower Price (CEO Approval)</button><button onclick="applyViaWhatsApp()" style="padding:12px;background:#111;border:1px solid #FFD700;border-radius:10px;font-weight:700;cursor:pointer;color:#FFD700">Apply Now via WhatsApp to CEO</button><div id="agentApplyStatus" style="font-size:12px;color:#2ecc71;display:none"></div></div></div></div>
 
 <div id="view-history" class="hidden"><h3>📜 History — Everything You Did</h3><div class="tabs"><button class="active" onclick="filterHistory('all',this)">All History</button><button onclick="filterHistory('orders',this)">Orders</button><button onclick="filterHistory('deposits',this)">Deposits / Top-ups</button><button onclick="filterHistory('refunds',this)">Refunds</button><button onclick="filterHistory('afa',this)">AFA Registration</button><button onclick="filterHistory('vouchers',this)">Voucher Purchases</button></div><div id="historyList"></div></div>
 
@@ -392,12 +392,31 @@ function doTopup(){
  ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
 }
-function applyAgent(){
- const n=document.getElementById('agentName').value.trim();
- const p=document.getElementById('agentPhone').value.trim();
- if(!n||!p){alert('Enter name and WhatsApp number');return;}
- const tier=document.getElementById('agentTier').value;
- window.open(`https://wa.me/233000000000?text=${encodeURIComponent('AGENT APPLICATION: Name:'+n+' Phone:'+p+' Wants:'+tier+' Tier')}`,'_blank');
+function applyAgent(){ alert('Use new Apply as AGENT button!'); }
+function applyAsAgent(){
+  let name=document.getElementById('agentFullName')?.value.trim() || document.getElementById('agentName')?.value.trim();
+  let phone=document.getElementById('agentWhatsApp')?.value.trim() || document.getElementById('agentPhone')?.value.trim();
+  let loc=document.getElementById('agentLocation')?.value.trim() || '';
+  let loggedEmail=localStorage.getItem('kratis_logged_user')||'unknown';
+  if(!name||!phone){alert('Enter Full Name and WhatsApp Number!');return;}
+  let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
+  apps.push({email:loggedEmail, name:name, phone:phone, location:loc, date:new Date().toLocaleString(), status:'PENDING'});
+  localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+  if(!users[loggedEmail]) users[loggedEmail]={tier:'USER', created:new Date().toISOString()};
+  localStorage.setItem('kratis_users',JSON.stringify(users));
+  let statusEl=document.getElementById('agentApplyStatus');
+  if(statusEl){ statusEl.style.display='block'; statusEl.innerHTML='✅ Application Sent! CEO will approve you in ceo.html.<br>Your Email: '+loggedEmail+'<br>WhatsApp: '+phone; }
+  alert('✅ AGENT Application Sent to CEO! CEO will see you in ceo.html → Pending Agent Approval → Approve → You become AGENT!');
+}
+function applyViaWhatsApp(){
+  let name=document.getElementById('agentFullName')?.value.trim() || document.getElementById('agentName')?.value.trim() || 'Agent Applicant';
+  let phone=document.getElementById('agentWhatsApp')?.value.trim() || document.getElementById('agentPhone')?.value.trim() || '';
+  let loc=document.getElementById('agentLocation')?.value.trim() || '';
+  let loggedEmail=localStorage.getItem('kratis_logged_user')||'';
+  let msg=`Hello CEO! I want to be KRATIS AGENT!%0A%0AName: ${name}%0AEmail: ${loggedEmail}%0APhone: ${phone}%0ALocation: ${loc}%0A%0APlease approve me to AGENT mode in ceo.html!`;
+  window.open('https://wa.me/233558228524?text='+msg,'_blank');
+  applyAsAgent();
 }
 function copyRef(){navigator.clipboard.writeText(document.getElementById('refLink').innerText); alert('Referral link copied!');}
  function logout(){
