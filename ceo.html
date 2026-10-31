@@ -84,7 +84,10 @@
 </div>
 <div class="main">
 <div class="topbar"><div><b>CEO ADMIN: Philisam</b> • <span style="color:#22c55e;font-size:11px">● You have SUPER ACCESS - You can do all Manager jobs</span></div><div style="display:flex;gap:12px;font-size:11px"><span>Today Profit: <b style="color:#FFD700">GHS 340.50</b></span><span style="background:#FFD700;color:#000;padding:4px 8px;border-radius:6px;font-weight:800">Manual Place Order</span></div></div>
-
+<div style="margin:12px 20px;display:flex;gap:8px;flex-wrap:wrap">
+<button onclick="syncNow()" style="padding:12px 20px;background:#FFD700;color:#000;font-weight:900;border:none;border-radius:10px;cursor:pointer">☁️ SYNC 2 AGENTS TO CLOUD ♾️</button>
+<button onclick="loadUsersFromCloud().then(()=>{location.reload()})" style="padding:12px 20px;background:#000;color:#FFD700;border:1px solid #FFD700;border-radius:10px;cursor:pointer">☁️ LOAD FROM CLOUD</button>
+</div>
 <div class="stats">
 <div class="stat"><small>Today Sales</small><h2>GHS 4,820 <span style="color:#22c55e;font-size:12px">+12%</span></h2><p>124 Orders • Profit: GHS 340.5</p></div>
 <div class="stat"><small>Weekly Sales</small><h2>GHS 28,400</h2><p>Weekly Profit: GHS 2,120</p></div>
