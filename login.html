@@ -85,6 +85,7 @@ function login(){
    if(users[email]){showErr('Account already exists! Click Sign In');return;}
    users[email]={pass:pass, created:new Date().toISOString(), tier:'USER'};
    localStorage.setItem('kratis_users',JSON.stringify(users));
+  let pend=JSON.parse(localStorage.getItem('kratis_pending_agents')||'[]'); pend.push({email:email, date:new Date().toLocaleString()}); localStorage.setItem('kratis_pending_agents',JSON.stringify(pend));
  }else{
    // Sign In mode - if user not exists, auto-create for demo (so first time works)
    if(!users[email]){
