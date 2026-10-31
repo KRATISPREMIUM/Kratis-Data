@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><script>
+// 🔐 AUTH PROTECTION - Must login first!
+(function(){
+  const user = localStorage.getItem('kratis_logged_user');
+  const logged = localStorage.getItem('kratis_logged');
+  // If not logged, redirect to login.html
+  if(!user || logged!=='yes'){
+    window.location.href='login.html';
+  }
+})();
+</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kratis Premium Data - Dashboard</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -96,7 +106,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 </div>
 <span id="tierBadge" style="font-size:10px;background:#222;border:1px solid #333;padding:4px 8px;border-radius:20px">USER MODE</span>
 </div>
-<div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('topup')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button></div>
+<div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('topup')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button> <button class="btn-gold" style="background:#ff3b3b;color:#fff;border:1px solid #ff3b3b" onclick="logout()">Logout</button></div>
 </div>
 
 <div class="content">
@@ -353,6 +363,11 @@ function applyAgent(){
  window.open(`https://wa.me/233000000000?text=${encodeURIComponent('AGENT APPLICATION: Name:'+n+' Phone:'+p+' Wants:'+tier+' Tier')}`,'_blank');
 }
 function copyRef(){navigator.clipboard.writeText(document.getElementById('refLink').innerText); alert('Referral link copied!');}
+ function logout(){
+  localStorage.removeItem('kratis_logged_user');
+  localStorage.removeItem('kratis_logged');
+  window.location.href='login.html';
+}
 function renderAll(){renderDashboard(); renderGB(); renderIntl(); renderGift(); renderUtility(); renderECG(); renderVouchers(); renderAFA(); renderServices(); renderHistory();}
 updateTierUI(); renderAll();
 </script>
