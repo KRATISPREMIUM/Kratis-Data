@@ -1,89 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRATIS CEO - BILLIONAIRE CLOUD EMPIRE</title>
+<title>KRATIS CEO - BILLIONAIRE CLOUD</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 <style>
-:root{--gold:#FFD700;--black:#0a0a0a;--card:#151515;--green:#00ff88;--blue:#00aaff}
+:root{--gold:#FFD700;--card:#151515;--green:#00ff88}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:Inter,Arial,sans-serif;padding:0}
+body{background:#000;color:#fff;font-family:Arial;padding:0}
 .sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:#0f0f0f;border-right:1px solid #222;padding:15px;overflow-y:auto}
 .main{margin-left:220px;padding:15px}
-.logo{color:var(--gold);font-weight:900;font-size:18px;margin-bottom:20px}
+.logo{color:var(--gold);font-weight:900}
 .menu-item{padding:8px 10px;border-radius:8px;color:#888;font-size:13px;margin:3px 0}
-.menu-item.active,.menu-item:hover{background:#1a1a1a;color:var(--gold)}
-.top-bar{background:#111;border:1px solid #222;border-radius:12px;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+.menu-item.active{background:#1a1a1a;color:var(--gold)}
+.top-bar{background:#111;border:1px solid #222;border-radius:12px;padding:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:15px}
 .cloud-badge{background:var(--green);color:#000;padding:6px 12px;border-radius:20px;font-weight:bold;font-size:12px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
-.btn-gold{background:var(--gold);color:#000;padding:10px 18px;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px}
-.btn-blue{background:#00aaff;color:#fff;padding:10px 18px;border:none;border-radius:10px;font-weight:900;cursor:pointer}
-.profit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:15px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.btn-gold{background:var(--gold);color:#000;padding:10px 18px;border:none;border-radius:10px;font-weight:900;cursor:pointer}
+.profit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
 .profit-card{background:#151515;border:1px solid #222;border-radius:12px;padding:15px;text-align:center}
-.profit-card h2{color:var(--gold);font-size:22px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:15px}
+.profit-card h2{color:var(--gold)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}
 .stat-card{background:#151515;border:1px solid #222;border-radius:10px;padding:12px;text-align:center}
 .pending-panel{background:#151515;border:2px solid var(--gold);border-radius:12px;padding:15px}
-.cool-update{border:2px solid #00ff88;box-shadow:0 0 20px rgba(0,255,136,0.3);animation:glow 3s infinite}
-@keyframes glow{0%,100%{box-shadow:0 0 10px rgba(0,255,136,0.2)}50%{box-shadow:0 0 25px rgba(0,255,136,0.5)}}
+.cool{border:2px solid #00ff88;box-shadow:0 0 20px rgba(0,255,136,0.3)}
 .live-dot{width:8px;height:8px;background:#00ff88;border-radius:50%;display:inline-block;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.order-row{display:grid;grid-template-columns:80px 1fr 100px 80px 100px 80px 120px;gap:5px;padding:8px;background:#1a1a1a;border-radius:6px;margin:4px 0;font-size:11px}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.profit-grid,.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="sidebar">
-<div class="logo">KRATIS DATA.COM<br><span style="font-size:10px;color:#666">CEO BILLIONAIRE CLOUD</span></div>
+<div class="logo">KRATIS DATA.COM<br><span style="font-size:9px;color:#666">CEO BILLIONAIRE CLOUD</span></div>
+<div style="color:var(--gold);font-size:11px;font-weight:bold;margin:15px 0 5px">MAIN MENU</div>
 <div class="menu-item active">● CEO Dashboard</div>
 <div class="menu-item">Sales Analytics</div>
 <div class="menu-item">All Users / Agents</div>
 <div class="menu-item">Dealers</div>
 <div class="menu-item">All Orders (All Networks)</div>
+<div style="color:var(--gold);font-size:11px;font-weight:bold;margin:15px 0 5px">MANAGER CONTROLS</div>
+<div class="menu-item">Complaints - Manager</div>
+<div class="menu-item">Transactions</div>
+<div class="menu-item">ECG / Prepaid Manager</div>
+<div class="menu-item">AFA & WASSCE Manager</div>
+<div class="menu-item">Data & Airline Manager</div>
+<div class="menu-item">Gift & Gaming Cards</div>
+<div class="menu-item">Product Price Setup</div>
+<div class="menu-item">Logout CEO</div>
 <div style="margin-top:20px;padding:10px;background:#111;border-radius:8px;border:1px solid #222">
 <div style="font-size:10px;color:#00ff88"><span class="live-dot"></span> GOOGLE CLOUD LIVE</div>
 <div style="font-size:10px;color:#888;margin-top:5px" id="cloudStatusSide">Connecting...</div>
+<div style="font-size:9px;color:#555;margin-top:5px">kratis-premium-data</div>
 </div>
 </div>
 <div class="main">
 <div class="top-bar">
 <div>
-<div style="font-weight:900;color:var(--gold)">CEO ADMIN: Philliam</div>
+<div style="font-weight:900;color:var(--gold)">CEO ADMIN: Philliam <span style="background:gold;color:#000;padding:2px 6px;border-radius:4px;font-size:9px">SUPER ACCESS</span></div>
 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn-gold" onclick="syncToCloud()" id="syncBtn">SYNC 2 AGENTS TO CLOUD</button>
-<button class="btn-blue" onclick="loadFromCloud()">LOAD FROM CLOUD</button>
+<button class="btn-gold" style="background:#222;color:gold;border:1px solid gold" onclick="loadFromCloud()">LOAD FROM CLOUD</button>
 <span class="cloud-badge" id="cloudBadge">☁️ AUTO-SYNC ON • 0 AGENTS</span>
 </div>
 </div>
 <div style="text-align:right">
 <div style="font-size:11px;color:#888">Today Profit: GHS 4,820</div>
-<div style="font-size:10px;color:#00ff88;margin-top:5px"><span class="live-dot"></span> Firebase: <span id="fbStatus">Live</span></div>
+<button class="btn-gold" style="margin-top:5px;font-size:11px">Manual Place Order</button>
+<div style="font-size:10px;color:#00ff88;margin-top:5px"><span class="live-dot"></span> Firebase: <span id="fbStatus">Live</span> | Auto-save 30s</div>
 </div>
 </div>
+
 <div class="profit-grid">
-<div class="profit-card"><h2>GHS 4,820</h2><p>Today Profit</p></div>
-<div class="profit-card"><h2>GHS 28,400</h2><p>Weekly</p></div>
-<div class="profit-card"><h2>GHS 124,000</h2><p>Monthly</p></div>
-<div class="profit-card"><h2>GHS 1.4M</h2><p>Total Profit</p></div>
+<div class="profit-card"><h2>GHS 4,820 <span style="font-size:10px;color:#00ff88">+12%</span></h2><p style="font-size:11px;color:#888">Today</p></div>
+<div class="profit-card"><h2>GHS 28,400</h2><p style="font-size:11px;color:#888">Weekly</p></div>
+<div class="profit-card"><h2>GHS 124,000</h2><p style="font-size:11px;color:#888">Monthly</p></div>
+<div class="profit-card"><h2>GHS 1.4M</h2><p style="font-size:11px;color:#888">Total Empire</p></div>
 </div>
+
 <div class="stats-grid">
 <div class="stat-card"><div style="font-size:20px;font-weight:900">3,200</div><div style="font-size:11px;color:#888">Total Agents</div></div>
-<div class="stat-card"><div style="font-size:20px;font-weight:900">1,100</div><div style="font-size:11px;color:#888">Dealers</div></div>
-<div class="stat-card"><div style="font-size:20px;font-weight:900">200</div><div style="font-size:11px;color:#888">Stockist - VIP</div></div>
-<div class="stat-card"><div style="font-size:20px;font-weight:900">42</div><div style="font-size:11px;color:#888">Awaiting</div></div>
+<div class="stat-card"><div style="font-size:20px;font-weight:900">1,100</div><div style="font-size:11px;color:#888">Dealers - Profit</div></div>
+<div class="stat-card"><div style="font-size:20px;font-weight:900">200</div><div style="font-size:11px;color:#888">More Stockist - VIP</div></div>
+<div class="stat-card"><div style="font-size:20px;font-weight:900">42</div><div style="font-size:11px;color:#888">Agents awaiting</div></div>
 </div>
-<div class="pending-panel cool-update">
-<div style="font-weight:900;font-size:12px;margin-bottom:10px">⚡ Pending Agent / Dealer Approvals - CEO ONLY LIVE</div>
-<div style="display:flex;justify-content:space-between;background:#1a1a1a;padding:10px;border-radius:8px;margin:6px 0"><span><b>2 AGENTS</b></span><span style="background:var(--gold);color:#000;padding:6px 10px;border-radius:6px;font-weight:bold" id="agentPendingCount">2</span></div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:15px">
+<div style="background:#151515;border:1px solid #222;border-radius:12px;padding:15px">
+<div style="display:flex;justify-content:space-between;margin-bottom:10px"><b>All Network Orders - CEO View</b><span style="font-size:10px;color:#888">Manually confirm API orders</span></div>
+<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap"><span style="background:gold;color:#000;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:bold">ALL</span><span style="background:#222;padding:4px 8px;border-radius:12px;font-size:10px">ECG Prepaid</span><span style="background:#222;padding:4px 8px;border-radius:12px;font-size:10px">AFA</span><span style="background:#222;padding:4px 8px;border-radius:12px;font-size:10px">WASSCE</span><span style="background:#222;padding:4px 8px;border-radius:12px;font-size:10px">Gift Cards</span></div>
+<div id="ordersList"><div class="order-row"><span>FDB</span><span>Kujo Mensah</span><span>MTN 10GB</span><span>059XXXX</span><span style="color:orange">Not Rated</span><span>Pending</span><span><button class="btn-gold" style="padding:4px 8px;font-size:9px">Place Manually & Confirm</button></span></div></div>
+<div style="margin-top:15px"><b>Top Performers</b><div style="font-size:11px;margin-top:5px">1. Kujo MTN Hub DEALER - GHS 97k sales</div><div style="font-size:11px">2. Sarah Data AGENT - GHS 42k</div><div style="font-size:11px">3. Kopo Info STOCKIST - GHS 18k</div></div>
+<div style="margin-top:15px;background:#111;padding:10px;border-radius:8px"><b>INTERNATIONAL - CEO Controls All 3 Prices</b><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;font-size:11px;color:#888;margin-top:8px"><span>Agent Price</span><span>Dealer Price</span><span>Your Cost</span><span>Profit</span></div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:8px;background:#1a1a1a;border-radius:6px;margin:5px 0;font-size:12px"><span>GHS 5.00</span><span>GHS 4.20</span><span>GHS 3.80</span><span>GHS 3.00</span><span>GHS 1.50</span></div></div>
+</div>
+
+<div class="pending-panel cool">
+<div style="font-weight:900;font-size:12px;margin-bottom:10px">⚡ Pending Agent / Dealer Approvals <span style="background:gold;color:#000;padding:2px 6px;border-radius:4px;font-size:9px">CEO ONLY LIVE</span></div>
+<div style="display:flex;justify-content:space-between;background:#1a1a1a;padding:10px;border-radius:8px;margin:6px 0"><span><b>2 AGENTS</b><br><span style="font-size:10px;color:#888">Waiting approval</span></span><span style="background:gold;color:#000;padding:6px 10px;border-radius:6px;font-weight:bold" id="agentPendingCount">2</span></div>
+<div style="display:flex;justify-content:space-between;background:#1a1a1a;padding:10px;border-radius:8px;margin:6px 0"><span><b>0 DEALERS</b><br><span style="font-size:10px;color:#888">Approved</span></span><span style="background:#222;color:#fff;padding:6px 10px;border-radius:6px;font-weight:bold">2</span></div>
 <div style="background:#111;border-radius:8px;padding:10px;margin-top:10px">
-<div style="font-size:10px;color:#00ff88;font-weight:bold">🔥 NEW SPECIAL UPDATE:</div>
+<div style="font-size:10px;color:#00ff88;font-weight:bold">🔥 NEW SPECIAL UPDATE - COOL FEATURES:</div>
 <div style="font-size:11px;margin-top:8px">✅ Auto-Sync: <span id="autoSyncStatus">Every 30s to Google Cloud</span></div>
-<div style="font-size:11px">✅ Real-time Listener: Instant updates</div>
-<div style="font-size:11px">✅ Cloud Backup: <span id="lastBackup">Safe!</span></div>
+<div style="font-size:11px">✅ Real-time: New agents appear instantly</div>
+<div style="font-size:11px">✅ Backup: <span id="lastBackup">Safe in Firebase!</span></div>
 <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:5px">
-<button class="btn-gold" style="font-size:10px" onclick="approveAll()">⚡ APPROVE ALL</button>
-<button style="background:#00ff88;color:#000;padding:8px;border:none;border-radius:8px;font-weight:800;font-size:10px" onclick="broadcast()">📢 BROADCAST</button>
+<button class="btn-gold" style="font-size:10px" onclick="approveAll()">⚡ APPROVE ALL 2</button>
+<button style="background:#00ff88;color:#000;padding:8px;border:none;border-radius:8px;font-weight:800;font-size:10px;cursor:pointer" onclick="broadcast()">📢 BROADCAST</button>
 </div>
+</div>
+<div style="margin-top:15px;padding:10px;background:#000;border-radius:8px;text-align:center"><div style="color:#00ff88;font-weight:900" id="totalCloudUsers">0</div><div style="font-size:10px">Cloud Users</div><div style="color:#00aaff;font-weight:900;margin-top:5px" id="syncTime">--:--</div><div style="font-size:10px">Last Sync</div></div>
 </div>
 </div>
 </div>
@@ -101,37 +128,41 @@ const db = firebase.firestore();
 let users = JSON.parse(localStorage.getItem('kratis_users') || '[]');
 let cloudUsers = [];
 function updateUI(){
- document.getElementById('cloudCountTop') && (document.getElementById('cloudCountTop').innerText = cloudUsers.length || users.length);
  document.getElementById('cloudStatusSide').innerText = `${cloudUsers.length || users.length} agents in Google Cloud - LIVE`;
  document.getElementById('syncBtn').innerText = `SYNC ${users.length} AGENTS TO CLOUD`;
+ document.getElementById('totalCloudUsers').innerText = cloudUsers.length || users.length;
  const now = new Date();
- document.getElementById('lastBackup') && (document.getElementById('lastBackup').innerText = 'Last: ' + now.toLocaleTimeString());
+ document.getElementById('syncTime').innerText = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+ document.getElementById('lastBackup').innerText = 'Last: ' + now.toLocaleTimeString() + ' - Safe!';
 }
 async function loadFromCloud(){
  try{
   document.getElementById('fbStatus').innerText = 'Loading...';
   const snap = await db.collection('users').get();
-  cloudUsers = []; snap.forEach(d=>cloudUsers.push(d.data()));
-  users = [...cloudUsers]; localStorage.setItem('kratis_users', JSON.stringify(users));
+  cloudUsers=[]; snap.forEach(d=>cloudUsers.push(d.data()));
+  users=[...cloudUsers]; localStorage.setItem('kratis_users', JSON.stringify(users));
   document.getElementById('fbStatus').innerText = `Live - ${cloudUsers.length} loaded`;
   document.getElementById('cloudBadge').innerText = `✅ ${cloudUsers.length} AGENTS FROM CLOUD!`;
   updateUI();
+  setTimeout(()=>{ document.getElementById('cloudBadge').innerText = `☁️ AUTO-SYNC ON • ${cloudUsers.length} AGENTS`; },3000);
  }catch(e){ document.getElementById('fbStatus').innerText = 'Error: '+e.message; }
 }
 async function syncToCloud(){
  try{
   document.getElementById('fbStatus').innerText = 'Syncing...';
+  document.getElementById('cloudBadge').innerText = '⏳ SYNCING TO GOOGLE CLOUD...';
   for(let u of users){ await db.collection('users').doc(u.email).set(u); }
-  cloudUsers = [...users];
+  cloudUsers=[...users];
   document.getElementById('fbStatus').innerText = `Live - ${users.length} synced!`;
   document.getElementById('cloudBadge').innerText = `✅ ${users.length} SAVED FOREVER!`;
   updateUI();
+  setTimeout(()=>{ document.getElementById('cloudBadge').innerText = `☁️ AUTO-SYNC ON • ${users.length} AGENTS`; },3000);
  }catch(e){ alert(e.message); }
 }
-function approveAll(){ alert('🔥 All 2 agents approved! UNLIMITED!'); document.getElementById('agentPendingCount').innerText='0'; }
+function approveAll(){ alert('🔥 CEO POWER! All 2 agents approved! UNLIMITED!'); document.getElementById('agentPendingCount').innerText='0'; }
 function broadcast(){ let m=prompt('Message to 3,200 agents:'); if(m) alert(`📢 Sent to ${cloudUsers.length} agents: ${m}`); }
 setInterval(async ()=>{ if(users.length>0){ await syncToCloud(); document.getElementById('autoSyncStatus').innerText='Saved: '+new Date().toLocaleTimeString(); } }, 30000);
-db.collection('users').onSnapshot((snap)=>{ cloudUsers=[]; snap.forEach(d=>cloudUsers.push(d.data())); users=[...cloudUsers]; localStorage.setItem('kratis_users', JSON.stringify(users)); updateUI(); });
+db.collection('users').onSnapshot((snap)=>{ cloudUsers=[]; snap.forEach(d=>cloudUsers.push(d.data())); if(cloudUsers.length>0){ users=[...cloudUsers]; localStorage.setItem('kratis_users', JSON.stringify(users)); updateUI(); } });
 window.onload=async()=>{ updateUI(); await loadFromCloud(); };
 </script>
 </body>
