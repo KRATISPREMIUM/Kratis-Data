@@ -430,28 +430,49 @@ function copyRef(){navigator.clipboard.writeText(document.getElementById('refLin
 }
 function renderAll(){renderDashboard(); renderGB(); renderIntl(); renderGift(); renderUtility(); renderECG(); renderVouchers(); renderAFA(); renderServices(); renderHistory();}
 updateTierUI(); renderAll();
-// KRATIS FIX - FORCE AGENT TIER
+// KRATIS FIX - FORCE AGENT + REMOVE LOCK
+// Step 1: Override setTier to ALLOW AGENT always
+window.setTier = function(tier){
+  try{
+    localStorage.setItem('kratis_tier', tier);
+    localStorage.setItem('role', tier.toLowerCase());
+    document.querySelectorAll('[id^=\"t-\"]').forEach(b=>b.classList.remove('active'));
+    let btn = document.getElementById('t-' + tier.toLowerCase());
+    if(btn) btn.classList.add('active');
+    // Update badge
+    let badge = document.getElementById('tierBadge');
+    if(badge){
+      if(tier==='AGENT'){
+        badge.textContent='AGENT MODE • 1100 Approved ✅';
+        badge.style.background='#FFD700';
+        badge.style.color='#000';
+      } else {
+        badge.textContent='USER • 50';
+      }
+    }
+    if(typeof updateTierUI==='function') updateTierUI();
+    if(typeof renderAll==='function') renderAll();
+    console.log('✅ Tier forced to', tier);
+  }catch(e){ console.error(e); }
+};
+
+// Step 2: Auto-switch if Firestore says agent
 setTimeout(async ()=>{
   try{
     let email = localStorage.getItem('kratis_logged_user') || '';
     if(!email){ try{ email = JSON.parse(localStorage.getItem('kratis_user')).email; }catch(e){} }
     if(!email && firebase.auth().currentUser) email = firebase.auth().currentUser.email;
     if(!email) return;
-          email = email.toLowerCase().split('"').join('').trim();
+    email = email.toLowerCase().split('"').join('').trim();
     const doc = await db.collection('users').doc(email).get();
     if(doc.exists){
       const d = doc.data();
       if(d.role==='agent' || d.isAgent || d.approved){
-        document.getElementById('t-user')?.classList.remove('active');
-        document.getElementById('t-agent')?.classList.add('active');
-        if(typeof setTier==='function') setTier('AGENT');
-        let badge = document.getElementById('tierBadge');
-        if(badge){ badge.textContent='AGENT MODE • 1100 Approved ✅'; badge.style.background='#FFD700'; badge.style.color='#000'; }
-        console.log('✅ FIXED TO AGENT');
+        setTier('AGENT');
       }
     }
   }catch(e){ console.error(e); }
-}, 2000);
+}, 1500);
 </script>
 </body>
 </html>
