@@ -1,48 +1,16 @@
-// KRATIS PREMIUM DATA - FIREBASE CLOUD ♾️
+// KRATIS PREMIUM - CLEAN 2026 - 0 READS - NO MORE 14857!
 const firebaseConfig = {
-  apiKey: "AIzaSyDcqNfVme6HXIUPAh_IDnayPU-MUPuDyxk",
-  authDomain: "kratis-premium-data.firebaseapp.com",
-  projectId: "kratis-premium-data",
-  storageBucket: "kratis-premium-data.firebasestorage.app",
-  messagingSenderId: "676541371951",
-  appId: "1:676541371951:web:0b13a99aa498b0ec3858da"
+  apiKey: "AIzaSyA56gWuoPIoxVo7rXyS1yIpfkV6RkdIQVQ",
+  authDomain: "kratis-premium-clean-2026.firebaseapp.com",
+  projectId: "kratis-premium-clean-2026",
+  storageBucket: "kratis-premium-clean-2026.firebasestorage.app",
+  messagingSenderId: "845995627106",
+  appId: "1:845995627106:web:1cd2e6511233d3365b773b"
 };
 
-// Initialize Firebase (compat)
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 const db = firebase.firestore();
+const auth = firebase.auth ? firebase.auth() : null;
 
-console.log("🔥 Firebase Connected - Kratis Cloud Live!");
-
-// Save user to cloud
-async function saveUserToCloud(email, data){
-  try{
-    await db.collection('users').doc(email).set(data, {merge:true});
-    console.log("✅ Saved to cloud:", email);
-  }catch(e){ console.error("Cloud error:", e); }
-}
-
-// Load users from cloud
-async function loadUsersFromCloud(){
-  try{
-    let snap = await db.collection('users').get();
-    let cloudUsers = {};
-    snap.forEach(doc=>{ cloudUsers[doc.id] = doc.data(); });
-    // Merge with local
-    let local = JSON.parse(localStorage.getItem('kratis_users')||'{}');
-    let merged = {...local, ...cloudUsers};
-    localStorage.setItem('kratis_users', JSON.stringify(merged));
-    console.log("☁️ Loaded from cloud:", Object.keys(cloudUsers).length);
-    return merged;
-  }catch(e){ console.error(e); return JSON.parse(localStorage.getItem('kratis_users')||'{}'); }
-}
-
-// Sync current 2 agents to cloud NOW
-async function syncNow(){
-  let users = JSON.parse(localStorage.getItem('kratis_users')||'{}');
-  for(let email in users){
-    await saveUserToCloud(email, users[email]);
-  }
-  alert("✅ CLOUD SYNC DONE! Your "+Object.keys(users).length+" users (2 Agents) saved to Firebase forever! ♾️");
-}
+console.log("✅ CLEAN PROJECT CONNECTED: kratis-premium-clean-2026 - 0 reads - Fixed!");
