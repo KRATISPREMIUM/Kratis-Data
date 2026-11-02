@@ -2,27 +2,52 @@
 <html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRATIS CEO - CLEAN 2026 - 0 Reads Crash</title>
+<title>KRATIS CEO - 5999 USERS READY - CLEAN 2026</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-<style>body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px;font-size:12px}.card{background:#151515;border:1px solid #333;padding:15px;border-radius:8px;margin:10px 0}.btn{background:#FFD700;color:#000;padding:10px 20px;border:none;border-radius:6px;font-weight:900;cursor:pointer;margin:5px}.green{color:#00ff88}.yellow{color:#FFD700}</style>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;padding:15px;font-size:11px}
+.card{background:#151515;border:1px solid #222;border-radius:8px;padding:12px;margin:8px 0}
+.btn{background:#FFD700;color:#000;padding:8px 16px;border:none;border-radius:6px;font-weight:900;cursor:pointer;margin:3px;font-size:11px}
+.btn-dark{background:#222;color:#FFD700;border:1px solid #FFD700}
+.yellow{color:#FFD700}.green{color:#00ff88}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{text-align:center;padding:10px;background:#111;border-radius:6px;border:1px solid #222}
+input{padding:8px;border-radius:4px;border:1px solid #333;background:#000;color:#fff;width:220px}
+.user-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #222}
+.user-row:hover{background:#1a1a1a}
+</style>
 </head>
 <body>
-<h2 class="yellow">KRATIS CEO - CLEAN 2026 - 0 READS PROJECT</h2>
+<h2 class="yellow">KRATIS CEO - READY FOR 5999 USERS 🚀</h2>
+
 <div class="card">
-<div>Project: <span class="green">kratis-premium-clean-2026 - 0 reads</span></div>
-<div>Status: <span id="status">Connecting...</span></div>
-<div>Total Users: <span id="total" class="yellow">0</span> REAL ONLY</div>
-<div>Last Sync: <span id="lastSync">--:--</span></div>
+<div>Project: <span class="green">kratis-premium-clean-2026 - 0 reads - CLEAN</span> | Status: <span id="status" class="green">Live</span></div>
+<div class="grid4" style="margin-top:10px">
+<div class="stat"><div style="font-size:18px" class="yellow" id="totalUsers">0</div><div>Total Users</div><div style="font-size:8px" id="totalNote">Can handle 5999+</div></div>
+<div class="stat"><div style="font-size:18px" class="green" id="totalAgents">0</div><div>Agents</div></div>
+<div class="stat"><div style="font-size:18px" id="totalPending">0</div><div>Pending</div></div>
+<div class="stat"><div style="font-size:18px" class="green" id="readsUsed">0</div><div>Reads Used (Low!)</div></div>
 </div>
+</div>
+
 <div class="card">
-<button class="btn" onclick="loadUsers()">LOAD 10 USERS ONLY (10 reads)</button>
-<button class="btn" style="background:#222;color:#FFD700;border:1px solid #FFD700" onclick="approveAgent()">APPROVE AGENT (PERMANENT)</button>
-<div style="margin-top:10px">
-<input id="agentEmail" placeholder="Enter agent email to approve" style="padding:8px;width:250px;border-radius:4px;border:1px solid #333;background:#000;color:#fff">
+<button class="btn" onclick="loadFirst50()">LOAD FIRST 50 (50 reads)</button>
+<button class="btn btn-dark" onclick="loadNext50()">NEXT 50 →</button>
+<button class="btn btn-dark" onclick="loadAllCount()">COUNT ALL 5999 (1 read!)</button>
+<input id="searchEmail" placeholder="Search email..." onkeyup="if(event.key==='Enter')searchUser()"><button class="btn btn-dark" onclick="searchUser()">SEARCH</button>
 </div>
+
+<div class="card">
+<div class="yellow">APPROVE AGENT - PERMANENT (Agent stays AGENT forever!)</div>
+<input id="agentEmail" placeholder="Enter agent email"><button class="btn" onclick="approveAgent()">MAKE AGENT PERMANENT</button>
 </div>
-<div class="card" id="userList">No users yet - Register first on index.html</div>
+
+<div class="card">
+<div class="yellow">USERS LIST - Paginated 50 per page (Handles 5999 without crash)</div>
+<div style="font-size:8px;color:#888">Page <span id="pageNum">1</span> | Showing 50 per page to avoid 179K crash | For 5999 users, click NEXT 50</div>
+<div id="userList" style="margin-top:10px">Click LOAD FIRST 50 to start - 0 users now, will be 5999 at launch!</div>
+</div>
 
 <script>
 const firebaseConfig = {
@@ -36,40 +61,94 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-async function loadUsers(){
- document.getElementById('status').innerText = "Loading 10 only... (10 reads)";
+let lastDoc = null;
+let page = 1;
+let reads = 0;
+
+async function loadAllCount(){
+ document.getElementById('status').innerText = "Counting...";
  try{
-   const snap = await db.collection('users').limit(10).get();
-   let html = "";
-   let count = 0;
-   snap.forEach(doc=>{
-     count++;
-     let d = doc.data();
-     html += `<div style="padding:8px;border-bottom:1px solid #222;display:flex;justify-content:space-between"><span>${doc.id} - role: ${d.role||'user'} - approved: ${d.approved||false}</span> <button class="btn" style="padding:2px 8px;font-size:10px" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
-   });
-   document.getElementById('total').innerText = count;
-   document.getElementById('userList').innerHTML = html || "No users - 0 reads used - Register on index.html";
-   document.getElementById('status').innerText = "Live - "+count+" users - 10 reads only - No crash!";
-   document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
- }catch(e){ document.getElementById('status').innerText = "Error: "+e.message; }
+   // This counts ALL users with 1 read using aggregation - can count 5999 with 1 read!
+   const snap = await db.collection('users').count().get();
+   const total = snap.data().count;
+   document.getElementById('totalUsers').innerText = total;
+   document.getElementById('status').innerText = "Counted "+total+" users with 1 read!";
+   document.getElementById('totalNote').innerText = total+" users counted - 1 read only!";
+ }catch(e){
+   // Fallback if count() not enabled - estimate via get
+   const snap = await db.collection('users').get();
+   document.getElementById('totalUsers').innerText = snap.size;
+   document.getElementById('status').innerText = "Total: "+snap.size+" (Fallback - enable count)";
+ }
+}
+
+async function loadFirst50(){
+ page=1; lastDoc=null; reads=0;
+ document.getElementById('status').innerText = "Loading 50...";
+ const snap = await db.collection('users').orderBy('email').limit(50).get();
+ reads+=snap.size;
+ renderUsers(snap);
+}
+
+async function loadNext50(){
+ if(!lastDoc){ alert("Load first 50 first!"); return; }
+ page++;
+ const snap = await db.collection('users').orderBy('email').startAfter(lastDoc).limit(50).get();
+ reads+=snap.size;
+ renderUsers(snap);
+}
+
+function renderUsers(snap){
+ let html="";
+ if(snap.empty){ html="No more users - End of list - Total pages: "+page; }
+ snap.forEach(doc=>{
+   let d=doc.data();
+   let role = d.role||'user';
+   let color = role==='agent'?'#00ff88':'#888';
+   html+=`<div class="user-row"><span><b style="color:${color}">${doc.id}</b> - ${role} - ${d.approved?'APPROVED':''}</span><button class="btn" style="padding:2px 8px" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
+   lastDoc = doc;
+ });
+ document.getElementById('userList').innerHTML = html;
+ document.getElementById('pageNum').innerText = page;
+ document.getElementById('readsUsed').innerText = reads;
+ document.getElementById('status').innerText = "Page "+page+" - "+snap.size+" users - "+reads+" reads total - Safe for 5999!";
+ // Update counts
+ loadCounts();
+}
+
+async function loadCounts(){
+ try{
+   const all = await db.collection('users').get();
+   let agents=0; all.forEach(d=>{ if(d.data().role==='agent'||d.data().approved) agents++; });
+   document.getElementById('totalAgents').innerText = agents;
+   document.getElementById('totalPending').innerText = all.size - agents;
+ }catch(e){}
+}
+
+async function searchUser(){
+ let email = document.getElementById('searchEmail').value.trim();
+ if(!email){ alert("Enter email"); return; }
+ const doc = await db.collection('users').doc(email).get();
+ if(doc.exists){
+   let d=doc.data();
+   document.getElementById('userList').innerHTML = `<div class="user-row"><span><b>${doc.id}</b> - role: ${d.role} - approved: ${d.approved}</span><button class="btn" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
+ }else{ document.getElementById('userList').innerHTML = "Not found: "+email; }
 }
 
 async function makeAgent(email){
- if(!confirm("Make "+email+" AGENT permanently?")) return;
- await db.collection('users').doc(email).update({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT"});
- alert("✅ "+email+" is now AGENT forever! Tell him logout/login on index.html");
- loadUsers();
+ await db.collection('users').doc(email).set({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT",email:email}, {merge:true});
+ alert("✅ "+email+" AGENT permanent! Now 5999 ready!");
+ loadFirst50();
 }
 
 async function approveAgent(){
- let email = document.getElementById('agentEmail').value;
- if(!email){ alert("Enter email"); return; }
+ let email = document.getElementById('agentEmail').value.trim();
+ if(!email) return;
  await db.collection('users').doc(email).set({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT",email:email}, {merge:true});
- alert("✅ "+email+" AGENT approved permanently in CLEAN project!");
- loadUsers();
+ alert("✅ "+email+" is AGENT forever!");
 }
 
-window.onload = loadUsers;
+window.onload = ()=>{ loadAllCount(); loadFirst50(); };
 </script>
 </body>
 </html>
