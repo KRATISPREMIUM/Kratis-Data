@@ -144,7 +144,66 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 <!-- DYNAMIC VIEWS -->
 <div id="view-ghana_gb" class="hidden"><h3>🇬🇭 Ghana GB — MTN GB, Telecel GB, AirtelTigo GB (Different from International!)</h3><div class="tabs"><button class="active" onclick="filterGB('all',this)">All GB</button><button onclick="filterGB('MTN GB',this)">MTN GB</button><button onclick="filterGB('Telecel GB',this)">Telecel GB</button><button onclick="filterGB('AirtelTigo GB',this)">AirtelTigo GB</button></div><div id="grid-ghana_gb" class="grid"></div></div>
 
-<div id="view-intl" class="hidden"><h3>🌍 International Bundle & Airtime = Normal Bundles & Airtime For All Countries</h3><div class="filters"><select id="f-intl-country" onchange="renderIntl()"><option value="all">All Countries (Shows All)</option><option>Ghana</option><option>Nigeria</option><option>USA</option><option>UK</option><option>Canada</option><option>South Africa</option><option>Kenya</option><option>Cameroon</option><option>Togo</option><option>Benin</option><option>Ivory Coast</option><option>Germany</option><option>France</option></select><select id="f-intl-type" onchange="renderIntl()"><option value="all">All Types (Bundle + Airtime)</option><option value="Bundle">Normal Bundle Only</option><option value="Airtime">Airtime Only</option></select></div><div id="grid-intl" class="grid"></div></div>
+<div id="view-intl" class="hidden">
+<h3>🌍 International Bundle & Airtime = Normal Bundles & Airtime For All Countries</h3>
+
+<div style="display:flex;gap:10px;margin:12px 0;">
+<button id="btn-airtime" onclick="showIntl('airtime')" style="background:#FFD700;color:#000;padding:8px 20px;border-radius:20px;border:none;font-weight:bold;">Airtime</button>
+<button id="btn-bundle" onclick="showIntl('bundle')" style="background:#333;color:#fff;padding:8px 20px;border-radius:20px;border:none;">Bundle</button>
+</div>
+
+<div id="intl-airtime">
+<div style="background:#111;border:1px solid #FFD700;border-radius:14px;padding:18px;max-width:520px;">
+<h4 style="color:#fff;">Mobile top-up - International Airtime</h4>
+<p style="color:#aaa;font-size:12px;">Follow three easy steps to top-up in seconds. Add phone number below (like your video):</p>
+<label style="color:#fff;font-size:12px;">Add phone number</label>
+<div style="display:flex;gap:8px;margin:10px 0;">
+<select id="ccode" style="background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:8px;width:135px;">
+<option value="233">Ghana +233</option>
+<option value="234">Nigeria +234</option>
+<option value="1">USA +1</option>
+<option value="44">UK +44</option>
+<option value="27">South Africa +27</option>
+<option value="254">Kenya +254</option>
+<option value="91">India +91</option>
+<option value="971">UAE +971</option>
+<!-- Add all countries from your video dropdown - 200+ countries -->
+</select>
+<input id="intPhone" type="tel" placeholder="24 5678" style="flex:1;background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:8px;" />
+</div>
+<button onclick="checkReloadly()" style="width:100%;background:#FFD700;color:#000;padding:11px;border:none;border-radius:20px;font-weight:bold;margin-top:8px;">Next</button>
+<div id="reloadlyList" style="margin-top:12px;"></div>
+</div>
+</div>
+
+<div id="intl-bundle" class="hidden">
+<div style="background:#111;border:1px solid #444;border-radius:14px;padding:35px;text-align:center;max-width:520px;">
+<div style="font-size:45px;">📦</div>
+<h3 style="color:#FFD700;">Bundle - Coming Soon</h3>
+<p style="color:#aaa;">International Data Bundles for all countries via Reloadly API - Coming Soon!<br>Mobile Top-up is for Airtime only (like you said!)</p>
+</div>
+</div>
+
+</div>
+
+<script>
+function showIntl(t){
+document.getElementById('intl-airtime').classList.toggle('hidden', t!=='airtime');
+document.getElementById('intl-bundle').classList.toggle('hidden', t!=='bundle');
+document.getElementById('btn-airtime').style.background = t==='airtime' ? '#FFD700' : '#333';
+document.getElementById('btn-airtime').style.color = t==='airtime' ? '#000' : '#fff';
+document.getElementById('btn-bundle').style.background = t==='bundle' ? '#FFD700' : '#333';
+document.getElementById('btn-bundle').style.color = t==='bundle' ? '#000' : '#fff';
+}
+function checkReloadly(){
+let cc = document.getElementById('ccode').value;
+let ph = document.getElementById('intPhone').value;
+if(!ph){alert('Enter number'); return;}
+let full = '+'+cc+ph;
+document.getElementById('reloadlyList').innerHTML = '<p style="color:#FFD700;">Checking '+full+' via Reloadly API - operators & amounts...</p>';
+// Backend call: /api/reloadly/operator?phone=full
+}
+</script>
 
 <div id="view-gift" class="hidden"><h3>🎁 Gift Cards — Gaming Cards Inside Gift Cards</h3><div class="filters"><select id="f-gift-country" onchange="renderGift()"><option value="all">All Countries (All countries name listed)</option><option>USA</option><option>UK</option><option>Nigeria</option><option>Ghana</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>South Africa</option><option>Kenya</option><option>UAE</option></select><select id="f-gift-cat" onchange="renderGift()"><option value="all">All Categories (Shows All)</option><option>Payment Cards</option><option>Software</option><option>Gaming</option><option>Entertainment</option><option>Shopping</option><option>Crypto</option><option>Travel</option><option>Charity</option></select></div><div id="grid-gift" class="grid"></div><div style="margin-top:10px;font-size:11px;color:#666">When click Gaming category → Shows Gaming Cards like Steam, Xbox, PlayStation, Roblox, etc.</div></div>
 
@@ -219,14 +278,18 @@ const PRODUCTS=[
   {id:'tele_gb_50',cat:'GHANA_GB',sub:'Telecel GB',name:'Telecel GB 50GB',desc:'Telecel Ghana GB',country:'Ghana',prices:{USER:153.2,AGENT:152.2,DEALER:151.7}},
   {id:'tele_gb_100',cat:'GHANA_GB',sub:'Telecel GB',name:'Telecel GB 100GB',desc:'Telecel Ghana GB',country:'Ghana',prices:{USER:296,AGENT:295,DEALER:294.5}},
 
- {id:'gh_normal_2',cat:'INTL',sub:'Bundle',name:'Ghana MTN Normal 2GB',desc:'Normal Bundle For All Countries',country:'Ghana',type:'Bundle',prices:{USER:12,AGENT:10,DEALER:9}},
- {id:'gh_air_5',cat:'INTL',sub:'Airtime',name:'Ghana Airtime GHS 5',desc:'Ghana Airtime',country:'Ghana',type:'Airtime',prices:{USER:5,AGENT:4.9,DEALER:4.8}},
- {id:'ng_mtn_5',cat:'INTL',sub:'Bundle',name:'Nigeria MTN 5GB',desc:'Normal Bundle Nigeria',country:'Nigeria',type:'Bundle',prices:{USER:30,AGENT:28,DEALER:26}},
- {id:'ng_air_1000',cat:'INTL',sub:'Airtime',name:'Nigeria Airtime NGN 1000',desc:'Nigeria Airtime',country:'Nigeria',type:'Airtime',prices:{USER:15,AGENT:14,DEALER:13}},
- {id:'usa_bundle_5',cat:'INTL',sub:'Bundle',name:'USA T-Mobile 5GB',desc:'International Bundle USA',country:'USA',type:'Bundle',prices:{USER:45,AGENT:42,DEALER:40}},
- {id:'usa_air_10',cat:'INTL',sub:'Airtime',name:'USA Airtime $10',desc:'International Airtime USA',country:'USA',type:'Airtime',prices:{USER:160,AGENT:155,DEALER:150}},
- {id:'uk_bundle_10',cat:'INTL',sub:'Bundle',name:'UK Vodafone 10GB',desc:'International Bundle UK',country:'UK',type:'Bundle',prices:{USER:60,AGENT:55,DEALER:52}},
+// INTERNATIONAL - NEW: Airtime via Reloadly API (All Countries), Bundle Coming Soon
+    {id:'intl_airtime_dynamic',cat:'INTL',sub:'Airtime',name:'International Airtime - All Countries via Reloadly',desc:'Auto-detect operator via phone - Reloadly API',country:'ALL',type:'Airtime',isDynamic:true,prices:{USER:0,AGENT:0,DEALER:0},note:'Fetched live from Reloadly'},
 
+    // Bundle - Coming Soon placeholders (will be enabled later via Reloadly)
+    {id:'gh_bundle_coming',cat:'INTL',sub:'Bundle',name:'Ghana Bundle - Coming Soon',desc:'Normal Bundle For All Countries - Coming Soon',country:'Ghana',type:'Bundle',comingSoon:true,prices:{USER:0,AGENT:0,DEALER:0}},
+    {id:'ng_bundle_coming',cat:'INTL',sub:'Bundle',name:'Nigeria Bundle - Coming Soon',desc:'Normal Bundle Nigeria - Coming Soon',country:'Nigeria',type:'Bundle',comingSoon:true,prices:{USER:0,AGENT:0,DEALER:0}},
+    {id:'usa_bundle_coming',cat:'INTL',sub:'Bundle',name:'USA Bundle - Coming Soon',desc:'International Bundle USA - Coming Soon',country:'USA',type:'Bundle',comingSoon:true,prices:{USER:0,AGENT:0,DEALER:0}},
+    {id:'uk_bundle_coming',cat:'INTL',sub:'Bundle',name:'UK Bundle - Coming Soon',desc:'International Bundle UK - Coming Soon',country:'UK',type:'Bundle',comingSoon:true,prices:{USER:0,AGENT:0,DEALER:0}},
+
+    // Keep Airtime static as fallback (if Reloadly offline)
+    {id:'gh_air_5',cat:'INTL',sub:'Airtime',name:'Ghana Airtime GHS 5',desc:'Ghana Airtime',country:'Ghana',type:'Airtime',prices:{USER:6,AGENT:5.5,DEALER:5}},
+    {id:'ng_air_1000',cat:'INTL',sub:'Airtime',name:'Nigeria Airtime NGN 1000',desc:'Nigeria Airtime',country:'Nigeria',type:'Airtime',prices:{USER:12,AGENT:11,DEALER:10.5}},
  {id:'gift_amazon_25',cat:'GIFT',sub:'Shopping',name:'Amazon Gift $25',desc:'Gift Card USA',country:'USA',giftCat:'Shopping',prices:{USER:410,AGENT:400,DEALER:395}},
  {id:'gift_google_10',cat:'GIFT',sub:'Payment Cards',name:'Google Play $10',desc:'Payment Cards',country:'USA',giftCat:'Payment Cards',prices:{USER:165,AGENT:160,DEALER:158}},
  {id:'gift_steam_20',cat:'GIFT',sub:'Gaming',name:'Steam Wallet $20',desc:'Gaming Card - Gaming',country:'USA',giftCat:'Gaming',prices:{USER:330,AGENT:320,DEALER:315}},
