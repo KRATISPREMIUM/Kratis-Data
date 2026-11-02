@@ -1,161 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRATIS CEO - FULL VIDEO ACCURATE - REAL DATA + COOL UPDATES</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRATIS CEO - CLEAN 2026 - 0 Reads Crash</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;color:#fff;font-family:Arial;font-size:12px}
-.sidebar{position:fixed;left:0;top:0;width:180px;height:100vh;background:#0f0f0f;border-right:1px solid #222;padding:10px;overflow-y:auto}
-.main{margin-left:180px;padding:10px}
-.logo{color:#FFD700;font-weight:900;font-size:12px;line-height:1.1;display:flex;align-items:center;gap:6px}
-.menu-title{color:#FFD700;font-size:9px;font-weight:900;margin:12px 0 5px}
-.menu-item{padding:6px 8px;border-radius:6px;color:#888;font-size:10px;margin:2px 0;cursor:pointer}
-.menu-item.active{background:#1a1a1a;color:#FFD700;border-left:2px solid #FFD700}
-.top-header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#111;border:1px solid #222;border-radius:8px;padding:10px;margin-bottom:10px}
-.btn-yellow{background:#FFD700;color:#000;padding:7px 14px;border:none;border-radius:6px;font-weight:900;font-size:11px;cursor:pointer}
-.btn-dark{background:#222;color:#FFD700;border:1px solid #FFD700;padding:7px 14px;border-radius:6px;font-weight:900;font-size:11px;cursor:pointer}
-.cloud-live{background:#00ff88;color:#000;padding:5px 10px;border-radius:20px;font-weight:900;font-size:10px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
-.live-dot{width:7px;height:7px;background:#00ff88;border-radius:50%;display:inline-block;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.profit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
-.profit-card{background:#151515;border:1px solid #222;border-radius:8px;padding:10px;text-align:center}
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
-.stat-card{background:#151515;border:1px solid #222;border-radius:8px;padding:10px;text-align:center}
-.content-grid{display:grid;grid-template-columns:2fr 1fr;gap:10px}
-.orders-panel{background:#151515;border:1px solid #222;border-radius:8px;padding:10px}
-.filter-pill{background:#222;color:#888;padding:4px 8px;border-radius:12px;font-size:9px}
-.filter-pill.active{background:#FFD700;color:#000;font-weight:900}
-.order-row{display:grid;grid-template-columns:50px 90px 70px 70px 70px 70px 110px;gap:5px;padding:7px;background:#1e1e1e;border-radius:5px;margin:4px 0;font-size:9px}
-.pending-panel{background:#151515;border:2px solid #FFD700;border-radius:8px;padding:10px}
-.pending-item{display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:8px;border-radius:6px;margin:5px 0}
-.pending-badge{background:#FFD700;color:#000;padding:4px 8px;border-radius:4px;font-weight:900;font-size:12px}
-.international{background:#151515;border:1px solid #222;border-radius:8px;padding:10px;margin-top:10px}
-.price-header{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.2fr;gap:8px;font-size:9px;color:#888;padding:5px 0;border-bottom:1px solid #222}
-.price-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.2fr;gap:8px;font-size:10px;padding:6px 0;border-bottom:1px solid #1a1a1a}
-.cool-glow{border:2px solid #00ff88;box-shadow:0 0 15px rgba(0,255,136,0.15)}
-@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.profit-grid,.stat-grid{grid-template-columns:1fr 1fr}.content-grid{grid-template-columns:1fr}}
-</style>
+<style>body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px;font-size:12px}.card{background:#151515;border:1px solid #333;padding:15px;border-radius:8px;margin:10px 0}.btn{background:#FFD700;color:#000;padding:10px 20px;border:none;border-radius:6px;font-weight:900;cursor:pointer;margin:5px}.green{color:#00ff88}.yellow{color:#FFD700}</style>
 </head>
 <body>
-<div class="sidebar">
-<div class="logo"><div style="width:28px;height:28px;background:#FFD700;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:12px">K</div><div><b>KRATIS<br>DATA.COM</b></div></div>
-<div class="menu-title">MAIN MENU</div>
-<div class="menu-item active">● CEO Dashboard</div>
-<div class="menu-item">Sales Analytics</div>
-<div class="menu-item">All Users / Agents / Dealers</div>
-<div class="menu-item">Dealers</div>
-<div class="menu-item">All Orders (All Networks)</div>
-<div class="menu-title">MANAGER CONTROLS</div>
-<div class="menu-item">Complaints - Manager</div>
-<div class="menu-item">Transactions (Charge/Withdraw)</div>
-<div class="menu-item">ECG / Prepaid Manager</div>
-<div class="menu-item">AFA & WASSCE Manager</div>
-<div class="menu-item">Data & Airline Manager</div>
-<div class="menu-item">Gift & Gaming Cards Manager</div>
-<div class="menu-item">Product Price Setup</div>
-<div class="menu-item">Logout CEO</div>
-<div style="margin-top:15px;padding:8px;background:#111;border-radius:6px;border:1px solid #222">
-<div style="font-size:9px;color:#00ff88"><span class="live-dot"></span> GOOGLE CLOUD LIVE</div>
-<div style="font-size:8px;color:#888;margin-top:4px" id="sideCloud">2 agents in cloud - REAL</div>
-<div style="font-size:7px;color:#555;margin-top:2px">kratis-premium-data</div>
-<div style="font-size:7px;color:#FFD700;margin-top:4px">⚡ REAL BUILD + AUTO-SYNC</div>
+<h2 class="yellow">KRATIS CEO - CLEAN 2026 - 0 READS PROJECT</h2>
+<div class="card">
+<div>Project: <span class="green">kratis-premium-clean-2026 - 0 reads</span></div>
+<div>Status: <span id="status">Connecting...</span></div>
+<div>Total Users: <span id="total" class="yellow">0</span> REAL ONLY</div>
+<div>Last Sync: <span id="lastSync">--:--</span></div>
+</div>
+<div class="card">
+<button class="btn" onclick="loadUsers()">LOAD 10 USERS ONLY (10 reads)</button>
+<button class="btn" style="background:#222;color:#FFD700;border:1px solid #FFD700" onclick="approveAgent()">APPROVE AGENT (PERMANENT)</button>
+<div style="margin-top:10px">
+<input id="agentEmail" placeholder="Enter agent email to approve" style="padding:8px;width:250px;border-radius:4px;border:1px solid #333;background:#000;color:#fff">
 </div>
 </div>
-<div class="main">
-<div class="top-header">
-<div>
-<div style="font-weight:900;font-size:11px">CEO ADMIN: Philliam <span style="background:#FFD700;color:#000;padding:1px 5px;border-radius:3px;font-size:8px">YOU HAVE SUPER ACCESS</span></div>
-<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-<button class="btn-yellow" onclick="syncToCloud()" id="syncBtn">SYNC 2 AGENTS TO CLOUD</button>
-<button class="btn-dark" onclick="loadFromCloud()">LOAD FROM CLOUD</button>
-<span class="cloud-live" id="cloudBadge"><span class="live-dot"></span> AUTO-SYNC ON • <span id="cloudCountTop">2</span> REAL | <span id="fbStatus">Live</span></span>
-</div>
-<div style="font-size:8px;color:#888;margin-top:5px">Last Sync: <span id="lastSync">--:--</span> | Real-time ON | Project: kratis-premium-data</div>
-</div>
-<div style="text-align:right">
-<div style="font-size:10px;color:#888">Today Profit: <span style="color:#fff;font-weight:900" id="todayProfit">GHS 0 - Building</span></div>
-<button class="btn-yellow" style="margin-top:5px">Manual Place Order</button>
-</div>
-</div>
-<div class="profit-grid">
-<div class="profit-card"><h2 style="color:#666" id="cardToday">GHS 0</h2><p>Today - REAL (was 4,820)</p><p style="font-size:7px;color:#00ff88">No sales - 2 agents building</p></div>
-<div class="profit-card"><h2 style="color:#666">GHS 0</h2><p>Weekly - REAL (was 28,400)</p></div>
-<div class="profit-card"><h2 style="color:#666">GHS 0</h2><p>Monthly - REAL (was 124,000)</p></div>
-<div class="profit-card" style="border-color:#00ff88;background:#0a1a0f"><h2 style="color:#00ff88" id="cardTotal">GHS 0</h2><p style="color:#00ff88">Total - REAL (was 1.4M)</p><p style="font-size:7px;color:#888">2 real agents</p></div>
-</div>
-<div class="stat-grid">
-<div class="stat-card" style="border-color:#FFD700;background:#1a1500"><h3 style="color:#FFD700" id="statAgents">2</h3><p>Total Agents - REAL (was 3,200)</p></div>
-<div class="stat-card"><h3 style="color:#666" id="statDealers">0</h3><p>Dealers - REAL (was 1,100)</p></div>
-<div class="stat-card"><h3 style="color:#666">0</h3><p>More Stockist - REAL (was 200)</p></div>
-<div class="stat-card" style="border-color:#00ff88"><h3 style="color:#00ff88" id="statPending">2</h3><p>Agents awaiting - REAL (was 42)</p></div>
-</div>
-<div class="content-grid">
-<div class="orders-panel">
-<div style="display:flex;justify-content:space-between"><b style="font-size:11px">All Network Orders - CEO View</b><span style="font-size:8px;color:#888">Real: <span id="realOrders">0</span> orders - Building</span></div>
-<div style="display:flex;gap:5px;margin:8px 0"><span class="filter-pill active">ALL</span><span class="filter-pill">ECG Prepaid</span><span class="filter-pill">AFA</span><span class="filter-pill">WASSCE</span><span class="filter-pill">Gift Cards</span><span class="filter-pill">MTN Bundle</span><span class="filter-pill">Airline</span></div>
-<div style="padding:15px;text-align:center;background:#0f0f0f;border-radius:6px;border:1px dashed #333">
-<div style="font-size:20px">🚀</div>
-<div style="font-weight:900;margin-top:5px;font-size:10px;color:#FFD700">No Real Orders Yet - Building Phase</div>
-<div style="font-size:8px;color:#666;margin-top:4px">Video sample: Kujo Mensah MTN 10.5GB 059XXXXXXX API Failed | Sarah ECG Prepaid | Dealer Sim AFA - But REAL: 0 orders, 2 agents just registered. When they sell, orders appear live from Firebase!</div>
-</div>
-<div class="international"><div style="font-weight:900;font-size:11px;margin-bottom:8px">Top Performers - REAL BUILDING</div><div style="padding:10px;background:#0f0f0f;border-radius:6px;text-align:center;border:1px dashed #333"><div style="font-size:9px;color:#666">No sales yet - Building with 2 real agents. Video showed 97k, 42k, 18k - But REAL: 0 sales, will auto-update!</div></div></div>
-<div class="international" style="margin-top:10px"><div style="font-weight:900;font-size:11px">INTERNATIONAL - CEO Controls All 3 Prices - SAME AS VIDEO</div><div class="price-header"><span>User Price</span><span>Agent Price</span><span>Dealer Price</span><span>Your Cost</span><span>Profit/Agent</span></div><div class="price-row"><span>GHS 5.00</span><span>GHS 4.20</span><span>GHS 3.80</span><span>GHS 3.00</span><span>GHS 1.50 / 0.20 / 0.20</span></div><div class="price-row"><span>GHS 12.00</span><span>GHS 10.50</span><span>GHS 9.80</span><span>GHS 9.00</span><span>GHS 1.50 / 1.50 / 0.80</span></div><div class="price-row"><span>GHS 25.00</span><span>GHS 22.00</span><span>GHS 20.00</span><span>GHS 18.00</span><span>GHS 7.00</span></div><div class="price-row"><span>GHS 80.00</span><span>GHS 75.00</span><span>GHS 72.00</span><span>GHS 70.00</span><span>GHS 45.00</span></div></div>
-</div>
-<div class="pending-panel cool-glow">
-<div style="font-weight:900;font-size:10px;display:flex;justify-content:space-between"><span>Pending Agent / Dealer</span><span style="background:#FFD700;color:#000;padding:2px 5px;border-radius:3px;font-size:8px">CEO ONLY - LIVE</span></div>
-<div class="pending-item" style="border:1px solid #FFD700;background:#1a1500"><span><b style="color:#FFD700">2 AGENTS - REAL</b><br><span style="font-size:7px;color:#00ff88" id="agentList">Loading 2 real agents...</span></span><span class="pending-badge" id="agentPendingCount">2</span></div>
-<div class="pending-item"><span><b>0 DEALERS - REAL</b><br><span style="font-size:8px;color:#666">No dealers yet</span></span><span class="pending-badge" style="background:#222;color:#666">0</span></div>
-<div style="background:#111;border-radius:6px;padding:8px;margin-top:8px"><div style="font-size:9px;color:#00ff88;font-weight:900">🔥 COOL UPDATES - VIDEO ACCURATE + REAL:</div><div style="font-size:9px;margin-top:6px">✅ Logo: Same as video (KRATIS DATA.COM)</div><div style="font-size:9px">✅ Layout: 100% same as video - All tables!</div><div style="font-size:9px">✅ Real: 2 agents, 0 dealers, GHS 0</div><div style="font-size:9px">✅ Auto-sync 30s + Real-time</div><div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:5px"><button class="btn-yellow" style="font-size:9px" onclick="approveAll()">⚡ APPROVE 2 REAL</button><button style="background:#00ff88;color:#000;padding:6px;border:none;border-radius:6px;font-weight:900;font-size:9px;cursor:pointer" onclick="viewAgents()">👁️ VIEW 2 REAL</button></div></div>
-<div style="margin-top:10px;padding:8px;background:#000;border-radius:6px;border:1px solid #222"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center"><div><div style="color:#FFD700;font-weight:900;font-size:16px" id="totalCloud">2</div><div style="font-size:8px;color:#888">Cloud Users REAL</div></div><div><div style="color:#00aaff;font-weight:900;font-size:14px" id="syncTime">--:--</div><div style="font-size:8px;color:#888">Last Sync REAL</div></div></div><div style="margin-top:8px;padding:6px;background:#111;border-radius:4px"><div style="font-size:8px;color:#00ff88;font-weight:900">kratis-premium-data</div><div style="font-size:7px;color:#555" id="lastBackup">Last backup: Just now</div></div></div>
-</div>
-</div>
-</div>
+<div class="card" id="userList">No users yet - Register first on index.html</div>
+
 <script>
-const firebaseConfig={apiKey:"AIzaSyDcqNfVme6HXIUPAh_IDnayPU-MUPuDyXk",authDomain:"kratis-premium-data.firebaseapp.com",projectId:"kratis-premium-data",storageBucket:"kratis-premium-data.firebasestorage.app",messagingSenderId:"676541371951",appId:"1:676541371951:web:0b13a99aa498b0ec3858da"};
+const firebaseConfig = {
+  apiKey: "AIzaSyA56gWuoPIoxVo7rXyS1yIpfkV6RkdIQVQ",
+  authDomain: "kratis-premium-clean-2026.firebaseapp.com",
+  projectId: "kratis-premium-clean-2026",
+  storageBucket: "kratis-premium-clean-2026.firebasestorage.app",
+  messagingSenderId: "845995627106",
+  appId: "1:845995627106:web:1cd2e6511233d3365b773b"
+};
 firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-let users=JSON.parse(localStorage.getItem('kratis_users')||'[]');
-let cloudUsers=[];
-function updateUI(){
- const count=cloudUsers.length||users.length||2;
- document.getElementById('cloudCountTop').innerText=count;
- document.getElementById('sideCloud').innerText=`${count} agents in cloud - REAL`;
- document.getElementById('totalCloud').innerText=count;
- document.getElementById('statAgents').innerText=count;
- document.getElementById('statPending').innerText=count;
- document.getElementById('agentPendingCount').innerText=count;
- document.getElementById('syncBtn').innerText=`SYNC ${count} AGENTS TO CLOUD`;
- if(cloudUsers.length>0){document.getElementById('agentList').innerText=cloudUsers.map(u=>u.email).join(', ');}
- const now=new Date();
- document.getElementById('syncTime').innerText=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
- document.getElementById('lastSync').innerText=now.toLocaleTimeString();
- document.getElementById('lastBackup').innerText=`Last backup: ${now.toLocaleTimeString()} - Safe! ${count} REAL`;
-}
-async function loadFromCloud(){
+const db = firebase.firestore();
+
+async function loadUsers(){
+ document.getElementById('status').innerText = "Loading 10 only... (10 reads)";
  try{
-  document.getElementById('fbStatus').innerText='Loading real...';
-  const snap=await db.collection('users').get();
-  cloudUsers=[];snap.forEach(d=>cloudUsers.push(d.data()));
-  users=[...cloudUsers];localStorage.setItem('kratis_users',JSON.stringify(users));
-  document.getElementById('fbStatus').innerText=`Live - ${cloudUsers.length} REAL`;
-  document.getElementById('cloudBadge').innerHTML=`<span class="live-dot"></span> ✅ ${cloudUsers.length} REAL FROM CLOUD!`;
-  updateUI();
-  setTimeout(()=>{document.getElementById('cloudBadge').innerHTML=`<span class="live-dot"></span> AUTO-SYNC ON • ${cloudUsers.length} REAL`;},3000);
- }catch(e){document.getElementById('fbStatus').innerText='Error: '+e.message;}
+   const snap = await db.collection('users').limit(10).get();
+   let html = "";
+   let count = 0;
+   snap.forEach(doc=>{
+     count++;
+     let d = doc.data();
+     html += `<div style="padding:8px;border-bottom:1px solid #222;display:flex;justify-content:space-between"><span>${doc.id} - role: ${d.role||'user'} - approved: ${d.approved||false}</span> <button class="btn" style="padding:2px 8px;font-size:10px" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
+   });
+   document.getElementById('total').innerText = count;
+   document.getElementById('userList').innerHTML = html || "No users - 0 reads used - Register on index.html";
+   document.getElementById('status').innerText = "Live - "+count+" users - 10 reads only - No crash!";
+   document.getElementById('lastSync').innerText = new Date().toLocaleTimeString();
+ }catch(e){ document.getElementById('status').innerText = "Error: "+e.message; }
 }
-async function syncToCloud(){
- try{for(let u of users){await db.collection('users').doc(u.email).set(u);}cloudUsers=[...users];document.getElementById('fbStatus').innerText=`Live - ${users.length} REAL synced!`;updateUI();}catch(e){alert(e.message);}
+
+async function makeAgent(email){
+ if(!confirm("Make "+email+" AGENT permanently?")) return;
+ await db.collection('users').doc(email).update({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT"});
+ alert("✅ "+email+" is now AGENT forever! Tell him logout/login on index.html");
+ loadUsers();
 }
-function approveAll(){alert(`🔥 All ${cloudUsers.length||2} REAL agents approved! UNLIMITED!`);}
-function viewAgents(){alert(cloudUsers.map(u=>u.email).join('\n')||'2 agents in cloud');}
-setInterval(async()=>{if(users.length>0){await syncToCloud();}},30000);
-db.collection('users').onSnapshot((snap)=>{cloudUsers=[];snap.forEach(d=>cloudUsers.push(d.data()));if(cloudUsers.length>0){users=[...cloudUsers];localStorage.setItem('kratis_users',JSON.stringify(users));updateUI();}});
-window.onload=async()=>{updateUI();await loadFromCloud();};
+
+async function approveAgent(){
+ let email = document.getElementById('agentEmail').value;
+ if(!email){ alert("Enter email"); return; }
+ await db.collection('users').doc(email).set({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT",email:email}, {merge:true});
+ alert("✅ "+email+" AGENT approved permanently in CLEAN project!");
+ loadUsers();
+}
+
+window.onload = loadUsers;
 </script>
 </body>
 </html>
