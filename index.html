@@ -205,7 +205,95 @@ document.getElementById('reloadlyList').innerHTML = '<p style="color:#FFD700;">C
 }
 </script>
 
-<div id="view-gift" class="hidden"><h3>🎁 Gift Cards — Gaming Cards Inside Gift Cards</h3><div class="filters"><select id="f-gift-country" onchange="renderGift()"><option value="all">All Countries (All countries name listed)</option><option>USA</option><option>UK</option><option>Nigeria</option><option>Ghana</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>South Africa</option><option>Kenya</option><option>UAE</option></select><select id="f-gift-cat" onchange="renderGift()"><option value="all">All Categories (Shows All)</option><option>Payment Cards</option><option>Software</option><option>Gaming</option><option>Entertainment</option><option>Shopping</option><option>Crypto</option><option>Travel</option><option>Charity</option></select></div><div id="grid-gift" class="grid"></div><div style="margin-top:10px;font-size:11px;color:#666">When click Gaming category → Shows Gaming Cards like Steam, Xbox, PlayStation, Roblox, etc.</div></div>
+<div id="view-gift" class="hidden">
+<h3>🎁 Gift Cards — Gaming Cards Inside Gift Cards — Powered by Reloadly</h3>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<select id="giftCountry" style="background:#222;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:20px;">
+<option value="Ghana">🇬🇭 Ghana</option>
+<option value="All">🌍 All Countries</option>
+<option value="USA">🇺🇸 USA</option>
+<option value="Nigeria">🇳🇬 Nigeria</option>
+<option value="UK">🇬🇧 UK</option>
+<option value="Germany">🇩🇪 Germany</option>
+<!-- All Countries from your video dropdown -->
+</select>
+
+<select id="giftCategory" style="background:#222;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:20px;">
+<option value="All">All Categories</option>
+<option value="Gaming">🎮 Gaming</option>
+<option value="Payment Cards">💳 Payment Cards</option>
+<option value="Software">💻 Software</option>
+<option value="Entertainment">🎬 Entertainment</option>
+<option value="Shopping">🛒 Shopping</option>
+<option value="Crypto">₿ Crypto</option>
+<option value="Travel">✈️ Travel</option>
+</select>
+
+<input id="giftSearch" type="text" placeholder="Search gift card (Airbnb, Roblox, Xbox...)" style="background:#222;color:#fff;border:1px solid #555;padding:8px 14px;border-radius:20px;flex:1;min-width:200px;" oninput="searchGiftCards()" />
+
+<label style="display:flex;align-items:center;gap:6px;color:#fff;font-size:13px;">
+<input type="checkbox" id="globalToggle" checked onchange="loadGiftCards()" /> Global products
+</label>
+</div>
+
+<div id="giftGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:15px;">
+<!-- Gift cards from Reloadly API will load here like video: Airbnb, Razer Gold GH, Jawaker, Roblox, Xbox, PUBG, Hotels.com, etc -->
+<div style="color:#aaa;text-align:center;padding:20px;grid-column:1/-1;">Loading gift cards from Reloadly API... (like your video: Airbnb US, Razer Gold GH, Roblox US, Xbox US, PUBG Mobile, etc)</div>
+</div>
+
+</div>
+
+<script>
+async function loadGiftCards(){
+  const country = document.getElementById('giftCountry').value;
+  const category = document.getElementById('giftCategory').value;
+  const globalProd = document.getElementById('globalToggle').checked;
+  const search = document.getElementById('giftSearch').value;
+  
+  document.getElementById('giftGrid').innerHTML = '<p style="color:#FFD700;">Loading '+country+' - '+category+' via Reloadly API...</p>';
+  
+  // Backend call to Reloadly Gift Cards API
+  // Example: GET /api/reloadly/giftcards?country=Ghana&category=All&search=&global=true
+  // Your backend should call: https://giftcards.reloadly.com/products?countryCode=GH etc with your API key
+  
+  try{
+    // TODO: Replace with your actual API endpoint
+    const res = await fetch(`/api/reloadly/giftcards?country=${country}&category=${category}&global=${globalProd}&search=${search}`);
+    const data = await res.json();
+    
+    let html = '';
+    data.forEach(card=>{
+      html += `
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;cursor:pointer;" onclick="buyGiftCard('${card.id}')">
+        <img src="${card.logoUrls?.[0] || ''}" style="width:80px;height:40px;object-fit:contain;" />
+        <div style="color:#fff;font-size:11px;margin-top:6px;font-weight:bold;">${card.productName}</div>
+        <div style="color:#aaa;font-size:10px;">${card.countryCode} ${card.category}</div>
+        <div style="color:#FFD700;font-size:11px;margin-top:4px;">From $${card.minimumAmount} - $${card.maximumAmount}</div>
+      </div>`;
+    });
+    document.getElementById('giftGrid').innerHTML = html || '<p style="color:#aaa;">No gift cards found - try All Countries + Global products ON (like your video)</p>';
+  } catch(e){
+    // Fallback demo like video if API not connected yet
+    document.getElementById('giftGrid').innerHTML = `
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#ff5a5f;color:#fff;padding:8px;border-radius:8px;">airbnb</div><div style="color:#fff;font-size:11px;margin-top:6px;">Airbnb US</div></div>
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#000;color:#ffd700;padding:8px;border-radius:8px;">Razer Gold GH</div><div style="color:#fff;font-size:11px;margin-top:6px;">Razer Gold Global GH</div></div>
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#1a1a1a;color:#fff;padding:8px;border-radius:8px;">Jawaker GH</div><div style="color:#fff;font-size:11px;margin-top:6px;">Jawaker GH</div></div>
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#000;color:#fff;padding:8px;border-radius:8px;">ROBLOX</div><div style="color:#fff;font-size:11px;margin-top:6px;">Roblox US</div></div>
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#107c10;color:#fff;padding:8px;border-radius:8px;">XBOX</div><div style="color:#fff;font-size:11px;margin-top:6px;">Xbox US</div></div>
+      <div style="background:#111;border:1px solid #333;border-radius:12px;padding:10px;text-align:center;"><div style="background:#f2a900;color:#000;padding:8px;border-radius:8px;">PUBG MOBILE</div><div style="color:#fff;font-size:11px;margin-top:6px;">PUBG Mobile UC (Global) US</div></div>
+    `;
+  }
+}
+
+function searchGiftCards(){ loadGiftCards(); }
+function buyGiftCard(id){ alert('Buy Gift Card ID: '+id+' via Reloadly API - Amount selection + Payment'); }
+
+document.getElementById('giftCountry')?.addEventListener('change', loadGiftCards);
+document.getElementById('giftCategory')?.addEventListener('change', loadGiftCards);
+// Auto load like video
+setTimeout(loadGiftCards, 1000);
+</script>
 
 <div id="view-utility" class="hidden"><h3>💧 Utility Payments — Different from ECG Prepaid!</h3><div class="filters"><select id="f-biller" onchange="renderUtility()"><option value="all">All Biller Types (Shows All)</option><option>Electricity Bill Payments</option><option>TV Bill Payments</option><option>Water Bill Payments</option><option>Internet Bill Payments</option></select><select id="f-service" onchange="renderUtility()"><option value="all">All Service Types (Shows All)</option><option>Prepaid</option><option>Postpaid</option></select></div><div id="grid-utility" class="grid"></div></div>
 
@@ -290,15 +378,13 @@ const PRODUCTS=[
     // Keep Airtime static as fallback (if Reloadly offline)
     {id:'gh_air_5',cat:'INTL',sub:'Airtime',name:'Ghana Airtime GHS 5',desc:'Ghana Airtime',country:'Ghana',type:'Airtime',prices:{USER:6,AGENT:5.5,DEALER:5}},
     {id:'ng_air_1000',cat:'INTL',sub:'Airtime',name:'Nigeria Airtime NGN 1000',desc:'Nigeria Airtime',country:'Nigeria',type:'Airtime',prices:{USER:12,AGENT:11,DEALER:10.5}},
- {id:'gift_amazon_25',cat:'GIFT',sub:'Shopping',name:'Amazon Gift $25',desc:'Gift Card USA',country:'USA',giftCat:'Shopping',prices:{USER:410,AGENT:400,DEALER:395}},
- {id:'gift_google_10',cat:'GIFT',sub:'Payment Cards',name:'Google Play $10',desc:'Payment Cards',country:'USA',giftCat:'Payment Cards',prices:{USER:165,AGENT:160,DEALER:158}},
- {id:'gift_steam_20',cat:'GIFT',sub:'Gaming',name:'Steam Wallet $20',desc:'Gaming Card - Gaming',country:'USA',giftCat:'Gaming',prices:{USER:330,AGENT:320,DEALER:315}},
- {id:'gift_xbox_25',cat:'GIFT',sub:'Gaming',name:'Xbox Gift $25',desc:'Gaming Card',country:'USA',giftCat:'Gaming',prices:{USER:410,AGENT:400,DEALER:395}},
- {id:'gift_ps_50',cat:'GIFT',sub:'Gaming',name:'PlayStation $50',desc:'Gaming Card',country:'USA',giftCat:'Gaming',prices:{USER:820,AGENT:800,DEALER:790}},
- {id:'gift_netflix',cat:'GIFT',sub:'Entertainment',name:'Netflix Gift $30',desc:'Entertainment',country:'USA',giftCat:'Entertainment',prices:{USER:490,AGENT:480,DEALER:475}},
- {id:'gift_btc_100',cat:'GIFT',sub:'Crypto',name:'Binance Crypto $100',desc:'Crypto',country:'USA',giftCat:'Crypto',prices:{USER:1650,AGENT:1620,DEALER:1600}},
- {id:'gift_airbnb',cat:'GIFT',sub:'Travel',name:'Airbnb $50',desc:'Travel',country:'USA',giftCat:'Travel',prices:{USER:820,AGENT:800,DEALER:790}},
- {id:'gift_charity',cat:'GIFT',sub:'Charity',name:'Charity Donation $10',desc:'Charity',country:'USA',giftCat:'Charity',prices:{USER:165,AGENT:160,DEALER:158}},
+ // GIFT CARDS - DYNAMIC via Reloadly API (like your video: Airbnb, Razer Gold GH, Jawaker, Roblox, Xbox, PUBG, Hotels.com, etc)
+    {id:'gift_dynamic_reloadly',cat:'GIFT',sub:'All Categories',name:'Gift Cards - All via Reloadly API',desc:'Dynamic: Airbnb US, Razer Gold GH, Jawaker GH, Roblox US, Xbox US, PUBG, Hotels.com, Nintendo, etc',country:'ALL',giftCat:'All Categories',type:'GiftCard',isDynamic:true,comingSoon:false,prices:{USER:0,AGENT:0,DEALER:0},note:'Fetched live from Reloadly Gift-cards API - Ghana + All Countries + Global products toggle'},
+
+    // Keep 3 fallback static if Reloadly offline
+    {id:'gift_amazon_25',cat:'GIFT',sub:'Shopping',name:'Amazon Gift $25',desc:'Gift Card USA',country:'USA',giftCat:'Shopping',prices:{USER:30,AGENT:28,DEALER:27}},
+    {id:'gift_google_10',cat:'GIFT',sub:'Payment Cards',name:'Google Play $10',desc:'Payment Cards',country:'USA',giftCat:'Payment Cards',prices:{USER:15,AGENT:13,DEALER:12}},
+    {id:'gift_steam_20',cat:'GIFT',sub:'Gaming',name:'Steam Wallet $20',desc:'Gaming Card - Gaming',country:'USA',giftCat:'Gaming',prices:{USER:25,AGENT:23,DEALER:22}},
 
  {id:'util_elec_pre',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Prepaid',name:'Ghana Electricity Prepaid',desc:'Electricity Prepaid',country:'Ghana',prices:{USER:100,AGENT:100,DEALER:100}},
  {id:'util_elec_post',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Postpaid',name:'Nigeria Electricity Postpaid',desc:'Electricity Postpaid',country:'Nigeria',prices:{USER:100,AGENT:100,DEALER:100}},
