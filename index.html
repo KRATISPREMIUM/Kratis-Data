@@ -295,7 +295,102 @@ document.getElementById('giftCategory')?.addEventListener('change', loadGiftCard
 setTimeout(loadGiftCards, 1000);
 </script>
 
-<div id="view-utility" class="hidden"><h3>💧 Utility Payments — Different from ECG Prepaid!</h3><div class="filters"><select id="f-biller" onchange="renderUtility()"><option value="all">All Biller Types (Shows All)</option><option>Electricity Bill Payments</option><option>TV Bill Payments</option><option>Water Bill Payments</option><option>Internet Bill Payments</option></select><select id="f-service" onchange="renderUtility()"><option value="all">All Service Types (Shows All)</option><option>Prepaid</option><option>Postpaid</option></select></div><div id="grid-utility" class="grid"></div></div>
+<div id="view-utility" class="hidden">
+<h3>💡 Utility Payments — Electricity, Water, TV, Internet — Powered by Reloadly</h3>
+
+<div style="background:#111;border:1px solid #FFD700;border-radius:14px;padding:18px;max-width:650px;">
+<p style="color:#aaa;font-size:13px;">Follow the steps below to make utility payments in seconds.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<input id="billerSearch" type="text" placeholder="Search biller name..." style="background:#222;color:#fff;border:1px solid #555;padding:9px 14px;border-radius:20px;flex:1;min-width:180px;" oninput="loadUtility()" />
+
+<select id="billerType" style="background:#222;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:20px;">
+<option value="All">All Biller Types</option>
+<option value="Electricity Bill Payments">⚡ Electricity Bill Payments</option>
+<option value="TV Bill Payments">📺 TV Bill Payments</option>
+<option value="Water Bill Payments">💧 Water Bill Payments</option>
+<option value="Internet Bill Payments">🌐 Internet Bill Payments</option>
+</select>
+
+<select id="serviceType" style="background:#222;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:20px;">
+<option value="All">All Service Types</option>
+<option value="Prepaid">Prepaid</option>
+<option value="Postpaid">Postpaid</option>
+</select>
+
+<button onclick="loadUtility()" style="background:#222;color:#fff;border:1px solid #555;padding:8px 12px;border-radius:20px;">🔍</button>
+</div>
+
+<div id="utilityList" style="margin-top:15px;display:flex;flex-direction:column;gap:8px;">
+<!-- From your video: Boja Electricity Prepaid Nigeria, Aloja Electricity Prepaid Nigeria, Eko Electricity Prepaid Nigeria etc -->
+<div style="color:#FFD700;text-align:center;padding:20px;">Loading billers from Reloadly API... (like your video: Boja Electricity Prepaid Nigeria - POSTPAID, etc)</div>
+</div>
+
+<button id="utilityContinue" style="width:100%;background:#7b2cf0;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;margin-top:15px;display:none;">Continue</button>
+</div>
+</div>
+
+<script>
+let selectedBiller = null;
+
+async function loadUtility(){
+  const search = document.getElementById('billerSearch').value;
+  const billerType = document.getElementById('billerType').value;
+  const serviceType = document.getElementById('serviceType').value;
+  
+  document.getElementById('utilityList').innerHTML = '<p style="color:#FFD700;">Searching '+billerType+' - '+serviceType+' via Reloadly API...</p>';
+  
+  // Backend: GET /api/reloadly/utility?search=&billerType=Electricity&serviceType=Prepaid
+  // Reloadly API: https://utilities.reloadly.com/billers?countryCode=NG&type=electricity etc
+  
+  try{
+    const res = await fetch(`/api/reloadly/utility?search=${search}&billerType=${billerType}&serviceType=${serviceType}`);
+    const data = await res.json();
+    
+    let html = '';
+    data.forEach(biller=>{
+      html += `
+      <div onclick="selectBiller('${biller.id}','${biller.name}')" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+        <div>
+          <div style="color:#fff;font-size:13px;font-weight:bold;">${biller.name}</div>
+          <div style="color:#aaa;font-size:11px;">${biller.country} ${biller.type}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="background:#ff00ff;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;">${biller.serviceType || 'POSTPAID'}</span>
+          <input type="radio" name="biller" />
+        </div>
+      </div>`;
+    });
+    document.getElementById('utilityList').innerHTML = html || '<p style="color:#aaa;">No billers - Try All Biller Types + All Service Types like your video</p>';
+  } catch(e){
+    // Fallback demo like your video
+    document.getElementById('utilityList').innerHTML = `
+      <div onclick="selectBiller('boja','Boja Electricity Prepaid Nigeria')" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+        <div><div style="color:#fff;font-size:13px;font-weight:bold;">Boja Electricity Prepaid Nigeria</div><div style="color:#aaa;font-size:11px;">Nigeria</div></div>
+        <div style="display:flex;gap:8px;align-items:center;"><span style="background:#ff00ff;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;">POSTPAID</span><input type="radio" name="biller" /></div>
+      </div>
+      <div onclick="selectBiller('aloja','Aloja Electricity Prepaid Nigeria')" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+        <div><div style="color:#fff;font-size:13px;font-weight:bold;">Aloja Electricity Prepaid Nigeria</div><div style="color:#aaa;font-size:11px;">Nigeria</div></div>
+        <div style="display:flex;gap:8px;align-items:center;"><span style="background:#ff00ff;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;">POSTPAID</span><input type="radio" name="biller" /></div>
+      </div>
+      <div onclick="selectBiller('eko','Eko Electricity Prepaid Nigeria')" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+        <div><div style="color:#fff;font-size:13px;font-weight:bold;">Eko Electricity Prepaid Nigeria</div><div style="color:#aaa;font-size:11px;">Nigeria</div></div>
+        <div style="display:flex;gap:8px;align-items:center;"><span style="background:#00d9ff;color:#000;padding:2px 8px;border-radius:10px;font-size:10px;">PREPAID</span><input type="radio" name="biller" /></div>
+      </div>
+    `;
+  }
+}
+
+function selectBiller(id,name){
+  selectedBiller = {id,name};
+  document.getElementById('utilityContinue').style.display='block';
+  document.getElementById('utilityContinue').innerText = 'Continue with '+name;
+}
+
+document.getElementById('billerType')?.addEventListener('change', loadUtility);
+document.getElementById('serviceType')?.addEventListener('change', loadUtility);
+setTimeout(loadUtility, 1000);
+</script>
 
 <div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="grid-ecg" class="grid"></div></div>
 
@@ -386,11 +481,12 @@ const PRODUCTS=[
     {id:'gift_google_10',cat:'GIFT',sub:'Payment Cards',name:'Google Play $10',desc:'Payment Cards',country:'USA',giftCat:'Payment Cards',prices:{USER:15,AGENT:13,DEALER:12}},
     {id:'gift_steam_20',cat:'GIFT',sub:'Gaming',name:'Steam Wallet $20',desc:'Gaming Card - Gaming',country:'USA',giftCat:'Gaming',prices:{USER:25,AGENT:23,DEALER:22}},
 
- {id:'util_elec_pre',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Prepaid',name:'Ghana Electricity Prepaid',desc:'Electricity Prepaid',country:'Ghana',prices:{USER:100,AGENT:100,DEALER:100}},
- {id:'util_elec_post',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Postpaid',name:'Nigeria Electricity Postpaid',desc:'Electricity Postpaid',country:'Nigeria',prices:{USER:100,AGENT:100,DEALER:100}},
- {id:'util_tv_gotv',cat:'UTILITY',sub:'TV Bill Payments',service:'Prepaid',name:'GOtv Subscription',desc:'TV Bill',country:'Ghana',prices:{USER:80,AGENT:78,DEALER:77}},
- {id:'util_water',cat:'UTILITY',sub:'Water Bill Payments',service:'Postpaid',name:'Ghana Water Bill',desc:'Water Bill',country:'Ghana',prices:{USER:50,AGENT:50,DEALER:50}},
- {id:'util_internet',cat:'UTILITY',sub:'Internet Bill Payments',service:'Prepaid',name:'MTN Fibre Internet',desc:'Internet Bill',country:'Ghana',prices:{USER:120,AGENT:118,DEALER:115}},
+// UTILITY PAYMENTS - DYNAMIC via Reloadly API (Electricity, Water, TV, Internet - Prepaid/Postpaid)
+    {id:'util_dynamic_reloadly',cat:'UTILITY',sub:'All Biller Types',name:'Utility Payments - All via Reloadly API',desc:'Dynamic: Electricity Bill Payments, Water Bill Payments, TV Bill Payments, Internet Bill Payments - Prepaid/Postpaid - All Countries',country:'ALL',type:'Utility',isDynamic:true,prices:{USER:0,AGENT:0,DEALER:0},note:'Fetched live from Reloadly Utility API - Search biller name + Filter by Type'},
+
+    // Fallback static for Ghana
+    {id:'util_elec_pre_gh',cat:'UTILITY',sub:'Electricity Bill Payments',service:'Prepaid',name:'Ghana ECG Prepaid',desc:'Electricity Bill Ghana',country:'Ghana',type:'Prepaid',prices:{USER:0,AGENT:0,DEALER:0}},
+    {id:'util_water_gh',cat:'UTILITY',sub:'Water Bill Payments',service:'Postpaid',name:'Ghana Water Bill',desc:'Water Bill Ghana',country:'Ghana',type:'Postpaid',prices:{USER:0,AGENT:0,DEALER:0}},
 
  {id:'ecg_50',cat:'ECG',sub:'ECG',name:'ECG Prepaid GHS 50',desc:'Ghana ECG Only - Manual Token',country:'Ghana',prices:{USER:50,AGENT:50,DEALER:50}},
  {id:'ecg_100',cat:'ECG',sub:'ECG',name:'ECG Prepaid GHS 100',desc:'Ghana ECG Only',country:'Ghana',prices:{USER:100,AGENT:100,DEALER:100}},
