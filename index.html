@@ -393,7 +393,7 @@ setTimeout(loadUtility, 1000);
 </script>
 
 <div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="ecg-grid" class="grid"></div></div>
-<div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all')">All Vouchers</button><button onclick="filterVoucher('wassce')">WASSCE</button><button onclick="filterVoucher('bece')">BECE</button></div><div id="voucherList" class="grid"></div></div>
+<div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all',this)">All Vouchers</button><button onclick="filterVoucher('WASSCE',this)">WASSCE</button><button onclick="filterVoucher('BECE',this)">BECE</button></div><div id="grid-vouchers" class="grid"></div></div>
 
 
 <div id="view-afa" class="hidden">
@@ -750,7 +750,11 @@ function renderVouchers(){
 }
 function filterVoucher(sub,el){CUR_V=sub; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderVouchers();}
 function renderAFA(){document.getElementById('grid-afa').innerHTML=PRODUCTS.filter(p=>p.cat==='AFA').map(p=>makeCard(p)).join('');}
-function renderServices(){document.getElementById('grid-services').innerHTML=SERVICES.map(s=>`<div class="card"><h4>${s.name}</h4><p>${s.desc}</p><button class="buy active" onclick="window.open('https://wa.me/233000000000?text=${encodeURIComponent(s.wa)}','_blank')">Launch via WhatsApp</button></div>`).join('');}
+function renderServices(){
+  const grid=document.getElementById('grid-services');
+  if(!grid) return;
+  grid.innerHTML=SERVICES.map(s=>`<div class="card"><h4>${s.name}</h4><p>${s.desc}</p><button class="btn" onclick="window.open('https://wa.me/233209136208?text='+encodeURIComponent(s.wa),'_blank')">Launch via WhatsApp</button></div>`).join('');
+}
 
 function renderHistory(){
  let list=ORDERS;
