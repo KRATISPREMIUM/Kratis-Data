@@ -887,7 +887,17 @@ function go(view){
   const btn = document.getElementById('m-'+view);
   if(btn){ btn.classList.add('active'); }
   window.scrollTo(0,0);
-  // Auto-load our new sections when opened
+
+  if(view==='ghana_gb'){
+    if(typeof renderProducts === 'function') renderProducts('GHANA_GB');
+    if(typeof filterGB === 'function') filterGB('all');
+  }
+  if(view==='ecg'){
+    if(typeof renderProducts === 'function') renderProducts('ECG');
+  }
+  if(view==='vouchers'){
+    if(typeof renderProducts === 'function') renderProducts('VOUCHER');
+  }
   if(view==='gift' && window.loadGiftCards) setTimeout(loadGiftCards,200);
   if(view==='utility' && window.loadUtility) setTimeout(loadUtility,200);
   if(view==='intl' && window.showIntl) setTimeout(()=>showIntl('airtime'),200);
