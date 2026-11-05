@@ -634,19 +634,24 @@ const SERVICES=[
 ];
 
 function go(view){
-  document.querySelectorAll('[id^="view-"]').forEach(el=>el.classList.add('hidden'));
-  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
-  const target = document.getElementById('view-'+view);
-  if(target){ target.classList.remove('hidden'); }
-  const btn = document.getElementById('m-'+view);
-  if(btn){ btn.classList.add('active'); }
-  window.scrollTo(0,0);
-  if(view==='ghana_gb' && typeof renderProducts==='function') renderProducts('GHANA_GB');
-  if(view==='ecg' && typeof renderProducts==='function') renderProducts('ECG');
-  if(view==='vouchers' && typeof renderProducts==='function') renderProducts('VOUCHER');
-  if(view==='gift' && window.loadGiftCards) setTimeout(loadGiftCards,200);
-  if(view==='utility' && window.loadUtility) setTimeout(loadUtility,200);
-  if(view==='intl' && window.showIntl) setTimeout(()=>showIntl('airtime'),200);
+  document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('view-'+view);
+  if(el) el.classList.remove('hidden');
+  const nav=document.querySelector(`[data-view="${view}"]`);
+  if(nav) nav.classList.add('active');
+
+  if(view==='dashboard') renderDashboard();
+  if(view==='ghana_gb') renderGB();
+  if(view==='intl') renderIntl();
+  if(view==='gift') renderGift();
+  if(view==='utility') renderUtility();
+  if(view==='ecg') renderECG();
+  if(view==='vouchers') renderVouchers();
+  if(view==='afa') renderAFA();
+  if(view==='services') renderServices();
+  if(view==='history') renderHistory();
+  if(view==='referral') renderReferral();
 }
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
