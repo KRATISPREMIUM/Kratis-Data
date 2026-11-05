@@ -396,7 +396,142 @@ setTimeout(loadUtility, 1000);
 
 <div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all',this)">All Vouchers</button><button onclick="filterVoucher('WASSCE',this)">WASSCE Results Voucher</button><button onclick="filterVoucher('BECE',this)">BECE Results Voucher</button></div><div id="grid-vouchers" class="grid"></div></div>
 
-<div id="view-afa" class="hidden"><h3>🎓 AFA Registration</h3><div id="grid-afa" class="grid"></div></div>
+<div id="view-afa" class="hidden">
+<div style="display:flex;gap:8px;margin-bottom:10px;"><span style="background:#FFD700;color:#000;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold;">● MTN AFA Program</span></div>
+<h3 style="color:#fff;font-size:22px;margin:0;">AFA Bundle Registration</h3>
+<p style="color:#aaa;font-size:13px;margin:5px 0 15px;">Register for MTN's All-For-All bundle and enjoy exclusive benefits</p>
+
+<div style="display:grid;grid-template-columns:1fr 1.2fr;gap:15px;max-width:900px;">
+<!-- LEFT: AFA Package -->
+<div>
+<div style="background:linear-gradient(135deg,#FFD700,#FF8C00);border-radius:12px;padding:18px;color:#000;">
+<div style="font-size:18px;font-weight:bold;">AFA Package</div>
+<div style="font-size:12px;">Lifetime benefits await</div>
+</div>
+
+<div style="background:#111;border:1px solid #333;border-radius:12px;padding:15px;margin-top:10px;">
+<div style="color:#FFD700;font-weight:bold;font-size:13px;">📱 Monthly Benefits</div>
+<ul style="color:#fff;font-size:12px;line-height:22px;margin:10px 0;padding-left:15px;">
+<li>250 mins onnet calls</li>
+<li>30 mins offnet calls</li>
+<li>500 mins CUG calls</li>
+<li>25 SMS messages</li>
+</ul>
+<div style="color:#FFD700;font-weight:bold;font-size:13px;margin-top:10px;">⭐ Exclusive Perks</div>
+<ul style="color:#ccc;font-size:12px;line-height:22px;margin:10px 0;padding-left:15px;">
+<li>✅ One-time lifetime registration</li>
+<li>✅ Unlimited calls with AFA members</li>
+<li>✅ Renew via <span style="background:#222;padding:2px 6px;border-radius:4px;color:#fff;">*1848#</span></li>
+</ul>
+</div>
+
+<div style="background:#111;border:1px solid #333;border-radius:12px;padding:15px;margin-top:10px;">
+<div style="color:#fff;font-weight:bold;font-size:13px;">ⓘ How to Activate</div>
+<ol style="color:#aaa;font-size:12px;line-height:24px;margin:10px 0;padding-left:20px;">
+<li>Dial *1848#</li>
+<li>Select Buy AFA Bundle</li>
+<li>Choose your offer</li>
+<li>Confirm & enter MoMo PIN</li>
+<li>Get SMS confirmation</li>
+</ol>
+</div>
+</div>
+
+<!-- RIGHT: Registration Form -->
+<div style="background:#111;border:1px solid #333;border-radius:12px;padding:18px;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<div>
+<div style="color:#fff;font-size:18px;font-weight:bold;">Registration Form</div>
+<div style="color:#aaa;font-size:11px;">Complete all fields to register for the AFA bundle</div>
+</div>
+<div style="text-align:right;">
+<div style="color:#aaa;font-size:10px;">Registration Fee</div>
+<div style="color:#FFD700;font-size:20px;font-weight:bold;">GHS 15</div>
+</div>
+</div>
+
+<div id="afaBalanceWarn" style="background:#ffe6e6;color:#c00;padding:10px;border-radius:8px;margin:12px 0;font-size:12px;display:none;">⚠️ Insufficient Balance<br>You need GHS 15.00, but have GHS <span id="afaBal">0</span></div>
+
+<div style="color:#FFD700;font-size:12px;font-weight:bold;margin:15px 0 8px;">👤 Personal Information</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+<div><label style="color:#fff;font-size:11px;">Full Name *</label><input id="afaName" placeholder="e.g., Kwame Mensah" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /></div>
+<div><label style="color:#fff;font-size:11px;">Date of Birth *</label><input id="afaDob" type="date" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /></div>
+<div><label style="color:#fff;font-size:11px;">MTN Phone Number *</label><input id="afaPhone" placeholder="e.g., 0241234567" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /></div>
+<div><label style="color:#fff;font-size:11px;">Ghana Card Number *</label><input id="afaGhanaCard" placeholder="GHA-123456789-0" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /><div style="color:#aaa;font-size:9px;">Format: GHA-XXXXXXXXX-X (13 characters)</div></div>
+</div>
+
+<div style="color:#FFD700;font-size:12px;font-weight:bold;margin:15px 0 8px;">📍 Location & Occupation</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+<div><label style="color:#fff;font-size:11px;">Region *</label>
+<select id="afaRegion" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;">
+<option value="">Select your region</option>
+<option>Ahafo</option><option>Ashanti</option><option>Bono</option><option>Bono East</option><option>Central</option><option>Eastern</option><option>Greater Accra</option><option>North East</option><option>Northern</option><option>Oti</option><option>Savannah</option><option>Upper East</option><option>Upper West</option><option>Volta</option><option>Western</option><option>Western North</option>
+</select></div>
+<div><label style="color:#fff;font-size:11px;">Occupation *</label><input id="afaOccupation" placeholder="Farmer" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /></div>
+<div style="grid-column:1/-1;"><label style="color:#fff;font-size:11px;">Specific Location *</label><input id="afaLocation" placeholder="e.g., Adabraka, Accra" style="width:100%;background:#222;color:#fff;border:1px solid #555;padding:9px;border-radius:8px;margin-top:4px;" /></div>
+</div>
+
+<button id="afaSubmitBtn" onclick="submitAFA()" style="width:100%;background:#FFD700;color:#000;padding:12px;border:none;border-radius:8px;font-weight:bold;margin-top:18px;font-size:14px;">Register AFA - GHS 15</button>
+<p style="color:#aaa;font-size:10px;text-align:center;margin-top:8px;">Your information is secure and will only be used for registration</p>
+</div>
+</div>
+</div>
+
+<script>
+async function submitAFA(){
+  const name = document.getElementById('afaName').value;
+  const dob = document.getElementById('afaDob').value;
+  const phone = document.getElementById('afaPhone').value;
+  const ghanaCard = document.getElementById('afaGhanaCard').value;
+  const region = document.getElementById('afaRegion').value;
+  const occupation = document.getElementById('afaOccupation').value;
+  const location = document.getElementById('afaLocation').value;
+
+  if(!name || !dob || !phone || !ghanaCard || !region || !occupation || !location){
+    alert('Complete all fields!');
+    return;
+  }
+  if(ghanaCard.length !== 13 && !ghanaCard.startsWith('GHA-')){
+    alert('Ghana Card format: GHA-XXXXXXXXX-X (13 characters)');
+    return;
+  }
+
+  const btn = document.getElementById('afaSubmitBtn');
+  btn.innerText = 'Processing via Digi-mall API...';
+  btn.disabled = true;
+
+  try{
+    // Backend call to Digi-mall API - NEVER expose API key in frontend!
+    // Your backend: POST /api/digimall/afa-register
+    // It calls Digi-mall: POST https://digi-mall.app/api/afa/register with your dealer API key
+    const res = await fetch('/api/digimall/afa-register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, dob, phone, ghanaCard, region, occupation, location, fee:15})
+    });
+    const data = await res.json();
+    
+    if(data.success){
+      alert('✅ AFA Registration Successful! Check SMS. Renew via *1848#');
+      btn.innerText = '✅ Registered!';
+    } else {
+      if(data.message?.includes('Insufficient Balance')){
+        document.getElementById('afaBalanceWarn').style.display='block';
+        document.getElementById('afaBal').innerText = data.balance || '1.10';
+        btn.innerText = 'Insufficient Balance';
+        btn.style.background = '#b8860b';
+      } else {
+        alert('❌ ' + (data.message || 'Registration failed'));
+        btn.innerText = 'Register AFA - GHS 15';
+      }
+    }
+  } catch(e){
+    alert('Digi-mall API connection error - Check backend /api/digimall/afa-register');
+    btn.innerText = 'Register AFA - GHS 15';
+  }
+  btn.disabled = false;
+}
+</script>
 
 <div id="view-services" class="hidden"><div class="hero-card"><h3>🚀 Services & Offers — Discover Deals & Launch via WhatsApp</h3><p style="font-size:12px;color:#888;margin-top:6px">Click any service to launch request directly through WhatsApp to our managers.</p><div id="grid-services" class="grid" style="margin-top:12px"></div></div></div>
 
@@ -494,9 +629,9 @@ const PRODUCTS=[
  {id:'wassce',cat:'VOUCHER',sub:'WASSCE',name:'WASSCE Result Checker',desc:'WASSCE Voucher',prices:{USER:18,AGENT:17,DEALER:16}},
  {id:'bece',cat:'VOUCHER',sub:'BECE',name:'BECE Result Checker',desc:'BECE Voucher',prices:{USER:15,AGENT:14,DEALER:13}},
 
- {id:'afa_reg',cat:'AFA',sub:'AFA',name:'AFA Registration',desc:'AFA Smart Card',prices:{USER:35,AGENT:33,DEALER:32}},
-];
-
+// AFA REGISTRATION - via Digi-mall API (like video: GHS 15 fee)
+    {id:'afa_reg',cat:'AFA',sub:'AFA Registration',name:'MTN AFA Registration - Lifetime',desc:'250 mins onnet, 30 mins offnet, 500 mins CUG, 25 SMS - One-time lifetime registration - Renew via *1848#',country:'Ghana',type:'AFA',isDynamic:true,api:'digimall',prices:{USER:15,AGENT:15,DEALER:15},note:'Via Digi-mall API - Full Name, DOB, MTN Number, Ghana Card, Region, Occupation, Location required'},
+    {id:'afa_renew',cat:'AFA',sub:'AFA Renewal',name:'AFA Renewal Bundle',desc:'Renew AFA via *1848#',country:'Ghana',type:'AFA',prices:{USER:10,AGENT:9,DEALER:8.5}},
 const SERVICES=[
  {name:'Business Registration',desc:'Register business - Launch via WhatsApp',wa:'I want Business Registration'},
  {name:'Passport Application',desc:'Passport help - Launch via WhatsApp',wa:'I want Passport Application'},
