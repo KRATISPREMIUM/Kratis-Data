@@ -877,5 +877,21 @@ setTimeout(async ()=>{
   }catch(e){ console.error(e); }
 }, 1500);
 </script>
+<script>
+// RESTORE YOUR ORIGINAL MENU FUNCTION - DO NOT DELETE!
+function go(view){
+  document.querySelectorAll('[id^="view-"]').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  const target = document.getElementById('view-'+view);
+  if(target){ target.classList.remove('hidden'); }
+  const btn = document.getElementById('m-'+view);
+  if(btn){ btn.classList.add('active'); }
+  window.scrollTo(0,0);
+  // Auto-load our new sections when opened
+  if(view==='gift' && window.loadGiftCards) setTimeout(loadGiftCards,200);
+  if(view==='utility' && window.loadUtility) setTimeout(loadUtility,200);
+  if(view==='intl' && window.showIntl) setTimeout(()=>showIntl('airtime'),200);
+}
+</script>
 </body>
 </html>
