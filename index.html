@@ -830,13 +830,26 @@ function applyViaWhatsApp(){
   window.open('https://wa.me/233558228524?text='+msg,'_blank');
   applyAsAgent();
 }
-function copyRef(){navigator.clipboard.writeText(document.getElementById('refLink').innerText); alert('Referral link copied!');}
- function logout(){
+function copyRef(id){let el=document.getElementById(id); if(el){el.select(); navigator.clipboard.writeText(el.value||el.innerText);} alert('Copied!');}
+function withdrawRef(){let num=prompt('Enter MoMo Number:'); if(!num) return; let comm=parseFloat(localStorage.getItem('kratis_commission')||'0'); alert('✅ Withdrawal Requested! ₵'+comm.toFixed(2)+' to '+num); localStorage.setItem('kratis_commission','0'); renderReferral();}
   localStorage.removeItem('kratis_logged_user');
   localStorage.removeItem('kratis_logged');
   window.location.href='login.html';
 }
-function renderAll(){
+function renderReferral(){
+  let refEl=document.getElementById('refLink');
+  let box=refEl?refEl.closest('section,div[class*="panel"],div[id*="referral"]'):document.getElementById('page-referral');
+  if(!box){box=document.getElementById('referral');}
+  if(!box){return;}
+  let u={}; try{u=JSON.parse(localStorage.getItem('KRATIS_USER')||localStorage.getItem('kratis_logged_user')||'{}')}catch(e){}
+  let name=(u.name||u.username||'CEO').toUpperCase().replace(/\s/g,'').slice(0,6);
+  let code='KR'+name+'26';
+  let link=location.origin+location.pathname+'?ref='+code;
+  let comm=parseFloat(localStorage.getItem('kratis_commission')||'0');
+  let waMsg=encodeURIComponent('Buy MTN GB cheap here 👇 Use my link: '+link+' Code: '+code);
+  box.innerHTML='<div style="padding:20px;color:#fff;font-family:sans-serif"><span style="background:#facc15;color:#000;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold">KRATIS SPECIAL</span><h2>Referral Performance</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:15px 0"><div style="background:#111;padding:18px;border-radius:12px"><b style="font-size:24px">0</b><br>Total Referred</div><div style="background:#111;padding:18px;border-radius:12px"><b style="font-size:24px">0</b><br>Active</div><div style="background:#111;padding:18px;border-radius:12px"><b style="font-size:24px">0</b><br>Total Orders</div><div style="background:#1a1600;border:1px solid #facc15;padding:18px;border-radius:12px"><b style="font-size:24px;color:#facc15">₵'+comm.toFixed(2)+'</b><br>Referral Wallet</div></div><div style="background:#111;padding:18px;border-radius:12px"><p>Your Code</p><div style="display:flex;gap:8px"><input id="refCode" value="'+code+'" readonly style="flex:1;background:#000;color:#facc15;border:1px solid #333;padding:12px;border-radius:10px"><button onclick="copyRef(\'refCode\')" style="background:#facc15;border:none;padding:12px;border-radius:10px;font-weight:bold">Copy</button></div><p style="margin-top:12px">Referral Link</p><div style="display:flex;gap:8px"><input id="refLink" value="'+link+'" readonly style="flex:1;background:#000;color:#fff;border:1px solid #333;padding:12px;border-radius:10px;font-size:12px"><button onclick="copyRef(\'refLink\')" style="background:#fff;border:none;padding:12px;border-radius:10px;font-weight:bold">Copy</button></div><a href="https://wa.me/?text='+waMsg+'" target="_blank" style="display:block;text-align:center;background:#25D366;color:#000;padding:14px;border-radius:10px;font-weight:bold;margin-top:12px;text-decoration:none">💬 Share on WhatsApp</a><p style="margin-top:12px;color:#25D366">✅ 5% Commission Enabled</p></div><div style="background:#111;padding:18px;border-radius:12px;margin-top:15px"><h3>🏆 Leaderboard</h3><p>🥇 KOFI MENSAH - 47 refs - ₵235</p><p>🥈 AMA SERWAA - 31 refs - ₵155</p><p>🥉 YAW DARKO - 18 refs - ₵90</p><p>👑 YOU - ₵'+comm.toFixed(2)+'</p></div><div style="background:#111;padding:18px;border-radius:12px;margin-top:15px"><h3>💰 Withdraw to MoMo (Min ₵20)</h3><div style="background:#000;height:10px;border-radius:10px;overflow:hidden"><div style="background:#facc15;height:100%;width:'+Math.min(comm/20*100,100)+'%"></div></div><button onclick="withdrawRef()" style="width:100%;padding:14px;margin-top:12px;border:none;border-radius:10px;font-weight:bold;background:'+(comm>=20?'#facc15':'#333')+';color:'+(comm>=20?'#000':'#888')+'">Withdraw to MoMo</button></div></div>';
+}
+  function renderAll(){
   try{renderDashboard()}catch(e){console.log('Dashboard',e)}
   try{renderGB()}catch(e){console.log('GB',e)}
   try{renderIntl()}catch(e){console.log('Intl',e)}
@@ -847,6 +860,7 @@ function renderAll(){
   try{renderAFA()}catch(e){console.log('AFA',e)}
   try{renderServices()}catch(e){console.log('Services',e)}
   try{renderHistory()}catch(e){console.log('History',e)}
+  try{renderReferral()}catch(e){console.log('Referral',e)}
 }
 updateTierUI(); renderAll();
 // KRATIS FIX - FORCE AGENT + REMOVE LOCK
