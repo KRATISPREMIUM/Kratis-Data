@@ -719,37 +719,38 @@ function renderGB(){
 function filterGB(sub,el){CUR_GB=sub; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderGB();}
 
 function renderIntl(){
- const c=document.getElementById('f-intl-country').value;
- const t=document.getElementById('f-intl-type').value;
- let list=PRODUCTS.filter(p=>p.cat==='INTL');
- if(c!=='all') list=list.filter(p=>p.country===c);
- if(t!=='all') list=list.filter(p=>p.type===t);
- document.getElementById('grid-intl').innerHTML=list.map(p=>makeCard(p)).join('');
+  const c=document.getElementById('f-intl-country')?.value || 'all';
+  const t=document.getElementById('f-intl-type')?.value || 'all';
+  let list=PRODUCTS.filter(p=>p.cat==='INTL');
+  if(c!=='all') list=list.filter(p=>p.country===c);
+  if(t!=='all') list=list.filter(p=>p.type===t);
+  const g=document.getElementById('grid-intl');
+  if(g) g.innerHTML=list.map(p=>makeCard(p)).join('');
 }
 function renderGift(){
- const c=document.getElementById('f-gift-country').value;
- const cat=document.getElementById('f-gift-cat').value;
+const c=document.getElementById('f-gift-country')?.value || 'all';
+const cat=document.getElementById('f-gift-cat')?.value || 'all';
  let list=PRODUCTS.filter(p=>p.cat==='GIFT');
  if(c!=='all') list=list.filter(p=>p.country===c);
  if(cat!=='all') list=list.filter(p=>p.giftCat===cat);
- document.getElementById('grid-gift').innerHTML=list.map(p=>makeCard(p)).join('');
+ const g=document.getElementById('grid-gift'); if(g) g.innerHTML=list.map(p=>makeCard(p)).join('');
 }
 function renderUtility(){
- const b=document.getElementById('f-biller').value;
- const s=document.getElementById('f-service').value;
+ const b=document.getElementById('f-biller')?.value || 'all';
+const s=document.getElementById('f-service')?.value || 'all';
  let list=PRODUCTS.filter(p=>p.cat==='UTILITY');
  if(b!=='all') list=list.filter(p=>p.sub===b);
  if(s!=='all') list=list.filter(p=>p.service===s);
- document.getElementById('grid-utility').innerHTML=list.map(p=>makeCard(p)).join('');
+ const g=document.getElementById('grid-utility'); if(g) g.innerHTML=list.map(p=>makeCard(p)).join('');
 }
-function renderECG(){document.getElementById('grid-ecg').innerHTML=PRODUCTS.filter(p=>p.cat==='ECG').map(p=>makeCard(p)).join('');}
+function renderECG(){const g=document.getElementById('grid-ecg'); if(g) g.innerHTML=PRODUCTS.filter(p=>p.cat==='ECG').map(p=>makeCard(p)).join('');}
 function renderVouchers(){
  let list=PRODUCTS.filter(p=>p.cat==='VOUCHER');
  if(CUR_V!=='all') list=list.filter(p=>p.sub===CUR_V);
- document.getElementById('grid-vouchers').innerHTML=list.map(p=>makeCard(p)).join('');
+const g=document.getElementById('grid-vouchers'); if(g) g.innerHTML=list.map(p=>makeCard(p)).join('');
 }
-function filterVoucher(sub,el){CUR_V=sub; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderVouchers();}
-function renderAFA(){document.getElementById('grid-afa').innerHTML=PRODUCTS.filter(p=>p.cat==='AFA').map(p=>makeCard(p)).join('');}
+function filterVoucher(sub,el){CUR_V=sub; if(el){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderVouchers();}
+function renderAFA(){const g=document.getElementById('grid-afa'); if(g) g.innerHTML=PRODUCTS.filter(p=>p.cat==='AFA').map(p=>makeCard(p)).join('');}
 function renderServices(){
   const grid=document.getElementById('grid-services');
   if(!grid) return;
@@ -767,10 +768,10 @@ function renderHistory(){
  }
  let html=list.length?'':'<div class="list-item" style="color:#666">No history yet. Everything you do will appear here: orders, refunds, deposits, afa registration, voucher purchases.</div>';
  list.slice().reverse().forEach(o=>{html+=`<div class="list-item"><b>${o.id}</b> • ${o.name} • ${o.recipient||''}<br><span style="color:${o.status.includes('Pending')?'#FFD700':'#00ff88'}">${o.status}</span> • GHS ${o.amount} • ${o.date} • Type: ${o.hist||o.cat}</div>`});
- document.getElementById('historyList').innerHTML=html;
- document.getElementById('topupHistory').innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
+ const hl=document.getElementById('historyList'); if(hl) hl.innerHTML=html;
+const th=document.getElementById('topupHistory'); if(th) th.innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
 }
-function filterHistory(type,el){CUR_H=type; el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderHistory();}
+function filterHistory(type,el){CUR_H=type; if(el){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderHistory();}
 
 function tabSet(id,el){document.querySelectorAll('.set-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('set-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
 function tabApi(id,el){document.querySelectorAll('.api-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('api-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
@@ -835,7 +836,18 @@ function copyRef(){navigator.clipboard.writeText(document.getElementById('refLin
   localStorage.removeItem('kratis_logged');
   window.location.href='login.html';
 }
-function renderAll(){renderDashboard(); renderGB(); renderIntl(); renderGift(); renderUtility(); renderECG(); renderVouchers(); renderAFA(); renderServices(); renderHistory();}
+function renderAll(){
+  try{renderDashboard()}catch(e){console.log('Dashboard',e)}
+  try{renderGB()}catch(e){console.log('GB',e)}
+  try{renderIntl()}catch(e){console.log('Intl',e)}
+  try{renderGift()}catch(e){console.log('Gift',e)}
+  try{renderUtility()}catch(e){console.log('Utility',e)}
+  try{renderECG()}catch(e){console.log('ECG',e)}
+  try{renderVouchers()}catch(e){console.log('Vouchers',e)}
+  try{renderAFA()}catch(e){console.log('AFA',e)}
+  try{renderServices()}catch(e){console.log('Services',e)}
+  try{renderHistory()}catch(e){console.log('History',e)}
+}
 updateTierUI(); renderAll();
 // KRATIS FIX - FORCE AGENT + REMOVE LOCK
 // Step 1: Override setTier to ALLOW AGENT always
