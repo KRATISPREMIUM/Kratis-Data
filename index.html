@@ -832,10 +832,11 @@ function applyViaWhatsApp(){
 }
 function copyRef(id){let el=document.getElementById(id); if(el){el.select(); navigator.clipboard.writeText(el.value||el.innerText);} alert('Copied!');}
 function withdrawRef(){let num=prompt('Enter MoMo Number:'); if(!num) return; let comm=parseFloat(localStorage.getItem('kratis_commission')||'0'); alert('✅ Withdrawal Requested! ₵'+comm.toFixed(2)+' to '+num); localStorage.setItem('kratis_commission','0'); renderReferral();}
+function logout(){  
   localStorage.removeItem('kratis_logged_user');
   localStorage.removeItem('kratis_logged');
   window.location.href='login.html';
-}
+
 function renderReferral(){
   let refEl=document.getElementById('refLink');
   let box=refEl?refEl.closest('section,div[class*="panel"],div[id*="referral"]'):document.getElementById('page-referral');
