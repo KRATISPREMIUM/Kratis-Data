@@ -392,12 +392,9 @@ document.getElementById('serviceType')?.addEventListener('change', loadUtility);
 setTimeout(loadUtility, 1000);
 </script>
 
-<div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="ecg-grid" class="grid"></div><div id="ecgList"></div></div>
-<div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all')">All Vouchers</button><button onclick="filterVoucher('wassce')">WASSCE Results Voucher</button><button onclick="filterVoucher('bece')">BECE Results Voucher</button></div><div id="voucherList" class="grid"></div></div>
-<div id="view-afa" class="hidden">
-<div style="display:flex;gap:8px;margin-bottom:10px;"><span style="background:#FFD700;color:#000;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold;">● MTN AFA Program</span></div>
-<h3 style="color:#fff;font-size:22px;margin:0;">AFA Bundle Registration</h3>
-<p style="color:#aaa;font-size:13px;margin:5px 0 15px;">Register for MTN's All-For-All bundle and enjoy exclusive benefits</p>
+<div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="ecg-grid" class="grid"></div></div>
+<div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all')">All Vouchers</button><button onclick="filterVoucher('wassce')">WASSCE</button><button onclick="filterVoucher('bece')">BECE</button></div><div id="voucherList" class="grid"></div></div>
+
 
 <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:15px;max-width:900px;">
 <!-- LEFT: AFA Package -->
@@ -637,20 +634,19 @@ const SERVICES=[
 ];
 
 function go(view){
- document.querySelectorAll('[id^="view-"]').forEach(v=>v.classList.add('hidden'));
- document.getElementById('view-'+view).classList.remove('hidden');
- document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
- const btn=document.getElementById('m-'+view); if(btn) btn.classList.add('active');
- if(view==='dashboard') renderDashboard();
- if(view==='ghana_gb') renderGB();
- if(view==='intl') renderIntl();
- if(view==='gift') renderGift();
- if(view==='utility') renderUtility();
- if(view==='ecg') renderECG();
- if(view==='vouchers') renderVouchers();
- if(view==='afa') renderAFA();
- if(view==='services') renderServices();
- if(view==='history') renderHistory();
+  document.querySelectorAll('[id^="view-"]').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  const target = document.getElementById('view-'+view);
+  if(target){ target.classList.remove('hidden'); }
+  const btn = document.getElementById('m-'+view);
+  if(btn){ btn.classList.add('active'); }
+  window.scrollTo(0,0);
+  if(view==='ghana_gb' && typeof renderProducts==='function') renderProducts('GHANA_GB');
+  if(view==='ecg' && typeof renderProducts==='function') renderProducts('ECG');
+  if(view==='vouchers' && typeof renderProducts==='function') renderProducts('VOUCHER');
+  if(view==='gift' && window.loadGiftCards) setTimeout(loadGiftCards,200);
+  if(view==='utility' && window.loadUtility) setTimeout(loadUtility,200);
+  if(view==='intl' && window.showIntl) setTimeout(()=>showIntl('airtime'),200);
 }
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
