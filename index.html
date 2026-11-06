@@ -799,8 +799,8 @@ function confirmBuy(){
  if(!rec){alert('Enter recipient');return;}
  const amt=CUR.prices[TIER];
  if(WALLET<amt){alert('Insufficient wallet! Top-up first.');renderWallet();closeM('buyModal');return;}
- WALLET-=amt; localStorage.setItem('kratis_wallet',WALLET);
- const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:'MTN',net:'MTN',price:amt,bal:WALLET,to:rec,amount:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
+ WALLET=parseFloat((WALLET-amt).toFixed(2)); localStorage.setItem('kratis_wallet',WALLET);
+ const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:'MTN',net:'MTN',price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
  closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
 }
