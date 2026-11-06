@@ -802,6 +802,7 @@ function doTopup(){
  WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',amount:amt,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
  ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
+  saveRealDeposit(amt,'Auto','paystack');
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
 }
 function applyAgent(){ alert('Use new Apply as AGENT button!'); }
@@ -958,5 +959,25 @@ function renderHistory(t){
  box.innerHTML=html;
 }
 function filterHistory(){let q=document.getElementById('histSearch').value.toLowerCase();document.querySelectorAll('#histBody tr').forEach(r=>{r.style.display=r.innerText.toLowerCase().includes(q)?'':'none'});}
+</script>
+<script>
+function saveRealOrder(size,to,net,amt,status){
+ try{
+  let orders=JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+  let bal=localStorage.getItem('kratis_wallet')||'GHS 0.00';
+  let id='ORD-'+Math.floor(100000+Math.random()*900000);
+  orders.unshift({id:id,size:size,to:to,net:net,status:status||'Delivered',amt:+amt,bal:bal});
+  localStorage.setItem('kratis_orders',JSON.stringify(orders.slice(0,100)));
+  console.log('Saved to History:',id);
+ }catch(e){}
+}
+function saveRealDeposit(amt,method,platform){
+ try{
+  let deps=JSON.parse(localStorage.getItem('kratis_deposits')||'[]');
+  let id='DEP-'+Math.floor(100000+Math.random()*900000);
+  deps.unshift({id:id,amt:+amt,method:method||'Auto',platform:platform||'paystack',status:'Credited'});
+  localStorage.setItem('kratis_deposits',JSON.stringify(deps));
+ }catch(e){}
+}
 </script></body>
 </html>
