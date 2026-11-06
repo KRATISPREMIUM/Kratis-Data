@@ -839,8 +839,9 @@ function logout(){
 }
 function renderReferral(){
 let refEl=document.getElementById('refLink');
-let box=refEl?refEl.closest('section,div'):document.getElementById('referral');
-if(!box){return;}
+let box=refEl?refEl.closest('section'):document.getElementById('referral');
+if(!box||box.dataset.done){return;}
+box.dataset.done='1';
 let code='KRCEO26';
 let link=location.origin+location.pathname+'?ref='+code;
 let comm=parseFloat(localStorage.getItem('kratis_commission')||'0');
