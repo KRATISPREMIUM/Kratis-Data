@@ -714,10 +714,10 @@ function renderDashboard(){
 }
 function renderGB(){
  let list=PRODUCTS.filter(p=>p.cat==='GHANA_GB');
- if(CUR_GB!=='all') list=list.filter(p=>p.sub===CUR_GB);
+ if(CUR_GB!=='all') list=list.filter(p=>(p.sub||'').toLowerCase().includes(CUR_GB.toLowerCase().replace(' gb','')));
  document.getElementById('grid-ghana_gb').innerHTML=list.map(p=>makeCard(p)).join('');
 }
-function filterGB(sub,el){ghana_GB=sub||'all'; if(el&&el.parentElement){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderGB();}
+function filterGB(sub,el){CUR_GB=sub||'all'; ghana_GB=CUR_GB; if(el&&el.parentElement){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderGB();}
 
 function renderIntl(){
   const c=document.getElementById('f-intl-country')?.value || 'all';
