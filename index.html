@@ -96,7 +96,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 <button onclick="go('history')"><i class="fa-solid fa-clock-rotate-left"></i> History • Everything</button>
 <button onclick="go('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
 <button id="apiBtn" onclick="go('api')" class="hidden"><i class="fa-solid fa-code"></i> API Management <span class="badge">AGENT/DEALER ONLY</span></button>
-<button onclick="go('topup')"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
+<button onclick="go('wallet')"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
 </div>
 </div>
 
@@ -110,7 +110,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 </div>
 <span id="tierBadge" style="font-size:10px;background:#222;border:1px solid #333;padding:4px 8px;border-radius:20px">USER MODE</span>
 </div>
-<div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('topup')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button> <button class="btn-gold" style="background:#ff3b3b;color:#fff;border:1px solid #ff3b3b" onclick="logout()">Logout</button></div>
+<div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('wallet')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button> <button class="btn-gold" style="background:#ff3b3b;color:#fff;border:1px solid #ff3b3b" onclick="logout()">Logout</button></div>
 </div>
 
 <div class="content">
@@ -797,7 +797,7 @@ function confirmBuy(){
  const rec=document.getElementById('buyRecipient').value.trim();
  if(!rec){alert('Enter recipient');return;}
  const amt=CUR.prices[TIER];
- if(WALLET<amt){alert('Insufficient wallet! Top-up first.');go('topup');closeM('buyModal');return;}
+ if(WALLET<amt){alert('Insufficient wallet! Top-up first.');go('wallet');closeM('buyModal');return;}
  WALLET-=amt; localStorage.setItem('kratis_wallet',WALLET);
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,amount:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
