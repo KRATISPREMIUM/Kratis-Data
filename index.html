@@ -653,6 +653,7 @@ function go(view){
   if(view==='services') renderServices();
   if(view==='history') renderHistory();
   if(view==='referral') renderReferral();
+  if(view==='wallet'){let h=document.getElementById('view-history');if(h)h.classList.remove('hidden');renderWallet();}
 }
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
@@ -756,8 +757,13 @@ function renderServices(){
   if(!grid) return;
   grid.innerHTML=SERVICES.map(s=>`<div class="card"><h4>${s.name}</h4><p>${s.desc}</p><button class="btn" onclick="window.open('https://wa.me/233209136208?text='+encodeURIComponent(s.wa),'_blank')">Launch via WhatsApp</button></div>`).join('');
 }
-
-function renderHistory(){
+function renderWallet(){
+ let box=document.getElementById('historylist');
+ if(!box) return;
+ let deps=ORDERS.filter(o=>o.hist==='DEPOSIT');
+ box.innerHTML=`<div style="padding:5px;color:#fff"><h2 style="margin:0 0 5px">Wallet Top-up</h2><p style="color:#aaa;margin:0 0 15px">Balance: <b style="color:#facc15">GHS ${WALLET.toFixed(2)}</b></p><div style="background:#1e1e2d;padding:20px;border-radius:12px;max-width:500px;margin-bottom:20px"><label>Amount (GHS)</label><input id="topupAmt" type="number" placeholder="e.g. 50" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #333;background:#12121e;color:#fff;box-sizing:border-box"><button onclick="doTopup()" style="width:100%;padding:12px;background:#facc15;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Top-up Now</button></div><h3>My Deposits (${deps.length})</h3>${deps.length?deps.slice().reverse().map(d=>`<div style="background:#1e1e2d;padding:12px;border-radius:8px;margin:8px 0">${d.id} • GHS ${(+d.amount).toFixed(2)} • ${d.status||'Credited'}</div>`).join(''):'<p style="color:#666">No deposits yet. Top-up above.</p>'}</div>`;
+}
+  function renderHistory(){
  let list=ORDERS;
  if(CUR_H!=='all'){
    if(CUR_H==='orders') list=ORDERS.filter(o=>!['DEPOSIT','REFUND','AFA','VOUCHER'].includes(o.hist));
