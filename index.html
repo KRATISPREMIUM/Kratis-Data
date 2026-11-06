@@ -542,7 +542,7 @@ async function submitAFA(){
 
 <div id="view-api" class="hidden"><div class="hero-card"><h3>🔌 API Management — AGENT/DEALER ONLY (Not for USER)</h3><div class="tabs"><button class="active" onclick="tabApi('keys',this)">API Keys</button><button onclick="tabApi('playground',this)">API Playground</button><button onclick="tabApi('docs',this)">API Docs</button><button onclick="tabApi('config',this)">API Configuration</button></div><div id="api-keys" class="api-panel"><div class="list-item">Live Key: <b>kratis_live_xxx...xxxx</b> <button class="btn-gold" style="padding:4px 8px;font-size:10px" onclick="alert('Copied')">Copy</button><br>Test Key: <b>kratis_test_xxx...xxxx</b></div></div><div id="api-playground" class="api-panel hidden"><div class="list-item">Test endpoint: POST /api/v1/data/mtn_gb<br>Response: {status: success, order_id: KR-...}</div></div><div id="api-docs" class="api-panel hidden"><div class="list-item">Docs: Ghana GB API, International Bundle API, Gift Cards API, Utility Payments API, Vouchers API... Full docs at /docs</div></div><div id="api-config" class="api-panel hidden"><div class="list-item">Webhook URL: <input class="input" placeholder="https://yourdomain.com/webhook"><br>IP Whitelist: <input class="input" placeholder="0.0.0.0"></div></div></div></div>
 
-<div id="view-topup" class="hidden"><div class="hero-card"><h3>💰 Wallet Top-up</h3><input id="topupAmt" type="number" class="input" placeholder="Amount e.g. 100"><button class="btn-gold" style="width:100%;margin-top:12px" onclick="doTopup()">Request Top-up • Transaction Manager Confirms</button><div style="margin-top:12px;font-size:11px;color:#666">History: <span id="topupHistory">No deposits yet</span></div></div></div>
+<div id="view-wallet" class="hidden"><div class="hero-card"><h3>💰 Wallet Top-up</h3><input id="walletAmt" type="number" class="input" placeholder="Amount e.g. 100"><button class="btn-gold" style="width:100%;margin-top:12px" onclick="dowallet()">Request Top-up • Transaction Manager Confirms</button><div style="margin-top:12px;font-size:11px;color:#666">History: <span id="walletHistory">No deposits yet</span></div></div></div>
 </div>
 </div>
 
@@ -763,7 +763,7 @@ function renderWallet(){
  if(!v){v=document.createElement('div');v.id='view-wallet';v.className='view hidden';document.body.appendChild(v);}
   document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden')); v.classList.remove('hidden'); v.style.display='block'; v.style.position='relative'; v.style.zIndex='5'; v.style.marginLeft='260px'; v.style.paddingTop='80px';
  let deps=ORDERS.filter(o=>o.hist==='DEPOSIT');
- v.innerHTML='<div style="padding:20px;color:#fff"><h2>Wallet Top-up</h2><p>Balance: <b style="color:#facc15">GHS '+WALLET.toFixed(2)+'</b></p><div style="background:#1e1e2d;padding:20px;border-radius:12px;max-width:500px;margin:15px 0"><label>Amount (GHS)</label><input id="topupAmt" type="number" placeholder="e.g. 50" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #333;background:#12121e;color:#fff;box-sizing:border-box"><button onclick="doTopup()" style="width:100%;padding:12px;background:#facc15;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Top-up Now</button></div><h3>My Deposits ('+deps.length+')</h3>'+(deps.length?deps.slice().reverse().map(d=>'<div style="background:#1e1e2d;padding:12px;border-radius:8px;margin:8px 0">'+d.id+' - GHS '+(+d.amount).toFixed(2)+'</div>').join(''):'<p style="color:#666">No deposits yet.</p>')+'</div>';
+ v.innerHTML='<div style="padding:20px;color:#fff"><h2>Wallet Top-up</h2><p>Balance: <b style="color:#facc15">GHS '+WALLET.toFixed(2)+'</b></p><div style="background:#1e1e2d;padding:20px;border-radius:12px;max-width:500px;margin:15px 0"><label>Amount (GHS)</label><input id="walletAmt" type="number" placeholder="e.g. 50" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #333;background:#12121e;color:#fff;box-sizing:border-box"><button onclick="dowallet()" style="width:100%;padding:12px;background:#facc15;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Top-up Now</button></div><h3>My Deposits ('+deps.length+')</h3>'+(deps.length?deps.slice().reverse().map(d=>'<div style="background:#1e1e2d;padding:12px;border-radius:8px;margin:8px 0">'+d.id+' - GHS '+(+d.amount).toFixed(2)+'</div>').join(''):'<p style="color:#666">No deposits yet.</p>')+'</div>';
 }
   function renderHistory(){
  let list=ORDERS;
@@ -777,7 +777,7 @@ function renderWallet(){
  let html=list.length?'':'<div class="list-item" style="color:#666">No history yet. Everything you do will appear here: orders, refunds, deposits, afa registration, voucher purchases.</div>';
  list.slice().reverse().forEach(o=>{html+=`<div class="list-item"><b>${o.id}</b> • ${o.name} • ${o.recipient||''}<br><span style="color:${o.status.includes('Pending')?'#FFD700':'#00ff88'}">${o.status}</span> • GHS ${o.amount} • ${o.date} • Type: ${o.hist||o.cat}</div>`});
  const hl=document.getElementById('historyList'); if(hl) hl.innerHTML=html;
-const th=document.getElementById('topupHistory'); if(th) th.innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
+const th=document.getElementById('walletHistory'); if(th) th.innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
 }
 function filterHistory(type,el){CUR_H=type; if(el){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderHistory();}
 
@@ -804,8 +804,8 @@ function confirmBuy(){
  ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
  closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
 }
-function doTopup(){
- const amt=parseFloat(document.getElementById('topupAmt').value);
+function dowallet(){
+ const amt=parseFloat(document.getElementById('walletAmt').value);
  if(!amt||amt<1){alert('Enter valid amount');return;}
  WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',amount:amt,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
