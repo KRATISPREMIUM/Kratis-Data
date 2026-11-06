@@ -812,6 +812,7 @@ function dowallet(){
  ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
   saveRealDeposit(amt,'Auto','paystack');
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
+  renderWallet();
 }
 function applyAgent(){ alert('Use new Apply as AGENT button!'); }
 function applyAsAgent(){
