@@ -808,7 +808,7 @@ function dowallet(){
  const amt=parseFloat(document.getElementById('walletAmt').value);
  if(!amt||amt<1){alert('Enter valid amount');return;}
  WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
- const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',amount:amt,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
+ const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
  ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
   saveRealDeposit(amt,'Auto','paystack');
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
