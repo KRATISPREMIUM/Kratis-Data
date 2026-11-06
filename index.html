@@ -839,9 +839,10 @@ function logout(){
 }
 function renderReferral(){
 let refEl=document.getElementById('refLink');
-let box=refEl?refEl.closest('section'):document.getElementById('referral');
-if(!box||box.dataset.done){return;}
-box.dataset.done='1';
+if(window._kratisRefDone){return;}
+window._kratisRefDone=true;
+let box=refEl?refEl.closest('div'):document.getElementById('referral');
+if(!box){return;}
 let code='KRCEO26';
 let link=location.origin+location.pathname+'?ref='+code;
 let comm=parseFloat(localStorage.getItem('kratis_commission')||'0');
@@ -930,6 +931,7 @@ function go(view){
   if(view==='gift' && window.loadGiftCards) setTimeout(loadGiftCards,200);
   if(view==='utility' && window.loadUtility) setTimeout(loadUtility,200);
   if(view==='intl' && window.showIntl) setTimeout(()=>showIntl('airtime'),200);
+  if(view==='referral' && typeof renderReferral==='function') renderReferral();
 }
 </script>
 </body>
