@@ -767,7 +767,7 @@ function renderWallet(){
 }
   function renderHistory(){
  let list=ORDERS;
- if(CUR_H!=='all'){
+ if(CUR_H!=='all'){ if(CUR_H==='mtn') list=ORDERS.filter(o=>(o.net==='MTN'||o.network==='MTN')&&!String(o.name||'').includes('AirtelTigo')&&!String(o.name||'').includes('Telecel')); if(CUR_H==='at') list=ORDERS.filter(o=>o.net==='AT'||o.network==='AT'||String(o.name||'').includes('AirtelTigo')); if(CUR_H==='telecel') list=ORDERS.filter(o=>o.net==='Telecel'||o.network==='Telecel'||String(o.name||'').includes('Telecel'));
    if(CUR_H==='orders') list=ORDERS.filter(o=>!['DEPOSIT','REFUND','AFA','VOUCHER'].includes(o.hist));
    if(CUR_H==='deposits') list=ORDERS.filter(o=>o.hist==='DEPOSIT');
    if(CUR_H==='refunds') list=ORDERS.filter(o=>o.hist==='REFUND');
