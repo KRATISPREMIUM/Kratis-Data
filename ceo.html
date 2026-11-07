@@ -113,7 +113,7 @@ function prices(){return JSON.parse(localStorage.getItem(PKEY)||'null')||[
 function showView(v){['dash','users','orders','prices'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'block':'none'); render();}
 function render(){
  let u=users(), o=allOrders(), p=prices();
-u=u.map(x=>{ if(!x.status && x.role){ x.status = x.role==='pending_agent' ? 'pending' : x.role; } if(x.role==='pending_agent'){ x.status='pending'; } return x; });
+u=u.map(x=>{ if(!x.status && x.role){ x.status = x.role==='pending_agent' ? 'pending' : x.role; } if(x.role==='pending_agent' && (!x.status || x.status==='pending')){ x.status='pending'; } return x; });
 const pending=u.filter(x=>x.status==='pending'), agents=u.filter(x=>x.status==='agent'), dealers=u.filter(x=>x.status==='dealer');
  const total=o.reduce((s,x)=>s+parseFloat(x.amount||0),0);
  document.querySelectorAll('.amt').forEach(e=>e.textContent=total); document.getElementById('profit').textContent=total;
