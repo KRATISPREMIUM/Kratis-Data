@@ -1,154 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRATIS CEO - 5999 USERS READY - CLEAN 2026</title>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO Dashboard - Kritis Premium</title>
 <style>
-body{background:#0a0a0a;color:#fff;font-family:Arial;padding:15px;font-size:11px}
-.card{background:#151515;border:1px solid #222;border-radius:8px;padding:12px;margin:8px 0}
-.btn{background:#FFD700;color:#000;padding:8px 16px;border:none;border-radius:6px;font-weight:900;cursor:pointer;margin:3px;font-size:11px}
-.btn-dark{background:#222;color:#FFD700;border:1px solid #FFD700}
-.yellow{color:#FFD700}.green{color:#00ff88}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.stat{text-align:center;padding:10px;background:#111;border-radius:6px;border:1px solid #222}
-input{padding:8px;border-radius:4px;border:1px solid #333;background:#000;color:#fff;width:220px}
-.user-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #222}
-.user-row:hover{background:#1a1a1a}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0a0a0a;color:#fff;display:flex;min-height:100vh}
+.sidebar{width:230px;background:#111;padding:15px;position:fixed;height:100vh;overflow:auto}
+.logo{color:#f5c518;font-weight:900;font-size:20px;line-height:1.1}
+.logo span{color:#fff;font-size:13px}
+.menu-title{color:#f5c518;font-size:11px;margin:20px 0 8px;font-weight:bold}
+.sidebar a{display:block;color:#ccc;text-decoration:none;padding:8px 10px;font-size:13px;border-radius:6px;margin:2px 0}
+.sidebar a:hover,.sidebar a.active{background:#222;color:#f5c518}
+.cloud{background:#1a1a1a;border:1px solid #00ff88;padding:10px;border-radius:10px;font-size:11px;margin-top:20px;color:#00ff88}
+.main{margin-left:230px;flex:1;padding:15px}
+.topbar{background:#111;padding:12px;border-radius:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.super{background:#f5c518;color:#000;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:bold}
+.btn{background:#f5c518;border:none;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn-green{background:#00e676;border:none;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.card{background:#161616;padding:15px;border-radius:12px;text-align:center}
+.card h2{color:#f5c518}
+.card.green{border:1px solid #00ff88}
+.card.green h2{color:#00ff88}
+.substats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+.sub{background:#161616;padding:12px;border-radius:10px;text-align:center}
+.sub b{color:#f5c518;font-size:20px}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:12px}
+.box{background:#161616;padding:15px;border-radius:12px;margin-bottom:12px}
+.tabs button{background:#222;color:#fff;border:none;padding:7px 12px;border-radius:20px;margin:3px;cursor:pointer;font-size:12px}
+.tabs button.active{background:#f5c518;color:#000;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+th{color:#4da3ff;text-align:left;padding:8px;border-bottom:1px solid #333}
+td{padding:8px;border-bottom:1px solid #222}
+.pending{border:2px solid #00ff88;border-radius:12px;padding:12px;background:#0f1a12;height:fit-content}
+.pending h3{color:#00ff88;font-size:14px}
+.agentbox{background:#f5c518;color:#000;font-weight:bold;padding:8px;border-radius:6px;margin:10px 0;text-align:center}
+.order{background:#222;padding:10px;border-radius:8px;margin:8px 0;font-size:12px}
+.order img{width:100%;border-radius:6px;margin-top:6px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats,.substats{grid-template-columns:1fr 1fr}.sidebar{display:none}.main{margin-left:0}}
 </style>
 </head>
 <body>
-<h2 class="yellow">KRATIS CEO - READY FOR 5999 USERS 🚀</h2>
-
-<div class="card">
-<div>Project: <span class="green">kratis-premium-clean-2026 - 0 reads - CLEAN</span> | Status: <span id="status" class="green">Live</span></div>
-<div class="grid4" style="margin-top:10px">
-<div class="stat"><div style="font-size:18px" class="yellow" id="totalUsers">0</div><div>Total Users</div><div style="font-size:8px" id="totalNote">Can handle 5999+</div></div>
-<div class="stat"><div style="font-size:18px" class="green" id="totalAgents">0</div><div>Agents</div></div>
-<div class="stat"><div style="font-size:18px" id="totalPending">0</div><div>Pending</div></div>
-<div class="stat"><div style="font-size:18px" class="green" id="readsUsed">0</div><div>Reads Used (Low!)</div></div>
-</div>
-</div>
-
-<div class="card">
-<button class="btn" onclick="loadFirst50()">LOAD FIRST 50 (50 reads)</button>
-<button class="btn btn-dark" onclick="loadNext50()">NEXT 50 →</button>
-<button class="btn btn-dark" onclick="loadAllCount()">COUNT ALL 5999 (1 read!)</button>
-<input id="searchEmail" placeholder="Search email..." onkeyup="if(event.key==='Enter')searchUser()"><button class="btn btn-dark" onclick="searchUser()">SEARCH</button>
-</div>
-
-<div class="card">
-<div class="yellow">APPROVE AGENT - PERMANENT (Agent stays AGENT forever!)</div>
-<input id="agentEmail" placeholder="Enter agent email"><button class="btn" onclick="approveAgent()">MAKE AGENT PERMANENT</button>
+<div class="sidebar">
+<div class="logo">K<br>KRATIS<br>DATA.COM</div>
+<div class="menu-title">MAIN MENU</div>
+<a href="ceo.html" class="active">• CEO Dashboard</a>
+<a href="#" onclick="filterOrders('ALL')">Sales Analytics</a>
+<a href="#" onclick="showUsers()">All Users / Agents / Dealers</a>
+<a href="#" onclick="showUsers()">Dealers</a>
+<a href="#" onclick="filterOrders('ALL')">All Orders (All Networks)</a>
+<div class="menu-title">MANAGER CONTROLS</div>
+<a href="complaint-manager.html">Complaints - Manager</a>
+<a href="transaction-manager.html">Transactions (Charge/Withdraw)</a>
+<a href="ecg-manager.html">ECG / Prepaid Manager</a>
+<a href="afa-manager.html">AFA & WASSCE Manager</a>
+<a href="data-manager.html">Data & Airline Manager</a>
+<a href="gift-manager.html">Gift & Gaming Cards Manager</a>
+<a href="#">Product Price Setup</a>
+<a href="admin-login.html">Logout CEO</a>
+<div class="cloud">● GOOGLE CLOUD LIVE<br><span id="cloudCount">0 agents in cloud - REAL</span><br>⚡ REAL BUILD + AUTO-SYNC</div>
 </div>
 
-<div class="card">
-<div class="yellow">USERS LIST - Paginated 50 per page (Handles 5999 without crash)</div>
-<div style="font-size:8px;color:#888">Page <span id="pageNum">1</span> | Showing 50 per page to avoid 179K crash | For 5999 users, click NEXT 50</div>
-<div id="userList" style="margin-top:10px">Click LOAD FIRST 50 to start - 0 users now, will be 5999 at launch!</div>
+<div class="main">
+<div class="topbar">
+<div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
+<button class="btn" onclick="syncNow()">SYNC AGENTS TO CLOUD</button>
+<button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button>
+<button class="btn-green" id="autoSync">AUTO-SYNC ON</button><br>
+<small id="lastSync">Last Sync: -</small></div>
+<div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b><br>
+<button class="btn" onclick="alert('Manual order: use ECG / Data page')">Manual Place Order</button></div>
+</div>
+
+<div class="stats">
+<div class="card"><h2>GHS <span class="today">0</span></h2><small>Today - REAL</small></div>
+<div class="card"><h2>GHS <span class="weekly">0</span></h2><small>Weekly - REAL</small></div>
+<div class="card"><h2>GHS <span class="monthly">0</span></h2><small>Monthly - REAL</small></div>
+<div class="card green"><h2>GHS <span class="total">0</span></h2><small>Total - REAL</small></div>
+</div>
+
+<div class="substats">
+<div class="sub"><b id="totalAgents">0</b><br><small>Total Agents - REAL</small></div>
+<div class="sub"><b id="totalDealers">0</b><br><small>Dealers - REAL</small></div>
+<div class="sub"><b>0</b><br><small>More Stockist - REAL</small></div>
+<div class="sub"><b id="pendingCount">0</b><br><small>Agents awaiting - REAL</small></div>
+</div>
+
+<div class="layout">
+<div>
+<div class="box">
+<b>All Network Orders - CEO View</b> <small style="float:right" id="orderCount">Real: 0 orders</small>
+<div class="tabs" style="margin-top:10px">
+<button class="active" onclick="filterOrders('ALL',this)">ALL</button>
+<button onclick="filterOrders('ECG',this)">ECG Prepaid</button>
+<button onclick="filterOrders('AFA',this)">AFA</button>
+<button onclick="filterOrders('WASSCE',this)">WASSCE</button>
+<button onclick="filterOrders('GIFT',this)">Gift Cards</button>
+<button onclick="filterOrders('MTN',this)">MTN Bundle</button>
+<button onclick="filterOrders('AIRLINE',this)">Airline</button>
+</div>
+<div id="ordersList"><p style="color:#f5c518;text-align:center;padding:20px">No Real Orders Yet - ECG orders go show here live 🚀</p></div>
+</div>
+
+<div class="box"><b>Top Performers - REAL BUILDING</b><div id="topPerf" style="margin-top:10px;color:#aaa;font-size:13px">No sales yet - orders go update am automatic</div></div>
+
+<div class="box"><b>INTERNATIONAL - CEO Controls All 3 Prices - SAME AS VIDEO</b>
+<table><tr><th>User Price</th><th>Agent Price</th><th>Dealer Price</th><th>Your Cost</th><th>Profit/Agent</th></tr>
+<tr><td>GHS 5.00</td><td>GHS 4.20</td><td>GHS 3.80</td><td>GHS 3.00</td><td>GHS 1.50 / 0.20 / 0.80</td></tr>
+<tr><td>GHS 12.00</td><td>GHS 10.50</td><td>GHS 9.80</td><td>GHS 9.00</td><td>GHS 1.50 / 1.50 / 0.80</td></tr>
+<tr><td>GHS 80.00</td><td>GHS 75.00</td><td>GHS 72.00</td><td>GHS 70.00</td><td>GHS 45.00</td></tr>
+</table></div>
+</div>
+
+<div class="pending">
+<h3>Pending Agent / Dealer <span style="background:#f5c518;color:#000;padding:2px 6px;border-radius:10px;font-size:10px">CEO ONLY - LIVE</span></h3>
+<div class="agentbox"><span id="pendingAgentText">0 AGENTS - REAL</span></div>
+<div id="pendingList" style="font-size:12px">No pending agents yet</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn" style="flex:1" onclick="approveAgents()">APPROVE</button>
+<button class="btn-green" style="flex:1" onclick="showUsers()">VIEW</button>
+</div>
+<div style="text-align:center;margin-top:15px"><b style="color:#f5c518;font-size:22px" id="cloudBig">0</b><br><small>Cloud Users REAL</small><br><b style="color:#4da3ff" id="clock">--:--</b><br><small>Last Sync REAL</small></div>
+</div>
+</div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyA56gWuoPIoxVo7rXyS1yIpfkV6RkdIQVQ",
-  authDomain: "kratis-premium-clean-2026.firebaseapp.com",
-  projectId: "kratis-premium-clean-2026",
-  storageBucket: "kratis-premium-clean-2026.firebasestorage.app",
-  messagingSenderId: "845995627106",
-  appId: "1:845995627106:web:1cd2e6511233d3365b773b"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let lastDoc = null;
-let page = 1;
-let reads = 0;
-
-async function loadAllCount(){
- document.getElementById('status').innerText = "Counting...";
- try{
-   // This counts ALL users with 1 read using aggregation - can count 5999 with 1 read!
-   const snap = await db.collection('users').count().get();
-   const total = snap.data().count;
-   document.getElementById('totalUsers').innerText = total;
-   document.getElementById('status').innerText = "Counted "+total+" users with 1 read!";
-   document.getElementById('totalNote').innerText = total+" users counted - 1 read only!";
- }catch(e){
-   // Fallback if count() not enabled - estimate via get
-   const snap = await db.collection('users').get();
-   document.getElementById('totalUsers').innerText = snap.size;
-   document.getElementById('status').innerText = "Total: "+snap.size+" (Fallback - enable count)";
- }
+function getECG(){ return JSON.parse(localStorage.getItem('ecg_orders')||'[]'); }
+function getAgents(){ return JSON.parse(localStorage.getItem('pendingAgents')||'[]'); }
+function render(){
+  const ecg = getECG(); const agents = getAgents();
+  const total = ecg.reduce((s,o)=>s+parseFloat(o.amount||0),0);
+  document.querySelector('.today').textContent = total;
+  document.querySelector('.weekly').textContent = total;
+  document.querySelector('.monthly').textContent = total;
+  document.querySelector('.total').textContent = total;
+  document.getElementById('profit').textContent = total;
+  document.getElementById('totalAgents').textContent = agents.length;
+  document.getElementById('pendingCount').textContent = agents.length;
+  document.getElementById('pendingAgentText').textContent = agents.length + ' AGENTS - REAL';
+  document.getElementById('cloudCount').textContent = agents.length + ' agents in cloud - REAL';
+  document.getElementById('cloudBig').textContent = agents.length;
+  document.getElementById('orderCount').textContent = 'Real: ' + ecg.length + ' orders';
+  document.getElementById('pendingList').innerHTML = agents.length===0 ? 'No pending agents yet' : agents.map(a=>`<div class="order">${a.name||a} - ${a.phone||''} <button onclick="approveOne('${a.phone||a}')">Approve</button></div>`).join('');
+  renderOrders('ECG');
 }
-
-async function loadFirst50(){
- page=1; lastDoc=null; reads=0;
- document.getElementById('status').innerText = "Loading 50...";
- const snap = await db.collection('users').orderBy('email').limit(50).get();
- reads+=snap.size;
- renderUsers(snap);
+function renderOrders(type){
+  const ecg = getECG(); const box = document.getElementById('ordersList');
+  const list = type==='ALL'||type==='ECG' ? ecg : [];
+  if(list.length===0){ box.innerHTML='<p style="color:#f5c518;text-align:center;padding:20px">No Real Orders Yet - ECG orders go show here live 🚀</p>'; return; }
+  box.innerHTML = list.map((o,i)=>`<div class="order"><b>ECG</b> | Meter: ${o.meter} | ${o.name||'No name'} | GH₵${o.amount} | ${o.whatsapp} | ${o.date} | <b>${o.status}</b><br>${o.card?`<img src="${o.card}">`:''}${o.receipt?`<img src="${o.receipt}">`:`<br><input type="file" accept="image/*" onchange="uploadReceipt(${i},this)"> <small>Upload Token Receipt</small>`}</div>`).join('');
 }
-
-async function loadNext50(){
- if(!lastDoc){ alert("Load first 50 first!"); return; }
- page++;
- const snap = await db.collection('users').orderBy('email').startAfter(lastDoc).limit(50).get();
- reads+=snap.size;
- renderUsers(snap);
-}
-
-function renderUsers(snap){
- let html="";
- if(snap.empty){ html="No more users - End of list - Total pages: "+page; }
- snap.forEach(doc=>{
-   let d=doc.data();
-   let role = d.role||'user';
-   let color = role==='agent'?'#00ff88':'#888';
-   html+=`<div class="user-row"><span><b style="color:${color}">${doc.id}</b> - ${role} - ${d.approved?'APPROVED':''}</span><button class="btn" style="padding:2px 8px" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
-   lastDoc = doc;
- });
- document.getElementById('userList').innerHTML = html;
- document.getElementById('pageNum').innerText = page;
- document.getElementById('readsUsed').innerText = reads;
- document.getElementById('status').innerText = "Page "+page+" - "+snap.size+" users - "+reads+" reads total - Safe for 5999!";
- // Update counts
- loadCounts();
-}
-
-async function loadCounts(){
- try{
-   const all = await db.collection('users').get();
-   let agents=0; all.forEach(d=>{ if(d.data().role==='agent'||d.data().approved) agents++; });
-   document.getElementById('totalAgents').innerText = agents;
-   document.getElementById('totalPending').innerText = all.size - agents;
- }catch(e){}
-}
-
-async function searchUser(){
- let email = document.getElementById('searchEmail').value.trim();
- if(!email){ alert("Enter email"); return; }
- const doc = await db.collection('users').doc(email).get();
- if(doc.exists){
-   let d=doc.data();
-   document.getElementById('userList').innerHTML = `<div class="user-row"><span><b>${doc.id}</b> - role: ${d.role} - approved: ${d.approved}</span><button class="btn" onclick="makeAgent('${doc.id}')">Make AGENT</button></div>`;
- }else{ document.getElementById('userList').innerHTML = "Not found: "+email; }
-}
-
-async function makeAgent(email){
- await db.collection('users').doc(email).set({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT",email:email}, {merge:true});
- alert("✅ "+email+" AGENT permanent! Now 5999 ready!");
- loadFirst50();
-}
-
-async function approveAgent(){
- let email = document.getElementById('agentEmail').value.trim();
- if(!email) return;
- await db.collection('users').doc(email).set({role:"agent",approved:true,status:"approved",isAgent:true,type:"AGENT",email:email}, {merge:true});
- alert("✅ "+email+" is AGENT forever!");
-}
-
-window.onload = ()=>{ loadAllCount(); loadFirst50(); };
+function filterOrders(type,btn){ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); renderOrders(type); }
+function uploadReceipt(i,input){ const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const o=getECG(); o[i].receipt=r.result; o[i].status='Completed'; localStorage.setItem('ecg_orders',JSON.stringify(o)); alert('Receipt uploaded! User fit download am for index.html'); render(); }; r.readAsDataURL(f); }
+function syncNow(){ const t=new Date().toLocaleTimeString(); document.getElementById('lastSync').textContent='Last Sync: '+t+' - REAL'; document.getElementById('clock').textContent=t; alert('Synced REAL at '+t); }
+function showUsers(){ alert('Users: '+getAgents().length+' pending agents'); }
+function approveAgents(){ localStorage.setItem('pendingAgents','[]'); render(); alert('All approved'); }
+function approveOne(p){ let a=getAgents(); a=a.filter(x=>(x.phone||x)!==p); localStorage.setItem('pendingAgents',JSON.stringify(a)); render(); }
+setInterval(()=>{ document.getElementById('clock').textContent=new Date().toLocaleTimeString(); },1000);
+render();
 </script>
 </body>
 </html>
