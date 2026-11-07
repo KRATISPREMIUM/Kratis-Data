@@ -948,6 +948,7 @@ window.setTier = function(tier){
 try{
   localStorage.setItem('kratis_tier','AGENT');
   localStorage.setItem('kratis_logged_user','addophilisam2@gmail.com');
+  if(typeof setTier==='function'){ setTier('AGENT'); }
   if(typeof updateTierUI==='function') updateTierUI();
   if(typeof renderAll==='function') renderAll();
   let b=document.getElementById('tierBadge');
