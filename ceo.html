@@ -1,166 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CEO Dashboard - Kritis Premium</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#0a0a0a;color:#fff;display:flex;min-height:100vh}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0a0a0a;color:#fff;display:flex}
 .sidebar{width:230px;background:#111;padding:15px;position:fixed;height:100vh;overflow:auto}
-.logo{color:#f5c518;font-weight:900;font-size:20px;line-height:1.1}
-.logo span{color:#fff;font-size:13px}
-.menu-title{color:#f5c518;font-size:11px;margin:20px 0 8px;font-weight:bold}
-.sidebar a{display:block;color:#ccc;text-decoration:none;padding:8px 10px;font-size:13px;border-radius:6px;margin:2px 0}
+.logo{color:#f5c518;font-weight:900;font-size:20px}
+.menu-title{color:#f5c518;font-size:11px;margin:18px 0 8px;font-weight:bold}
+.sidebar a{display:block;color:#ccc;text-decoration:none;padding:8px 10px;font-size:13px;border-radius:6px;cursor:pointer}
 .sidebar a:hover,.sidebar a.active{background:#222;color:#f5c518}
 .cloud{background:#1a1a1a;border:1px solid #00ff88;padding:10px;border-radius:10px;font-size:11px;margin-top:20px;color:#00ff88}
 .main{margin-left:230px;flex:1;padding:15px}
 .topbar{background:#111;padding:12px;border-radius:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .super{background:#f5c518;color:#000;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:bold}
-.btn{background:#f5c518;border:none;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
-.btn-green{background:#00e676;border:none;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn{background:#f5c518;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn-red{background:#ff4444;color:#fff;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn-green{background:#00e676;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
 .card{background:#161616;padding:15px;border-radius:12px;text-align:center}
-.card h2{color:#f5c518}
-.card.green{border:1px solid #00ff88}
-.card.green h2{color:#00ff88}
-.substats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
-.sub{background:#161616;padding:12px;border-radius:10px;text-align:center}
-.sub b{color:#f5c518;font-size:20px}
-.layout{display:grid;grid-template-columns:1fr 340px;gap:12px}
+.card h2{color:#f5c518}.card.green{border:1px solid #00ff88}.card.green h2{color:#00ff88}
+.substats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sub{background:#161616;padding:12px;border-radius:10px;text-align:center}.sub b{color:#f5c518;font-size:20px}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:12px}
 .box{background:#161616;padding:15px;border-radius:12px;margin-bottom:12px}
 .tabs button{background:#222;color:#fff;border:none;padding:7px 12px;border-radius:20px;margin:3px;cursor:pointer;font-size:12px}
 .tabs button.active{background:#f5c518;color:#000;font-weight:bold}
 table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
-th{color:#4da3ff;text-align:left;padding:8px;border-bottom:1px solid #333}
-td{padding:8px;border-bottom:1px solid #222}
+th{color:#4da3ff;text-align:left;padding:8px;border-bottom:1px solid #333}td{padding:8px;border-bottom:1px solid #222}
+input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222;color:#fff;margin:3px}
 .pending{border:2px solid #00ff88;border-radius:12px;padding:12px;background:#0f1a12;height:fit-content}
-.pending h3{color:#00ff88;font-size:14px}
 .agentbox{background:#f5c518;color:#000;font-weight:bold;padding:8px;border-radius:6px;margin:10px 0;text-align:center}
 .order{background:#222;padding:10px;border-radius:8px;margin:8px 0;font-size:12px}
-.order img{width:100%;border-radius:6px;margin-top:6px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.stats,.substats{grid-template-columns:1fr 1fr}.sidebar{display:none}.main{margin-left:0}}
-</style>
-</head>
-<body>
-<div class="sidebar">
-<div class="logo">K<br>KRATIS<br>DATA.COM</div>
+</style></head><body>
+<div class="sidebar"><div class="logo">K<br>KRATIS DATA.COM</div>
 <div class="menu-title">MAIN MENU</div>
-<a href="ceo.html" class="active">• CEO Dashboard</a>
-<a href="#" onclick="filterOrders('ALL')">Sales Analytics</a>
-<a href="#" onclick="showUsers()">All Users / Agents / Dealers</a>
-<a href="#" onclick="showUsers()">Dealers</a>
-<a href="#" onclick="filterOrders('ALL')">All Orders (All Networks)</a>
+<a class="active" onclick="showView('dash')">• CEO Dashboard</a>
+<a onclick="showView('users')">All Users / Agents / Dealers</a>
+<a onclick="showView('users')">Dealers</a>
+<a onclick="showView('orders')">All Orders (All Networks)</a>
+<a onclick="showView('prices')">Product Price Setup</a>
 <div class="menu-title">MANAGER CONTROLS</div>
 <a href="complaint-manager.html">Complaints - Manager</a>
-<a href="transaction-manager.html">Transactions (Charge/Withdraw)</a>
+<a href="transaction-manager.html">Transactions</a>
 <a href="ecg-manager.html">ECG / Prepaid Manager</a>
 <a href="afa-manager.html">AFA & WASSCE Manager</a>
 <a href="data-manager.html">Data & Airline Manager</a>
 <a href="gift-manager.html">Gift & Gaming Cards Manager</a>
-<a href="#">Product Price Setup</a>
 <a href="admin-login.html">Logout CEO</a>
-<div class="cloud">● GOOGLE CLOUD LIVE<br><span id="cloudCount">0 agents in cloud - REAL</span><br>⚡ REAL BUILD + AUTO-SYNC</div>
-</div>
+<div class="cloud">● GOOGLE CLOUD LIVE<br><span id="cloudCount">0 users</span><br>⚡ REAL BUILD + AUTO-SYNC</div></div>
 
 <div class="main">
-<div class="topbar">
-<div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
-<button class="btn" onclick="syncNow()">SYNC AGENTS TO CLOUD</button>
-<button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button>
-<button class="btn-green" id="autoSync">AUTO-SYNC ON</button><br>
-<small id="lastSync">Last Sync: -</small></div>
-<div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b><br>
-<button class="btn" onclick="alert('Manual order: use ECG / Data page')">Manual Place Order</button></div>
+<div class="topbar"><div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
+<button class="btn" onclick="syncNow()">SYNC TO CLOUD</button> <button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button> <button class="btn-green">AUTO-SYNC ON</button><br><small id="lastSync">Last Sync: -</small></div>
+<div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b></div></div>
+
+<div id="view-dash">
+<div class="stats"><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Today</small></div><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Weekly</small></div><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Monthly</small></div><div class="card green"><h2>GHS <span class="amt">0</span></h2><small>Total</small></div></div>
+<div class="substats"><div class="sub"><b id="cUsers">0</b><br>Users</div><div class="sub"><b id="cAgents">0</b><br>Agents</div><div class="sub"><b id="cDealers">0</b><br>Dealers</div><div class="sub"><b id="cPending">0</b><br>Pending</div></div>
+
+<div class="layout"><div>
+<div class="box"><b>All Network Orders - CEO View</b> <small style="float:right" id="orderCount">0 orders</small>
+<div class="tabs"><button class="active" onclick="filterOrders('ALL',this)">ALL</button><button onclick="filterOrders('ECG',this)">ECG Prepaid</button><button onclick="filterOrders('AFA',this)">AFA</button><button onclick="filterOrders('WASSCE',this)">WASSCE</button><button onclick="filterOrders('GIFT',this)">Gift Cards</button><button onclick="filterOrders('MTN',this)">MTN Bundle</button><button onclick="filterOrders('AIRLINE',this)">Airline</button></div>
+<div id="ordersList"></div></div>
+
+<div class="box"><b>TEST: Create New User (make e appear for Pending)</b><br>
+<input id="tName" placeholder="Full Name"><input id="tPhone" placeholder="Phone 024xxxxxxx"><input id="tPass" placeholder="Password">
+<button class="btn" onclick="createUser()">Create User Account</button>
+<button class="btn-red" onclick="clearAll()">CLEAR ALL USERS / AGENTS / ORDERS</button>
+<p style="font-size:12px;color:#aaa;margin-top:8px">This user go enter Pending. CEO go approve am to Agent or Dealer for right side.</p></div>
+
+<div class="box"><b>INTERNATIONAL Prices - CEO Controls</b><div id="priceTable"></div></div>
 </div>
 
-<div class="stats">
-<div class="card"><h2>GHS <span class="today">0</span></h2><small>Today - REAL</small></div>
-<div class="card"><h2>GHS <span class="weekly">0</span></h2><small>Weekly - REAL</small></div>
-<div class="card"><h2>GHS <span class="monthly">0</span></h2><small>Monthly - REAL</small></div>
-<div class="card green"><h2>GHS <span class="total">0</span></h2><small>Total - REAL</small></div>
-</div>
+<div class="pending"><h3>Pending Agent / Dealer <span style="background:#f5c518;color:#000;padding:2px 6px;border-radius:10px;font-size:10px">CEO ONLY</span></h3>
+<div class="agentbox"><span id="pendingText">0 PENDING</span></div><div id="pendingList"></div>
+<div style="text-align:center;margin-top:10px"><b style="color:#f5c518;font-size:22px" id="cloudBig">0</b><br><small>Cloud Users</small><br><b style="color:#4da3ff" id="clock">--:--</b></div></div>
+</div></div>
 
-<div class="substats">
-<div class="sub"><b id="totalAgents">0</b><br><small>Total Agents - REAL</small></div>
-<div class="sub"><b id="totalDealers">0</b><br><small>Dealers - REAL</small></div>
-<div class="sub"><b>0</b><br><small>More Stockist - REAL</small></div>
-<div class="sub"><b id="pendingCount">0</b><br><small>Agents awaiting - REAL</small></div>
-</div>
-
-<div class="layout">
-<div>
-<div class="box">
-<b>All Network Orders - CEO View</b> <small style="float:right" id="orderCount">Real: 0 orders</small>
-<div class="tabs" style="margin-top:10px">
-<button class="active" onclick="filterOrders('ALL',this)">ALL</button>
-<button onclick="filterOrders('ECG',this)">ECG Prepaid</button>
-<button onclick="filterOrders('AFA',this)">AFA</button>
-<button onclick="filterOrders('WASSCE',this)">WASSCE</button>
-<button onclick="filterOrders('GIFT',this)">Gift Cards</button>
-<button onclick="filterOrders('MTN',this)">MTN Bundle</button>
-<button onclick="filterOrders('AIRLINE',this)">Airline</button>
-</div>
-<div id="ordersList"><p style="color:#f5c518;text-align:center;padding:20px">No Real Orders Yet - ECG orders go show here live 🚀</p></div>
-</div>
-
-<div class="box"><b>Top Performers - REAL BUILDING</b><div id="topPerf" style="margin-top:10px;color:#aaa;font-size:13px">No sales yet - orders go update am automatic</div></div>
-
-<div class="box"><b>INTERNATIONAL - CEO Controls All 3 Prices - SAME AS VIDEO</b>
-<table><tr><th>User Price</th><th>Agent Price</th><th>Dealer Price</th><th>Your Cost</th><th>Profit/Agent</th></tr>
-<tr><td>GHS 5.00</td><td>GHS 4.20</td><td>GHS 3.80</td><td>GHS 3.00</td><td>GHS 1.50 / 0.20 / 0.80</td></tr>
-<tr><td>GHS 12.00</td><td>GHS 10.50</td><td>GHS 9.80</td><td>GHS 9.00</td><td>GHS 1.50 / 1.50 / 0.80</td></tr>
-<tr><td>GHS 80.00</td><td>GHS 75.00</td><td>GHS 72.00</td><td>GHS 70.00</td><td>GHS 45.00</td></tr>
-</table></div>
-</div>
-
-<div class="pending">
-<h3>Pending Agent / Dealer <span style="background:#f5c518;color:#000;padding:2px 6px;border-radius:10px;font-size:10px">CEO ONLY - LIVE</span></h3>
-<div class="agentbox"><span id="pendingAgentText">0 AGENTS - REAL</span></div>
-<div id="pendingList" style="font-size:12px">No pending agents yet</div>
-<div style="display:flex;gap:8px;margin-top:12px">
-<button class="btn" style="flex:1" onclick="approveAgents()">APPROVE</button>
-<button class="btn-green" style="flex:1" onclick="showUsers()">VIEW</button>
-</div>
-<div style="text-align:center;margin-top:15px"><b style="color:#f5c518;font-size:22px" id="cloudBig">0</b><br><small>Cloud Users REAL</small><br><b style="color:#4da3ff" id="clock">--:--</b><br><small>Last Sync REAL</small></div>
-</div>
-</div>
+<div id="view-users" style="display:none"><div class="box"><b>All Users / Agents / Dealers</b><div id="usersList"></div></div></div>
+<div id="view-orders" style="display:none"><div class="box"><b>All Orders</b><div id="allOrders"></div></div></div>
+<div id="view-prices" style="display:none"><div class="box"><b>Set Prices - Users / Agents / Dealers</b><div id="priceEditor"></div><button class="btn" onclick="savePrices()">SAVE ALL PRICES</button></div></div>
 </div>
 
 <script>
-function getECG(){ return JSON.parse(localStorage.getItem('ecg_orders')||'[]'); }
-function getAgents(){ return JSON.parse(localStorage.getItem('pendingAgents')||'[]'); }
+const UKEY='kratis_users', OKEY='kratis_orders', EKEY='ecg_orders', PKEY='kratis_prices';
+function users(){return JSON.parse(localStorage.getItem(UKEY)||'[]')}
+function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
+function ecg(){return JSON.parse(localStorage.getItem(EKEY)||'[]')}
+function allOrders(){return [...ecg().map(o=>({...o,type:'ECG'})), ...JSON.parse(localStorage.getItem(OKEY)||'[]')]}
+function prices(){return JSON.parse(localStorage.getItem(PKEY)||'null')||[
+{name:'International 5',user:5,agent:4.2,dealer:3.8,cost:3},
+{name:'International 12',user:12,agent:10.5,dealer:9.8,cost:9},
+{name:'International 80',user:80,agent:75,dealer:72,cost:70},
+{name:'MTN 10GB',user:5,agent:4.2,dealer:3.8,cost:3},
+{name:'AFA Registration',user:10,agent:8,dealer:7,cost:6},
+{name:'WASSCE Voucher',user:15,agent:13,dealer:12,cost:11},
+{name:'ECG Token',user:20,agent:19,dealer:18,cost:17},
+{name:'Gift Card $10',user:70,agent:65,dealer:60,cost:55}]}
+function showView(v){['dash','users','orders','prices'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'block':'none'); render();}
 function render(){
-  const ecg = getECG(); const agents = getAgents();
-  const total = ecg.reduce((s,o)=>s+parseFloat(o.amount||0),0);
-  document.querySelector('.today').textContent = total;
-  document.querySelector('.weekly').textContent = total;
-  document.querySelector('.monthly').textContent = total;
-  document.querySelector('.total').textContent = total;
-  document.getElementById('profit').textContent = total;
-  document.getElementById('totalAgents').textContent = agents.length;
-  document.getElementById('pendingCount').textContent = agents.length;
-  document.getElementById('pendingAgentText').textContent = agents.length + ' AGENTS - REAL';
-  document.getElementById('cloudCount').textContent = agents.length + ' agents in cloud - REAL';
-  document.getElementById('cloudBig').textContent = agents.length;
-  document.getElementById('orderCount').textContent = 'Real: ' + ecg.length + ' orders';
-  document.getElementById('pendingList').innerHTML = agents.length===0 ? 'No pending agents yet' : agents.map(a=>`<div class="order">${a.name||a} - ${a.phone||''} <button onclick="approveOne('${a.phone||a}')">Approve</button></div>`).join('');
-  renderOrders('ECG');
+ const u=users(), o=allOrders(), p=prices();
+ const pending=u.filter(x=>x.status==='pending'), agents=u.filter(x=>x.status==='agent'), dealers=u.filter(x=>x.status==='dealer');
+ const total=o.reduce((s,x)=>s+parseFloat(x.amount||0),0);
+ document.querySelectorAll('.amt').forEach(e=>e.textContent=total); document.getElementById('profit').textContent=total;
+ cUsers.textContent=u.length; cAgents.textContent=agents.length; cDealers.textContent=dealers.length; cPending.textContent=pending.length;
+ pendingText.textContent=pending.length+' PENDING - REAL'; cloudBig.textContent=u.length; cloudCount.textContent=u.length+' users in cloud';
+ orderCount.textContent=o.length+' orders';
+ pendingList.innerHTML=pending.length?pending.map(x=>`<div class="order"><b>${x.name}</b><br>${x.phone}<br><select id="role-${x.phone}"><option value="agent">Agent</option><option value="dealer">Dealer</option></select> <button class="btn" onclick="approve('${x.phone}')">APPROVE</button> <button class="btn-red" onclick="reject('${x.phone}')">Reject</button></div>`).join(''):'No pending agents yet';
+ usersList.innerHTML=u.length?`<table><tr><th>Name</th><th>Phone</th><th>Status</th><th>Action</th></tr>${u.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td><td>${x.status}</td><td><button onclick="setRole('${x.phone}','agent')">Make Agent</button> <button onclick="setRole('${x.phone}','dealer')">Make Dealer</button> <button onclick="setRole('${x.phone}','user')">Make User</button></td></tr>`).join('')}</table>`:'No users yet. Create one for top.';
+ allOrders.innerHTML=o.length?o.map(x=>`<div class="order">${x.type||x.product||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.status||'Pending'}</div>`).join(''):'No orders yet';
+ priceTable.innerHTML=`<table><tr><th>Product</th><th>User</th><th>Agent</th><th>Dealer</th><th>Cost</th></tr>${p.map(x=>`<tr><td>${x.name}</td><td>GHS ${x.user}</td><td>GHS ${x.agent}</td><td>GHS ${x.dealer}</td><td>GHS ${x.cost}</td></tr>`).join('')}</table>`;
+ priceEditor.innerHTML=p.map((x,i)=>`<div style="margin:8px 0"><b>${x.name}</b><br>User <input type="number" step="0.1" id="pu${i}" value="${x.user}"> Agent <input type="number" step="0.1" id="pa${i}" value="${x.agent}"> Dealer <input type="number" step="0.1" id="pd${i}" value="${x.dealer}"> Cost <input type="number" step="0.1" id="pc${i}" value="${x.cost}"></div>`).join('');
+ renderOrders('ALL');
 }
-function renderOrders(type){
-  const ecg = getECG(); const box = document.getElementById('ordersList');
-  const list = type==='ALL'||type==='ECG' ? ecg : [];
-  if(list.length===0){ box.innerHTML='<p style="color:#f5c518;text-align:center;padding:20px">No Real Orders Yet - ECG orders go show here live 🚀</p>'; return; }
-  box.innerHTML = list.map((o,i)=>`<div class="order"><b>ECG</b> | Meter: ${o.meter} | ${o.name||'No name'} | GH₵${o.amount} | ${o.whatsapp} | ${o.date} | <b>${o.status}</b><br>${o.card?`<img src="${o.card}">`:''}${o.receipt?`<img src="${o.receipt}">`:`<br><input type="file" accept="image/*" onchange="uploadReceipt(${i},this)"> <small>Upload Token Receipt</small>`}</div>`).join('');
-}
-function filterOrders(type,btn){ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); renderOrders(type); }
-function uploadReceipt(i,input){ const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const o=getECG(); o[i].receipt=r.result; o[i].status='Completed'; localStorage.setItem('ecg_orders',JSON.stringify(o)); alert('Receipt uploaded! User fit download am for index.html'); render(); }; r.readAsDataURL(f); }
-function syncNow(){ const t=new Date().toLocaleTimeString(); document.getElementById('lastSync').textContent='Last Sync: '+t+' - REAL'; document.getElementById('clock').textContent=t; alert('Synced REAL at '+t); }
-function showUsers(){ alert('Users: '+getAgents().length+' pending agents'); }
-function approveAgents(){ localStorage.setItem('pendingAgents','[]'); render(); alert('All approved'); }
-function approveOne(p){ let a=getAgents(); a=a.filter(x=>(x.phone||x)!==p); localStorage.setItem('pendingAgents',JSON.stringify(a)); render(); }
-setInterval(()=>{ document.getElementById('clock').textContent=new Date().toLocaleTimeString(); },1000);
+function renderOrders(t){ const o=allOrders().filter(x=>t==='ALL'||(x.type||'').includes(t)); ordersList.innerHTML=o.length?o.map(x=>`<div class="order">${x.type||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.whatsapp||''} | ${x.status||'Pending'}</div>`).join(''):'No Real Orders Yet 🚀'; }
+function filterOrders(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderOrders(t);}
+function createUser(){ const n=tName.value.trim(), ph=tPhone.value.trim(); if(!n||!ph) return alert('Name and Phone required'); let u=users(); if(u.find(x=>x.phone===ph)) return alert('Phone already exist'); u.push({name:n,phone:ph,pass:tPass.value||'1234',status:'pending',date:new Date().toLocaleString()}); saveUsers(u); tName.value=tPhone.value=tPass.value=''; render(); alert('User created! E dey Pending for right side now. Approve am.'); }
+function approve(ph){ const role=document.getElementById('role-'+ph).value; setRole(ph,role); }
+function setRole(ph,role){ let u=users(); u=u.map(x=>x.phone===ph?{...x,status:role}:x); saveUsers(u); render(); alert('Changed to '+role.toUpperCase()); }
+function reject(ph){ saveUsers(users().filter(x=>x.phone!==ph)); render(); }
+function clearAll(){ if(!confirm('Clear ALL users, agents, dealers, ECG orders?')) return; localStorage.removeItem(UKEY); localStorage.removeItem(EKEY); localStorage.removeItem(OKEY); render(); alert('All cleared. Create new user now.'); }
+function savePrices(){ let p=prices(); p=p.map((x,i)=>({name:x.name,user:+document.getElementById('pu'+i).value,agent:+document.getElementById('pa'+i).value,dealer:+document.getElementById('pd'+i).value,cost:+document.getElementById('pc'+i).value})); localStorage.setItem(PKEY,JSON.stringify(p)); render(); alert('Prices saved for Users, Agents, Dealers!'); }
+function syncNow(){ lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString(); }
+setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
 render();
-</script>
-</body>
-</html>
+</script></body></html>
