@@ -940,7 +940,7 @@ function go(view){
   document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
   const target = document.getElementById('view-'+view);
   if(target){ target.classList.remove('hidden'); }
-  const btn = document.getElementById('m-'+view);
+  const btn = document.querySelector('[onclick="go(\''+view+'\')"]');
   if(btn){ btn.classList.add('active'); }
   window.scrollTo(0,0);
 
