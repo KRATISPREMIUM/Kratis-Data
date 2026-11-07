@@ -928,7 +928,10 @@ window.setTier = function(tier){
     let btn = document.getElementById('t-' + tier.toLowerCase());
     if(btn) btn.classList.add('active');
     // Update badge
-    let badge = document.getElementById('tierBadge');
+   
+    if(typeof updateTierUI==='function') updateTierUI();
+    if(typeof renderAll==='function') renderAll();
+    console.log('✅ Tier forced to', tier); let badge = document.getElementById('tierBadge');
     if(badge){
       if(tier==='AGENT'){
         badge.textContent='AGENT MODE • 1100 Approved ✅';
@@ -938,9 +941,6 @@ window.setTier = function(tier){
         badge.textContent='USER • 50';
       }
     }
-    if(typeof updateTierUI==='function') updateTierUI();
-    if(typeof renderAll==='function') renderAll();
-    console.log('✅ Tier forced to', tier);
   }catch(e){ console.error(e); }
 };
 
