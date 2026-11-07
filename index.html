@@ -657,15 +657,20 @@ function go(view){
   if(view==='referral') renderReferral();
   if(view==='wallet') renderWallet();
 }
-  var _oldGo = go;
+ var _oldGo = go;
 go = function(id){
   _oldGo(id);
   document.querySelectorAll('[onclick*="go("]').forEach(b=>{
+    b.style.background='';
+    b.style.color='';
+    b.classList.remove('active');
     let o=b.getAttribute('onclick')||'';
-    if(o.includes("go('")){ b.style.background=''; b.style.color=''; b.classList.remove('active'); }
+    if(o === "go('"+id+"')"){
+      b.style.background='#FFD600';
+      b.style.color='#000';
+      b.classList.add('active');
+    }
   });
-  var el=document.querySelector('[onclick="go(\''+id+'\')"]');
-  if(el){ el.style.background='#FFD600'; el.style.color='#000'; el.classList.add('active'); }
 };
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
