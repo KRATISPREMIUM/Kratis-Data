@@ -392,7 +392,35 @@ document.getElementById('serviceType')?.addEventListener('change', loadUtility);
 setTimeout(loadUtility, 1000);
 </script>
 
-<div id="view-ecg" class="hidden"><h3>💡 ECG Prepaid — Ghana Only Manual</h3><div id="ecg-grid" class="grid"></div></div>
+<section id="view-ecg" class="view">
+  <h2>⚡ ECG Prepaid - Manual Purchase</h2>
+  <p style="color:#666;font-size:13px">Enter meter details. CEO / ECG Manager go purchase am and upload your token receipt. You go get am for here + WhatsApp.</p>
+
+  <div style="background:#fff;padding:15px;border-radius:12px;margin:15px 0;box-shadow:0 2px 8px #eee">
+    <h3>Buy ECG Token</h3>
+    <input id="ecgMeter" placeholder="Meter Number *" style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px">
+    <input id="ecgName" placeholder="Meter Name (optional - name used to register)" style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px">
+    <input id="ecgAmount" type="number" placeholder="Amount GH₵ *" style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px">
+    <input id="ecgWhatsapp" placeholder="WhatsApp Number * e.g 024xxxxxxx" style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px">
+    <label style="font-size:13px">Image of Meter Card (optional)</label>
+    <input id="ecgCard" type="file" accept="image/*" style="width:100%;padding:8px;margin:8px 0">
+    <button onclick="submitECG()" style="width:100%;padding:14px;background:#f5c518;border:none;border-radius:10px;font-weight:bold;font-size:16px">Submit ECG Order</button>
+    <p id="ecgMsg" style="text-align:center;margin-top:10px;font-weight:bold"></p>
+  </div>
+
+  <div style="background:#fff;padding:15px;border-radius:12px;margin:15px 0;box-shadow:0 2px 8px #eee">
+    <h3>📥 Check / Download My Token Receipts</h3>
+    <input id="checkMeter" placeholder="Enter Meter Number" style="width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px">
+    <button onclick="checkECGReceipts()" style="width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:bold">Check Receipts</button>
+    <div id="ecgReceipts"></div>
+  </div>
+
+  <div style="background:#fff8e1;padding:15px;border-radius:12px;margin:15px 0;border:1px dashed #f5c518">
+    <h3>🛠️ ECG Manager (Test Upload)</h3>
+    <p style="font-size:12px;color:#666">This be for manager test. Real CEO Dashboard go replace am later.</p>
+    <div id="ecgManagerList"></div>
+  </div>
+</section>
 <div id="view-vouchers" class="hidden"><h3>🎓 Vouchers — WASSCE & BECE</h3><div class="tabs"><button class="active" onclick="filterVoucher('all',this)">All Vouchers</button><button onclick="filterVoucher('WASSCE',this)">WASSCE</button><button onclick="filterVoucher('BECE',this)">BECE</button></div><div id="grid-vouchers" class="grid"></div></div>
 
 
@@ -1010,5 +1038,61 @@ function changeFontSize(v){document.body.style.fontSize=v;markSettingsDirty()}
 function markSettingsDirty(){let b=document.getElementById('saveSettingsBtn');if(b)b.style.background='#166534'}
 document.addEventListener('change',e=>{if(e.target.classList?.contains('set-toggle'))markSettingsDirty()});
 function saveSettings(){alert('✅ Settings Saved Successfully!')}
-</script></body>
+let ecgCardData = "";
+document.getElementById('ecgCard')?.addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(file){ const r = new FileReader(); r.onload = ()=> ecgCardData = r.result; r.readAsDataURL(file); }
+});
+
+function getECGOrders(){ return JSON.parse(localStorage.getItem('ecg_orders')||'[]'); }
+function saveECGOrders(o){ localStorage.setItem('ecg_orders', JSON.stringify(o)); renderECGManager(); }
+
+function submitECG(){
+  const meter = document.getElementById('ecgMeter').value.trim();
+  const name = document.getElementById('ecgName').value.trim();
+  const amount = document.getElementById('ecgAmount').value.trim();
+  const whatsapp = document.getElementById('ecgWhatsapp').value.trim();
+  const msg = document.getElementById('ecgMsg');
+  if(!meter || !amount || !whatsapp){ msg.style.color='red'; msg.textContent='Meter, Amount and WhatsApp be required!'; return; }
+  const orders = getECGOrders();
+  orders.push({id:Date.now(), meter, name, amount, whatsapp, card:ecgCardData, receipt:"", date:new Date().toLocaleString(), status:"Pending"});
+  saveECGOrders(orders);
+  msg.style.color='green'; msg.textContent='✅ Order submitted! Manager go purchase am soon. Check receipts below with your meter number.';
+  document.getElementById('ecgMeter').value=''; document.getElementById('ecgName').value=''; document.getElementById('ecgAmount').value=''; document.getElementById('ecgWhatsapp').value=''; ecgCardData="";
+}
+
+function checkECGReceipts(){
+  const meter = document.getElementById('checkMeter').value.trim();
+  const box = document.getElementById('ecgReceipts');
+  if(!meter){ box.innerHTML='<p style="color:red">Enter meter number</p>'; return; }
+  const list = getECGOrders().filter(o=>o.meter===meter);
+  if(list.length===0){ box.innerHTML='<p>No receipt yet for this meter. Order go show here after manager purchase am.</p>'; return; }
+  box.innerHTML = list.map(o=>`
+    <div style="border:1px solid #eee;padding:10px;border-radius:10px;margin:10px 0">
+      <b>Meter:</b> ${o.meter} ${o.name?`(${o.name})`:''}<br>
+      <b>Amount:</b> GH₵${o.amount}<br>
+      <b>Date:</b> ${o.date}<br>
+      <b>Status:</b> ${o.status}<br>
+      ${o.receipt?`<a href="${o.receipt}" download="ECG-Receipt-${o.meter}.png"><img src="${o.receipt}" style="width:100%;border-radius:8px;margin-top:8px"></a><p style="font-size:12px">Tap image to download</p>`:'<p style="color:orange">⏳ Token receipt no ready yet</p>'}
+      <a href="https://wa.me/233${o.whatsapp.replace(/^0/,'')}" target="_blank" style="color:green;font-size:13px">Send / Get Receipt on WhatsApp</a>
+    </div>`).join('');
+}
+
+function renderECGManager(){
+  const box = document.getElementById('ecgManagerList'); if(!box) return;
+  const orders = getECGOrders();
+  box.innerHTML = orders.length===0 ? '<p>No orders yet</p>' : orders.map((o,i)=>`
+    <div style="border:1px solid #ddd;padding:10px;border-radius:8px;margin:8px 0;font-size:13px">
+      <b>${o.meter}</b> - GH₵${o.amount} - ${o.whatsapp} - ${o.status}<br>
+      ${o.card?`<img src="${o.card}" style="width:80px;border-radius:6px">`:''}
+      <input type="file" accept="image/*" onchange="uploadECGReceipt(${i}, this)">
+    </div>`).join('');
+}
+function uploadECGReceipt(i, input){
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = ()=>{ const orders=getECGOrders(); orders[i].receipt=r.result; orders[i].status='Completed'; saveECGOrders(orders); alert('Receipt uploaded! User fit download am now.'); };
+  r.readAsDataURL(file);
+}
+renderECGManager();</script></body>
 </html>
