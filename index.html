@@ -860,12 +860,17 @@ function applyAsAgent(){
   let phone=document.getElementById('agentWhatsApp')?.value.trim() || document.getElementById('agentPhone')?.value.trim();
   let loc=document.getElementById('agentLocation')?.value.trim() || '';
   let loggedEmail=localStorage.getItem('kratis_logged_user')||'unknown';
-  if(!name||!phone){alert('Enter Full Name and WhatsApp Number!');return;}
+  if(!name||!phone){alert('Enter Full Name and WhatsApp Number!');return}
+  // 1. Save for old key (make backup)
   let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
-  apps.push({email:loggedEmail, name:name, phone:phone, location:loc, date:new Date().toLocaleString(), status:'PENDING'});
+  apps.push({email:loggedEmail,name:name,phone:phone,location:loc,date:new Date().toLocaleString(),status:'PENDING'});
   localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
-  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
-  if(!users[loggedEmail]) users[loggedEmail]={tier:'USER', created:new Date().toISOString()};
+  // 2. Save for CEO Pending (array format wey CEO dey read)
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'[]');
+  if(!Array.isArray(users)){ users=Object.values(users); }
+  let exist=users.find(u=>u.phone===phone);
+  if(exist){ exist.role='pending_agent'; exist.name=name; exist.location=loc; }
+  else { users.push({name:name,phone:phone,location:loc,role:'pending_agent',pass:'1234',email:loggedEmail,date:new Date().toLocaleString()}); }
   localStorage.setItem('kratis_users',JSON.stringify(users));
   let statusEl=document.getElementById('agentApplyStatus');
   if(statusEl){ statusEl.style.display='block'; statusEl.innerHTML='✅ Application Sent! CEO will approve you in ceo.html.<br>Your Email: '+loggedEmail+'<br>WhatsApp: '+phone; }
