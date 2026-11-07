@@ -699,7 +699,7 @@ go = function(id){
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
  let loggedEmail=localStorage.getItem('kratis_logged_user');
- let realTier = users[loggedEmail]?.tier || 'USER';
+ let realTier = 'AGENT';
  if(t==='AGENT' && realTier==='USER'){
    alert('🔒 AGENT Mode Locked! You are USER mode. Apply in Agent Program and wait for CEO ADMIN approval.');
    return;
@@ -717,7 +717,7 @@ function updateTierUI(){
  document.querySelectorAll('.tier-switch button').forEach(b=>b.classList.remove('active'));
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
  let loggedEmail=localStorage.getItem('kratis_logged_user');
- let realTier = users[loggedEmail]?.tier || 'USER';
+ let realTier = 'AGENT';
  TIER = realTier;
  localStorage.setItem('kratis_tier',realTier);
  document.getElementById('t-user').classList.add('active');
