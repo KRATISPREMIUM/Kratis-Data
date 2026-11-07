@@ -657,6 +657,16 @@ function go(view){
   if(view==='referral') renderReferral();
   if(view==='wallet') renderWallet();
 }
+  var _oldGo = go;
+go = function(id){
+  _oldGo(id);
+  document.querySelectorAll('button').forEach(b=>{
+    let o=b.getAttribute('onclick')||'';
+    if(o.includes("go('")){ b.style.background=''; b.style.color=''; b.classList.remove('active'); }
+  });
+  var el=document.querySelector('[onclick="go(\''+id+'\')"]');
+  if(el){ el.style.background='#FFD600'; el.style.color='#000'; el.classList.add('active'); }
+};
 function setTier(t){
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
  let loggedEmail=localStorage.getItem('kratis_logged_user');
