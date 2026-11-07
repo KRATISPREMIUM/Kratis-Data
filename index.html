@@ -660,7 +660,7 @@ function go(view){
   var _oldGo = go;
 go = function(id){
   _oldGo(id);
-  document.querySelectorAll('button').forEach(b=>{
+  document.querySelectorAll('[onclick*="go("]').forEach(b=>{
     let o=b.getAttribute('onclick')||'';
     if(o.includes("go('")){ b.style.background=''; b.style.color=''; b.classList.remove('active'); }
   });
