@@ -953,9 +953,9 @@ function renderHistory(t){
  let orders=getOrders();
  if(!orders.length){orders=[{id:'ORD-246814',size:'Airtime GHS 3',to:'0558119607',net:'MTN',status:'Delivered',amt:3,bal:'GHS 1.10'},{id:'ORD-188981',size:'Airtime GHS 1',to:'0558228524',net:'MTN',status:'Delivered',amt:1,bal:'GHS 4.07'},{id:'ORD-182753',size:'Airtime GHS 3',to:'0558119607',net:'MTN',status:'Cancelled',amt:3,bal:'GHS 5.06'}];}
  let f=orders;
- if(t==='mtn')f=orders.filter(o=>(o.net||'MTN').includes('MTN'));
- if(t==='at')f=orders.filter(o=>(o.net||'').includes('AT'));
- if(t==='telecel')f=orders.filter(o=>(o.net||'').includes('Telecel'));
+ if(t==='mtn')f=orders.filter(o=>String(o.size||o.name||'').includes('MTN')&&!String(o.id||'').startsWith('DEP-'));
+ if(t==='at')f=orders.filter(o=>String(o.size||o.name||'').includes('AirtelTigo')||(o.net||'').includes('AT'));
+ if(t==='telecel')f=orders.filter(o=>String(o.size||o.name||'').includes('Telecel'));
  if(t==='refunds')f=orders.filter(o=>o.status==='Cancelled');
 let spent=f.reduce((a,b)=>a+(parseFloat(b.amt||b.amount||b.price)||0),0);let gbdata=f.reduce((a,b)=>{let m=String(b.size||b.name||'').match(/(\d+(?:\.\d+)?)\s*GB/i);return a+(m?parseFloat(m[1]):0)},0);
  let head={mtn:'MTN Order History',at:'AirtelTigo Order History',telecel:'Telecel Order History',all:'All Orders',refunds:'Refund History',deposits:'Deposit History',afa:'AFA Registration History',vouchers:'Voucher Purchases'}[t];
