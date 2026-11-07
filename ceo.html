@@ -47,7 +47,7 @@ input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222
 <a href="afa-manager.html">AFA & WASSCE Manager</a>
 <a href="data-manager.html">Data & Airline Manager</a>
 <a href="gift-manager.html">Gift & Gaming Cards Manager</a>
-<a href="admin-login.html">Logout CEO</a>
+<a href="#" onclick="sessionStorage.removeItem('kratis_ceo');location.href='admin-login.html'">Logout CEO</a>
 <div class="cloud">● GOOGLE CLOUD LIVE<br><span id="cloudCount">0 users</span><br>⚡ REAL BUILD + AUTO-SYNC</div></div>
 
 <div class="main">
@@ -84,6 +84,18 @@ input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222
 </div>
 
 <script>
+// CEO LOGIN LOCK - KratisData.com CEO Only
+if(sessionStorage.getItem('kratis_ceo') !== 'true'){
+  const email = prompt('CEO LOGIN\nEmail:');
+  const pass = prompt('Password:');
+  if(email === 'ceo@kratisdata.com' && pass === 'KratisCEO2025!'){
+    sessionStorage.setItem('kratis_ceo','true');
+    alert('Welcome CEO Phillip - SUPER ACCESS');
+  } else {
+    alert('Wrong CEO login! Redirect to manager login...');
+    location.href='admin-login.html';
+  }
+}
 const UKEY='kratis_users', OKEY='kratis_orders', EKEY='ecg_orders', PKEY='kratis_prices';
 function users(){return JSON.parse(localStorage.getItem(UKEY)||'[]')}
 function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
