@@ -97,10 +97,32 @@ if(sessionStorage.getItem('kratis_ceo') !== 'true'){
   }
 }
 const UKEY='kratis_users', OKEY='kratis_orders', EKEY='ecg_orders', PKEY='kratis_prices';
-function users(){return JSON.parse(localStorage.getItem(UKEY)||'[]')}
+function users(){
+  let raw = localStorage.getItem(UKEY);
+  if(!raw) return [];
+  try{
+    let data = JSON.parse(raw);
+    if(Array.isArray(data)) return data;
+    // index.html save as object {email: {...}} - convert am for CEO
+    return Object.keys(data).map(email=>{
+      let u = data[email] || {};
+      return {
+        name: u.name || u.fullname || email.split('@')[0],
+        email: email,
+        phone: u.phone || u.whatsapp || '-',
+        status: (u.tier || u.role || 'USER').toLowerCase(),
+        role: (u.tier || u.role || 'USER').toLowerCase(),
+        tier: u.tier || 'USER',
+        wallet: u.wallet || localStorage.getItem('kratis_wallet') || '0',
+        date: u.date || new Date().toLocaleString()
+      };
+    });
+  }catch(e){ return []; }
+}
+function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
 function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
 function ecg(){return JSON.parse(localStorage.getItem(EKEY)||'[]')}
-function allOrders(){return [...ecg().map(o=>({...o,type:'ECG'})), ...JSON.parse(localStorage.getItem(OKEY)||'[]')]}
+function allOrders(){   let ecgOrders = ecg().map(o=>({...o, type:'ECG', product:o.type||'ECG', amount:o.amount||o.amt||0, phone:o.meter||o.phone||'', status:o.status||'Pending'}));   let mainOrders = [];   try{ mainOrders = JSON.parse(localStorage.getItem(OKEY)||'[]'); }catch(e){}   mainOrders = mainOrders.map(o=>({     ...o,     type: o.cat || o.type || 'GHANA_GB',     product: o.name || o.size || o.product || 'Order',     amount: o.amount || o.amt || o.price || 0,     phone: o.recipient || o.to || o.phone || '',     meter: o.recipient || o.to || o.phone || '',     status: o.status || 'Pending',     id: o.id || '-'   }));   return [...ecgOrders, ...mainOrders]; }
 function prices(){return JSON.parse(localStorage.getItem(PKEY)||'null')||[
 {name:'International 5',user:5,agent:4.2,dealer:3.8,cost:3},
 {name:'International 12',user:12,agent:10.5,dealer:9.8,cost:9},
@@ -127,7 +149,7 @@ pendingList.innerHTML=pending.length?pending.map(x=>`<div class="order"><b>${x.n
  priceEditor.innerHTML=p.map((x,i)=>`<div style="margin:8px 0"><b>${x.name}</b><br>User <input type="number" step="0.1" id="pu${i}" value="${x.user}"> Agent <input type="number" step="0.1" id="pa${i}" value="${x.agent}"> Dealer <input type="number" step="0.1" id="pd${i}" value="${x.dealer}"> Cost <input type="number" step="0.1" id="pc${i}" value="${x.cost}"></div>`).join('');
  renderOrders('ALL');
 }
-function renderOrders(t){ const o=allOrders().filter(x=>t==='ALL'||(x.type||'').includes(t)); ordersList.innerHTML=o.length?o.map(x=>`<div class="order">${x.type||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.whatsapp||''} | ${x.status||'Pending'}</div>`).join(''):'No Real Orders Yet 🚀'; }
+function renderOrders(t){   const o=allOrders().filter(x=>{     if(t==='ALL') return true;     let hay = ((x.type||'')+' '+(x.product||'')+' '+(x.name||'')+' '+(x.cat||'')).toUpperCase();     if(t==='MTN') return hay.includes('MTN') || hay.includes('GHANA_GB');     return hay.includes(t.toUpperCase());   });   ordersList.innerHTML=o.length?o.map(x=>`<div class="order"><b>${x.id||''}</b> | ${x.product||x.type} | ${x.phone||x.meter||''} | GH₵${x.amount} | ${x.status||'Pending'}<br><small>${x.date||''}</small></div>`).join(''):'No Real Orders Yet 🚀'; }
 function filterOrders(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderOrders(t);}
 function createUser(){ const n=tName.value.trim(), ph=tPhone.value.trim(); if(!n||!ph) return alert('Name and Phone required'); let u=users(); if(u.find(x=>x.phone===ph)) return alert('Phone already exist'); u.push({name:n,phone:ph,pass:tPass.value||'1234',status:'pending',date:new Date().toLocaleString()}); saveUsers(u); tName.value=tPhone.value=tPass.value=''; render(); alert('User created! E dey Pending for right side now. Approve am.'); }
 function approve(ph){ const role=document.getElementById('role-'+ph).value; setRole(ph,role); }
@@ -135,7 +157,7 @@ function setRole(ph,role){ let u=users(); u=u.map(x=>x.phone===ph?{...x,status:r
 function reject(ph){ saveUsers(users().filter(x=>x.phone!==ph)); render(); }
 function clearAll(){ if(!confirm('Clear ALL users, agents, dealers, ECG orders?')) return; localStorage.removeItem(UKEY); localStorage.removeItem(EKEY); localStorage.removeItem(OKEY); render(); alert('All cleared. Create new user now.'); }
 function savePrices(){ let p=prices(); p=p.map((x,i)=>({name:x.name,user:+document.getElementById('pu'+i).value,agent:+document.getElementById('pa'+i).value,dealer:+document.getElementById('pd'+i).value,cost:+document.getElementById('pc'+i).value})); localStorage.setItem(PKEY,JSON.stringify(p)); render(); alert('Prices saved for Users, Agents, Dealers!'); }
-function syncNow(){ lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString(); }
+function syncNow(){   lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString();   render();   alert('CEO Sync Done! Users: '+users().length+' | Orders: '+allOrders().length); }
 setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
 render();
 </script></body></html>
