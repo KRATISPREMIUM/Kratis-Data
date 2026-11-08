@@ -40,10 +40,7 @@ async function loadOrders(){
     let list = [];
     snap.forEach(d=> list.push({docId:d.id, ...d.data()}));
     // filter only Data: Ghana GB + International
-    list = list.filter(o=>{
-      const t = ((o.cat||'')+' '+(o.type||'')+' '+(o.name||'')+' '+(o.product||'')).toUpperCase();
-      return t.includes('GB') || t.includes('MTN') || t.includes('TELECEL') || t.includes('AIRTEL') || t.includes('INTERNATIONAL') || t.includes('AIRTIME') || t.includes('BUNDLE') || o.cat==='GHANA_GB' || o.cat==='INTL' || o.id==='KR-1712' || o.id==='KR-7302' || o.id==='KR-8841';
-    });
+   // show all orders
     if(!list.length){ box.innerHTML='<p>No Data orders yet</p>'; return; }
     box.innerHTML = '';
     list.sort((a,b)=> new Date(b.date||0)-new Date(a.date||0));
