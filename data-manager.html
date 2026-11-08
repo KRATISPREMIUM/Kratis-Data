@@ -1,16 +1,81 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Data Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:10px 8px;border-bottom:1px solid #151515;text-align:left}.table th{color:#555;font-size:10px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#00d4ff;color:#000;padding:2px 6px;border-radius:4px;font-size:8px">DATA & AIRTIME MANAGER</span></b></div><h2 style="margin-top:14px">Data <span style="color:#FFD700">Login</span></h2><p style="color:#666;font-size:11px;margin-top:6px">If you came from Admin Login, you will auto-enter. Or login directly here.</p><div class="field"><input type="email" id="e" value="data@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="Data2025!"></div><button class="btn" onclick="login()">Login to Data Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">data@kratisdata.com / Data2025! (Exact! Capital D)</p></div></div>
-<div id="dash"><h2>📶 Data & Airtime Manager — ONLY Data/Airtime</h2><p style="font-size:11px;color:#888;margin-top:4px">Logged as: <span id="who" style="color:#FFD700"></span> • CEO can also do your job</p><div class="card"><h4>🇬🇭 GHANA GB Bundles (MTN GB, Telecel GB, AirtelTigo GB) - Separate Table</h4><table class="table"><tr><th>Order</th><th>Network</th><th>Status</th><th>Action if API fails</th></tr><tr><td>#KR-8841 - 5GB</td><td>MTN GB (GHANA_GB)</td><td>API Failed - Need Manual</td><td><button style="background:#FFD700;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Place Manually & Confirm</button></td></tr></table></div><div class="card"><h4>🌍 International All Network Bundle & International All Network Airtime - Separate as you said!</h4><p style="font-size:11px;color:#888">Intl Bundle USA, UK, Nigeria + Intl Airtime - Monitoring API faults</p></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Manager - KRATIS DATA</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:20px}
+h1{color:#FFD400}
+.card{background:#111;border:1px solid #333;padding:15px;margin:10px 0;border-radius:10px}
+button{background:#FFD400;color:#000;padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.green{background:#00E676}
+</style>
+</head>
+<body>
+<h1>DATA MANAGER</h1>
+<p>Ghana GB + International Bundle & Airtime</p>
+<p id="info"></p>
+<button onclick="loadOrders()">LOAD ORDERS</button>
+<button onclick="logout()" style="background:#ff5252">Logout</button>
+<div id="orders"></div>
+
 <script>
-function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'data@kratisdata.com';}
-function login(){
- const email=document.getElementById('e').value.trim().toLowerCase();
- const pass=document.getElementById('p').value.trim();
- if(email==='data@kratisdata.com' && pass==='Data2025!'){localStorage.setItem('kratis_role',email);showDash();}
- else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Email must be data@kratisdata.com and Password must be exactly Data2025! with capital D and ! at end';}
+const role = localStorage.getItem('manager_role');
+if(role !== 'data_manager' && role !== 'manager' && role !== 'data' && role !== 'ceo'){
+  alert('No Data Manager Access');
+  window.location.href='admin-login.html';
 }
-window.onload=function(){
- const role=localStorage.getItem('kratis_role');
- if(role==='data@kratisdata.com'){showDash();}
+document.getElementById('info').textContent = 'Logged in: ' + localStorage.getItem('manager_email');
+
+async function loadOrders(){
+  const box = document.getElementById('orders');
+  box.innerHTML = 'Loading...';
+  try{
+    const snap = await db.collection('kratis_orders').get();
+    let list = [];
+    snap.forEach(d=> list.push({docId:d.id, ...d.data()}));
+    // filter only Data: Ghana GB + International
+    list = list.filter(o=>{
+      const t = ((o.cat||'')+' '+(o.type||'')+' '+(o.name||'')+' '+(o.product||'')).toUpperCase();
+      return t.includes('GB') || t.includes('MTN') || t.includes('TELECEL') || t.includes('AIRTEL') || t.includes('INTERNATIONAL') || t.includes('AIRTIME') || t.includes('BUNDLE') || o.cat==='GHANA_GB' || o.cat==='INTL';
+    });
+    if(!list.length){ box.innerHTML='<p>No Data orders yet</p>'; return; }
+    box.innerHTML = '';
+    list.sort((a,b)=> new Date(b.date||0)-new Date(a.date||0));
+    list.forEach(o=>{
+      const div = document.createElement('div');
+      div.className='card';
+      div.innerHTML = `<b>${o.id}</b> | ${o.name||o.product||''} | ${o.recipient||o.to||o.phone||''} | GH₵${o.amount||o.amt||0}<br>Status: <b>${o.status||'Pending'}</b> | ${o.date||''}<br><br>
+      <button onclick="setStatus('${o.docId}','Processing')">Processing</button>
+      <button class="green" onclick="setStatus('${o.docId}','Delivered')">Delivered</button>`;
+      box.appendChild(div);
+    });
+  }catch(e){ box.innerHTML='Fail: '+e.message; }
 }
-</script></body></html>
+
+async function setStatus(docId, status){
+  try{
+    await db.collection('kratis_orders').doc(docId).update({status: status});
+    await db.collection('orders').doc(docId).set({status: status}, {merge:true});
+    alert('Updated to '+status);
+    loadOrders();
+  }catch(e){ alert('Fail: '+e.message); }
+}
+
+function logout(){
+  localStorage.removeItem('manager_email');
+  localStorage.removeItem('manager_role');
+  window.location.href='admin-login.html';
+}
+
+// auto load
+loadOrders();
+db.collection('kratis_orders').onSnapshot(()=> loadOrders());
+</script>
+</body>
+</html>
