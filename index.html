@@ -4,6 +4,54 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
+  <script>
+// KRATIS CLOUD BRIDGE - CEO SYNC FIX
+function getDB(){
+  try{
+    if(window.db) return window.db;
+    if(window.firebase && firebase.firestore) return firebase.firestore();
+    if(window._db) return window._db;
+  }catch(e){}
+  return null;
+}
+function pushOrderToCloud(order){
+  try{
+    const db = getDB();
+    if(!db){ console.log('No DB yet, order saved local only'); return; }
+    const user = localStorage.getItem('kratis_logged_user')||'unknown';
+    const payload = Object.assign({}, order, {
+      userEmail: user,
+      userTier: localStorage.getItem('kratis_tier')||'USER',
+      walletAfter: localStorage.getItem('kratis_wallet'),
+      createdAt: new Date().toISOString(),
+      source: 'index.html'
+    });
+    db.collection('kratis_orders').doc(order.id).set(payload, {merge:true})
+      .then(()=>console.log('Cloud Order OK', order.id))
+      .catch(e=>console.log('Cloud Order Fail', e));
+    // also push to generic orders collection for CEO old code
+    db.collection('orders').doc(order.id).set(payload, {merge:true}).catch(()=>{});
+  }catch(e){ console.log(e); }
+}
+function pushUserToCloud(){
+  try{
+    const db = getDB(); if(!db) return;
+    const email = localStorage.getItem('kratis_logged_user'); if(!email) return;
+    const users = JSON.parse(localStorage.getItem('kratis_users')||'[]');
+    const me = users.find(u=>u.email===email) || {email:email};
+    const payload = Object.assign({}, me, {
+      email: email,
+      tier: localStorage.getItem('kratis_tier')||'USER',
+      wallet: localStorage.getItem('kratis_wallet')||'0',
+      updatedAt: new Date().toISOString()
+    });
+    db.collection('kratis_users').doc(email.replace(/[^a-zA-Z0-9]/g,'_')).set(payload,{merge:true}).catch(()=>{});
+    db.collection('users').doc(email.replace(/[^a-zA-Z0-9]/g,'_')).set(payload,{merge:true}).catch(()=>{});
+  }catch(e){}
+}
+setInterval(pushUserToCloud, 15000);
+window.addEventListener('load', pushUserToCloud);
+</script>
 <script>
 // 🔐 AUTH PROTECTION - Must login first!
 (function(){
@@ -841,7 +889,7 @@ function confirmBuy(){
  if(WALLET<amt){alert('Insufficient wallet! Top-up first.');renderWallet();closeM('buyModal');return;}
  WALLET=parseFloat((WALLET-amt).toFixed(2)); localStorage.setItem('kratis_wallet',WALLET);
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
- ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
+ ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(order);
  closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
 }
 function dowallet(){
@@ -849,7 +897,7 @@ function dowallet(){
  if(!amt||amt<1){alert('Enter valid amount');return;}
  WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',phone:'Wallet',to:'Wallet',net:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
- ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS));
+ ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(dep);
   saveRealDeposit(amt,'Auto','paystack');
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
   renderWallet();
