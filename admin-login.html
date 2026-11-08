@@ -60,7 +60,14 @@ async function login(){
   err.style.display = "none";
   err.textContent = "Checking...";
   err.style.display = "block";
-  err.style.color = "#FFD400";
+  err.style.color = "#FFD400";  
+ if(USERS[email] && USERS[email].pass === pass){
+    localStorage.setItem('manager_email', email);
+    localStorage.setItem('manager_role', 'data_manager');
+    localStorage.setItem('manager_name', 'Data Manager');
+    window.location.href = USERS[email].page;
+    return;
+  }
   try{
     const doc = await db.collection('kratis_users').doc(email).get();
     if(!doc.exists){
