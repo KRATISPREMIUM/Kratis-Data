@@ -68,9 +68,11 @@ async function setStatus(docId, status){
 async function confirmManual(docId, orderId){
   if(!confirm('Place '+orderId+' manually and Confirm Delivered?')) return;
   try{
-    await db.collection('kratis_orders').doc(docId).update({status:'Delivered', deliveredAt: new Date().toLocaleString()});
-    await db.collection('orders').doc(docId).set({status:'Delivered'}, {merge:true});
-    alert(orderId+' Delivered! CEO go see am now.');
+    await db.collection('kratis_orders').doc(docId).update({status:'Delivered'});
+    const q = await db.collection('orders').where('id','==',orderId).get();
+    if(!q.empty){ q.forEach(d=> d.ref.update({status:'Delivered'})); }
+    else { await db.collection('orders').doc(orderId).set({status:'Delivered'}, {merge:true}); }
+    alert('Updated to Delivered');
     loadOrders();
   }catch(e){ alert('Fail: '+e.message); }
 }
