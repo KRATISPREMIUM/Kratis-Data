@@ -944,21 +944,7 @@ window.setTier = function(tier){
   }catch(e){ console.error(e); }
 };
 
-// Step 2: Force AGENT price sync - FIX realTier
-try{
-  let _users = JSON.parse(localStorage.getItem('kratis_users')||'{}');
-  let _email = localStorage.getItem('kratis_logged_user') || 'addophilisam2@gmail.com';
-  if(_users[_email]){ _users[_email].tier='AGENT'; }
-  else { _users[_email]={tier:'AGENT'}; }
-  localStorage.setItem('kratis_users', JSON.stringify(_users));
-  localStorage.setItem('kratis_tier','AGENT');
-  localStorage.setItem('kratis_logged_user',_email);
-  if(typeof setTier==='function'){ setTier('AGENT'); }
-  if(typeof updateTierUI==='function') updateTierUI();
-  if(typeof renderAll==='function') renderAll();
-  let b=document.getElementById('tierBadge');
-  if(b){ b.textContent='AGENT MODE • 1100 Approved ✅'; b.style.background='#FFD700'; b.style.color='#000'; }
-}catch(e){ console.error(e); }
+updateTierUI();
 </script>
 <script>
 // RESTORE YOUR ORIGINAL MENU FUNCTION - DO NOT DELETE!
