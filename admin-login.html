@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Manager Login - Kratis Premium Data</title>
+ <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}
 body{min-height:100vh;background:radial-gradient(circle at top left,rgba(255,215,0,0.15),transparent 35%),radial-gradient(circle at bottom right,rgba(255,215,0,0.08),transparent 40%),#070707;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff}
@@ -49,17 +53,53 @@ const USERS = {
  "data@kratisdata.com": {pass:"Data2025!", page:"data-manager.html"},
  "gift@kratisdata.com": {pass:"Gift2025!", page:"gift-manager.html"}
 };
-function login(){
- const email=document.getElementById('email').value.trim().toLowerCase();
- const pass=document.getElementById('pass').value.trim();
- const u=USERS[email];
- if(u && u.pass===pass){
-   localStorage.setItem('kratis_role',email);
-   localStorage.setItem('kratis_logged','yes');
-   window.location.href=u.page;
- }else{
-   document.getElementById('errorMsg').style.display='block';
- }
+async function login(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const pass = document.getElementById('pass').value.trim();
+  const err = document.getElementById('errorMsg');
+  err.style.display = "none";
+  err.textContent = "Checking...";
+  err.style.display = "block";
+  err.style.color = "#FFD400";
+  try{
+    const doc = await db.collection('kratis_users').doc(email).get();
+    if(!doc.exists){
+      err.textContent = "❌ Invalid credentials. Please check your email and password.";
+      err.style.color = "#ff5252";
+      return;
+    }
+    const u = doc.data();
+    if(u.password !== pass){
+      err.textContent = "❌ Invalid credentials. Please check your email and password.";
+      err.style.color = "#ff5252";
+      return;
+    }
+    localStorage.setItem('manager_email', email);
+    localStorage.setItem('manager_role', (u.role||'').toLowerCase());
+    localStorage.setItem('manager_name', u.name||'Manager');
+    const role = (u.role||'').toLowerCase();
+    if(role === 'data_manager' || role === 'data'){
+      window.location.href = 'data-manager.html';
+    } else if(role === 'ceo' || role === 'admin'){
+      window.location.href = 'ceo.html';
+    } else if(role === 'ecg_manager' || role === 'ecg'){
+      window.location.href = 'ecg-manager.html';
+    } else if(role === 'gift_manager' || role === 'gift'){
+      window.location.href = 'gift-manager.html';
+    } else if(role === 'afa_manager' || role === 'afa'){
+      window.location.href = 'afa-manager.html';
+    } else if(role === 'complaint_manager' || role === 'complaint'){
+      window.location.href = 'complaint-manager.html';
+    } else if(role === 'transaction_manager' || role === 'transaction'){
+      window.location.href = 'transaction-manager.html';
+    } else {
+      err.textContent = "❌ No dashboard for role: " + role;
+      err.style.color = "#ff5252";
+    }
+  }catch(e){
+    err.textContent = "❌ Login Fail: " + e.message;
+    err.style.color = "#ff5252";
+  }
 }
 </script>
 </body>
