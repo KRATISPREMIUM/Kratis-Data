@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CEO Dashboard - Kritis Premium</title>
+<title><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase.js"></script>CEO Dashboard - Kritis Premium</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0a0a0a;color:#fff;display:flex}
@@ -157,7 +160,45 @@ function setRole(ph,role){ let u=users(); u=u.map(x=>x.phone===ph?{...x,status:r
 function reject(ph){ saveUsers(users().filter(x=>x.phone!==ph)); render(); }
 function clearAll(){ if(!confirm('Clear ALL users, agents, dealers, ECG orders?')) return; localStorage.removeItem(UKEY); localStorage.removeItem(EKEY); localStorage.removeItem(OKEY); render(); alert('All cleared. Create new user now.'); }
 function savePrices(){ let p=prices(); p=p.map((x,i)=>({name:x.name,user:+document.getElementById('pu'+i).value,agent:+document.getElementById('pa'+i).value,dealer:+document.getElementById('pd'+i).value,cost:+document.getElementById('pc'+i).value})); localStorage.setItem(PKEY,JSON.stringify(p)); render(); alert('Prices saved for Users, Agents, Dealers!'); }
-function syncNow(){   lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString();   render();   alert('CEO Sync Done! Users: '+users().length+' | Orders: '+allOrders().length); }
+async function syncNow(){
+  lastSync.textContent='Syncing...';
+  try{
+    // 1. Pull Cloud Orders -> local
+    const snap = await db.collection('kratis_orders').get();
+    let cloudOrders = [];
+    snap.forEach(d=> cloudOrders.push(d.data()));
+    if(cloudOrders.length){
+      let local = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+      cloudOrders.forEach(co=>{
+        if(co.id && !local.find(x=>x.id===co.id)) local.push(co);
+      });
+      localStorage.setItem('kratis_orders', JSON.stringify(local));
+    }
+    // 2. Pull Cloud Users -> local
+    const usnap = await db.collection('kratis_users').get();
+    let cloudUsers = [];
+    usnap.forEach(d=> cloudUsers.push(d.data()));
+    if(cloudUsers.length){
+      let raw = JSON.parse(localStorage.getItem('kratis_users')||'{}');
+      let obj = Array.isArray(raw) ? {} : raw;
+      cloudUsers.forEach(u=>{
+        if(u.email) obj[u.email] = u;
+      });
+      localStorage.setItem('kratis_users', JSON.stringify(obj));
+    }
+    lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString();
+    render();
+    alert('CEO Cloud Sync Done! Users: '+users().length+' | Orders: '+allOrders().length);
+  }catch(e){
+    lastSync.textContent='Sync Fail: '+e.message;
+    alert('Sync Fail: '+e.message+'\nCheck Firestore Rules be allow read/write');
+  }
+}
+// auto listen - when customer buy for another phone, CEO go see am automatic
+try{
+  db.collection('kratis_orders').onSnapshot(()=>{ render(); });
+  db.collection('kratis_users').onSnapshot(()=>{ render(); });
+}catch(e){}
 setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
 render();
 </script></body></html>
