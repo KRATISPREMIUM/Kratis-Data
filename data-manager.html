@@ -42,7 +42,7 @@ async function loadOrders(){
     // filter only Data: Ghana GB + International
     list = list.filter(o=>{
       const t = ((o.cat||'')+' '+(o.type||'')+' '+(o.name||'')+' '+(o.product||'')).toUpperCase();
-      return t.includes('GB') || t.includes('MTN') || t.includes('TELECEL') || t.includes('AIRTEL') || t.includes('INTERNATIONAL') || t.includes('AIRTIME') || t.includes('BUNDLE') || o.cat==='GHANA_GB' || o.cat==='INTL';
+      return t.includes('GB') || t.includes('MTN') || t.includes('TELECEL') || t.includes('AIRTEL') || t.includes('INTERNATIONAL') || t.includes('AIRTIME') || t.includes('BUNDLE') || o.cat==='GHANA_GB' || o.cat==='INTL' || o.id==='KR-1712' || o.id==='KR-7302' || o.id==='KR-8841';
     });
     if(!list.length){ box.innerHTML='<p>No Data orders yet</p>'; return; }
     box.innerHTML = '';
@@ -52,7 +52,8 @@ async function loadOrders(){
       div.className='card';
       div.innerHTML = `<b>${o.id}</b> | ${o.name||o.product||''} | ${o.recipient||o.to||o.phone||''} | GH₵${o.amount||o.amt||0}<br>Status: <b>${o.status||'Pending'}</b> | ${o.date||''}<br><br>
       <button onclick="setStatus('${o.docId}','Processing')">Processing</button>
-      <button class="green" onclick="setStatus('${o.docId}','Delivered')">Delivered</button>`;
+     <button class="green" onclick="setStatus('${o.docId}','Delivered')">Delivered</button>
+<button onclick="confirmManual('${o.docId}','${o.id}')">Place Manually & Confirm</button>
       box.appendChild(div);
     });
   }catch(e){ box.innerHTML='Fail: '+e.message; }
@@ -63,6 +64,16 @@ async function setStatus(docId, status){
     await db.collection('kratis_orders').doc(docId).update({status: status});
     await db.collection('orders').doc(docId).set({status: status}, {merge:true});
     alert('Updated to '+status);
+    loadOrders();
+  }catch(e){ alert('Fail: '+e.message); }
+}
+
+async function confirmManual(docId, orderId){
+  if(!confirm('Place '+orderId+' manually and Confirm Delivered?')) return;
+  try{
+    await db.collection('kratis_orders').doc(docId).update({status:'Delivered', deliveredAt: new Date().toLocaleString()});
+    await db.collection('orders').doc(docId).set({status:'Delivered'}, {merge:true});
+    alert(orderId+' Delivered! CEO go see am now.');
     loadOrders();
   }catch(e){ alert('Fail: '+e.message); }
 }
