@@ -56,7 +56,7 @@ input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222
 
 <div class="main">
 <div class="topbar"><div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
-<button class="btn" onclick="syncNow()">SYNC TO CLOUD</button> <button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button> <button class="btn-green">AUTO-SYNC ON</button><br><small id="lastSync">Last Sync: -</small></div>
+<button class="btn-green" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button>
 <div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b></div></div>
 
 <div id="view-dash">
@@ -83,7 +83,7 @@ input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222
 </div></div>
 
 <div id="view-users" style="display:none"><div class="box"><b>All Users / Agents / Dealers</b><div id="usersList"></div></div></div>
-<div id="view-orders" style="display:none"><div class="box"><b>All Orders</b><div id="allOrders"></div></div></div>
+<div id="view-orders" style="display:none"><div class="box"><b>All Orders</b><div id="allOrdersList"></div></div></div>
 <div id="view-prices" style="display:none"><div class="box"><b>Set Prices - Users / Agents / Dealers</b><div id="priceEditor"></div><button class="btn" onclick="savePrices()">SAVE ALL PRICES</button></div></div>
 </div>
 
@@ -148,7 +148,7 @@ const pending=u.filter(x=>x.status==='pending'), agents=u.filter(x=>x.status==='
  orderCount.textContent=o.length+' orders';
 pendingList.innerHTML=pending.length?pending.map(x=>`<div class="order"><b>${x.name}</b><br>${x.phone}<br>${x.email||'No Email'}<br>${x.loc||''}<br><select id="role-${x.phone}"><option value="agent">Agent</option><option value="dealer">Dealer</option></select> <button class="btn" onclick="approve('${x.phone}')">APPROVE</button> <button class="btn-red" onclick="reject('${x.phone}')">Reject</button></div>`).join(''):'No pending agents yet';
  usersList.innerHTML=u.length?`<table><tr><th>Name</th><th>Phone</th><th>Status</th><th>Action</th></tr>${u.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td><td>${x.status||x.role||'user'}</td><td><button onclick="setRole('${x.phone}','agent')">Make Agent</button> <button onclick="setRole('${x.phone}','dealer')">Make Dealer</button> <button onclick="setRole('${x.phone}','user')">Make User</button></td></tr>`).join('')}</table>`:'No users yet. Create one for top.';
- allOrders.innerHTML=o.length?o.map(x=>`<div class="order">${x.type||x.product||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.status||'Pending'}</div>`).join(''):'No orders yet';
+document.getElementById('allOrdersList').innerHTML=o.length?o.map(x=>`<div class="order">${x.type||x.product||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.status||'Pending'}</div>`).join(''):'No orders yet';
  priceTable.innerHTML=`<table><tr><th>Product</th><th>User</th><th>Agent</th><th>Dealer</th><th>Cost</th></tr>${p.map(x=>`<tr><td>${x.name}</td><td>GHS ${x.user}</td><td>GHS ${x.agent}</td><td>GHS ${x.dealer}</td><td>GHS ${x.cost}</td></tr>`).join('')}</table>`;
  priceEditor.innerHTML=p.map((x,i)=>`<div style="margin:8px 0"><b>${x.name}</b><br>User <input type="number" step="0.1" id="pu${i}" value="${x.user}"> Agent <input type="number" step="0.1" id="pa${i}" value="${x.agent}"> Dealer <input type="number" step="0.1" id="pd${i}" value="${x.dealer}"> Cost <input type="number" step="0.1" id="pc${i}" value="${x.cost}"></div>`).join('');
  renderOrders('ALL');
@@ -157,25 +157,52 @@ function renderOrders(t){   const o=allOrders().filter(x=>{     if(t==='ALL') re
 function filterOrders(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderOrders(t);}
 function createUser(){ const n=tName.value.trim(), ph=tPhone.value.trim(); if(!n||!ph) return alert('Name and Phone required'); let u=users(); if(u.find(x=>x.phone===ph)) return alert('Phone already exist'); u.push({name:n,phone:ph,pass:tPass.value||'1234',status:'pending',date:new Date().toLocaleString()}); saveUsers(u); tName.value=tPhone.value=tPass.value=''; render(); alert('User created! E dey Pending for right side now. Approve am.'); }
 function approve(ph){ const role=document.getElementById('role-'+ph).value; setRole(ph,role); }
-function setRole(ph,role){ let u=users(); u=u.map(x=>x.phone===ph?{...x,status:role}:x); saveUsers(u); render(); alert('Changed to '+role.toUpperCase()); }
+async function setRole(ph, role){
+  let u = users();
+  u = u.map(x => x.phone===ph ? {...x, status:role, role:role, tier:role.toUpperCase()} : x);
+  saveUsers(u);
+  render();
+  // PUSH to cloud immediately - na the main fix be this
+  try{
+    let target = u.find(x=>x.phone===ph);
+    if(target && target.email){
+      await db.collection('kratis_users').doc(target.email).set(target, {merge:true});
+    }
+    lastSync.textContent = 'Last Sync: '+new Date().toLocaleTimeString();
+  }catch(e){ alert('Saved local, cloud fail: '+e.message); }
+  alert('Changed to '+role.toUpperCase()+' - Saved to Cloud!');
+}
 function reject(ph){ saveUsers(users().filter(x=>x.phone!==ph)); render(); }
 function clearAll(){ if(!confirm('Clear ALL users, agents, dealers, ECG orders?')) return; localStorage.removeItem(UKEY); localStorage.removeItem(EKEY); localStorage.removeItem(OKEY); render(); alert('All cleared. Create new user now.'); }
 function savePrices(){ let p=prices(); p=p.map((x,i)=>({name:x.name,user:+document.getElementById('pu'+i).value,agent:+document.getElementById('pa'+i).value,dealer:+document.getElementById('pd'+i).value,cost:+document.getElementById('pc'+i).value})); localStorage.setItem(PKEY,JSON.stringify(p)); render(); alert('Prices saved for Users, Agents, Dealers!'); }
 async function syncNow(){
   lastSync.textContent='Syncing...';
   try{
-    // 1. Pull Cloud Orders -> local
+    // PUSH local users to cloud first (so agent no go lost)
+    let localUsers = users();
+    for(let u of localUsers){
+      if(u.email){
+        await db.collection('kratis_users').doc(u.email).set(u, {merge:true});
+      }
+    }
+    // PUSH local orders to cloud
+    let localOrders = JSON.parse(localStorage.getItem(OKEY)||'[]');
+    for(let o of localOrders){
+      if(o.id) await db.collection('kratis_orders').doc(o.id).set(o, {merge:true});
+    }
+    // THEN pull cloud orders back
     const snap = await db.collection('kratis_orders').get();
     let cloudOrders = [];
     snap.forEach(d=> cloudOrders.push(d.data()));
     if(cloudOrders.length){
       let local = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
       cloudOrders.forEach(co=>{
-       let i=local.findIndex(x=>x.id==co.id); if(i>-1)local[i]=co; else local.push(co);
+        let i = local.findIndex(x=>x.id==co.id);
+        if(i>-1) local[i]=co; else local.push(co);
       });
       localStorage.setItem('kratis_orders', JSON.stringify(local));
     }
-    // 2. Pull Cloud Users -> local
+    // THEN pull cloud users back - but no overwrite new agent status
     const usnap = await db.collection('kratis_users').get();
     let cloudUsers = [];
     usnap.forEach(d=> cloudUsers.push(d.data()));
@@ -183,7 +210,7 @@ async function syncNow(){
       let raw = JSON.parse(localStorage.getItem('kratis_users')||'{}');
       let obj = Array.isArray(raw) ? {} : raw;
       cloudUsers.forEach(u=>{
-        if(u.email) obj[u.email] = u;
+        if(u.email) obj[u.email] = {...obj[u.email], ...u};
       });
       localStorage.setItem('kratis_users', JSON.stringify(obj));
     }
@@ -192,14 +219,21 @@ async function syncNow(){
     alert('CEO Cloud Sync Done! Users: '+users().length+' | Orders: '+allOrders().length);
   }catch(e){
     lastSync.textContent='Sync Fail: '+e.message;
-    alert('Sync Fail: '+e.message+'\nCheck Firestore Rules be allow read/write');
+    alert('Sync Fail: '+e.message);
   }
 }
 // auto listen - when customer buy for another phone, CEO go see am automatic
 try{
-  db.collection('kratis_orders').onSnapshot(()=>{ render(); });
-  db.collection('kratis_users').onSnapshot(()=>{ render(); });
+  db.collection('kratis_orders').onSnapshot(()=>{ if(autoSync) render(); });
+  db.collection('kratis_users').onSnapshot(()=>{ if(autoSync) render(); });
 }catch(e){}
-setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
+let autoSync=true;
+function toggleAuto(){
+  autoSync=!autoSync;
+  document.getElementById('autoBtn').textContent = autoSync ? 'AUTO-SYNC ON' : 'AUTO-SYNC OFF';
+  document.getElementById('autoBtn').style.background = autoSync ? '#28a745' : '#666';
+  alert(autoSync ? 'Auto-sync ON' : 'Auto-sync OFF');
+}
+  setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
 render();
 </script></body></html>
