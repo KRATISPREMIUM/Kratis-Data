@@ -56,7 +56,8 @@ input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222
 
 <div class="main">
 <div class="topbar"><div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
-<button class="btn-green" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button>
+<button class="btn" onclick="syncNow()">SYNC TO CLOUD</button> <button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button> <br><small id="lastSync">Last Sync: -</small><br>
+  <button class="btn-green" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button>
 <div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b></div></div>
 
 <div id="view-dash">
