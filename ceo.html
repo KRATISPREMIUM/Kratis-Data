@@ -1,240 +1,72 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<title>Kratis CEO - FIXED</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
-<title>CEO Dashboard - Kritis Premium</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#0a0a0a;color:#fff;display:flex}
-.sidebar{width:230px;background:#111;padding:15px;position:fixed;height:100vh;overflow:auto}
-.logo{color:#f5c518;font-weight:900;font-size:20px}
-.menu-title{color:#f5c518;font-size:11px;margin:18px 0 8px;font-weight:bold}
-.sidebar a{display:block;color:#ccc;text-decoration:none;padding:8px 10px;font-size:13px;border-radius:6px;cursor:pointer}
-.sidebar a:hover,.sidebar a.active{background:#222;color:#f5c518}
-.cloud{background:#1a1a1a;border:1px solid #00ff88;padding:10px;border-radius:10px;font-size:11px;margin-top:20px;color:#00ff88}
-.main{margin-left:230px;flex:1;padding:15px}
-.topbar{background:#111;padding:12px;border-radius:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.super{background:#f5c518;color:#000;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:bold}
-.btn{background:#f5c518;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
-.btn-red{background:#ff4444;color:#fff;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
-.btn-green{background:#00e676;border:none;padding:9px 13px;border-radius:8px;font-weight:bold;cursor:pointer}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
-.card{background:#161616;padding:15px;border-radius:12px;text-align:center}
-.card h2{color:#f5c518}.card.green{border:1px solid #00ff88}.card.green h2{color:#00ff88}
-.substats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.sub{background:#161616;padding:12px;border-radius:10px;text-align:center}.sub b{color:#f5c518;font-size:20px}
-.layout{display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:12px}
-.box{background:#161616;padding:15px;border-radius:12px;margin-bottom:12px}
-.tabs button{background:#222;color:#fff;border:none;padding:7px 12px;border-radius:20px;margin:3px;cursor:pointer;font-size:12px}
-.tabs button.active{background:#f5c518;color:#000;font-weight:bold}
-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
-th{color:#4da3ff;text-align:left;padding:8px;border-bottom:1px solid #333}td{padding:8px;border-bottom:1px solid #222}
-input,select{padding:8px;border-radius:6px;border:1px solid #333;background:#222;color:#fff;margin:3px}
-.pending{border:2px solid #00ff88;border-radius:12px;padding:12px;background:#0f1a12;height:fit-content}
-.agentbox{background:#f5c518;color:#000;font-weight:bold;padding:8px;border-radius:6px;margin:10px 0;text-align:center}
-.order{background:#222;padding:10px;border-radius:8px;margin:8px 0;font-size:12px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.stats,.substats{grid-template-columns:1fr 1fr}.sidebar{display:none}.main{margin-left:0}}
-</style></head><body>
-<div class="sidebar"><div class="logo">K<br>KRATIS DATA.COM</div>
-<div class="menu-title">MAIN MENU</div>
-<a class="active" onclick="showView('dash')">• CEO Dashboard</a>
-<a onclick="showView('users')">All Users / Agents / Dealers</a>
-<a onclick="showView('users')">Dealers</a>
-<a onclick="showView('orders')">All Orders (All Networks)</a>
-<a onclick="showView('prices')">Product Price Setup</a>
-<div class="menu-title">MANAGER CONTROLS</div>
-<a href="complaint-manager.html">Complaints - Manager</a>
-<a href="transaction-manager.html">Transactions</a>
-<a href="ecg-manager.html">ECG / Prepaid Manager</a>
-<a href="afa-manager.html">AFA & WASSCE Manager</a>
-<a href="data-manager.html">Data & Airline Manager</a>
-<a href="gift-manager.html">Gift & Gaming Cards Manager</a>
-<a href="#" onclick="sessionStorage.removeItem('kratis_ceo');location.href='admin-login.html'">Logout CEO</a>
-<div class="cloud">● GOOGLE CLOUD LIVE<br><span id="cloudCount">0 users</span><br>⚡ REAL BUILD + AUTO-SYNC</div></div>
-
+<style>*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#0b0b0f;color:#fff;display:flex}.side{width:230px;background:#111;min-height:100vh;padding:14px}.side a{display:block;color:#ddd;text-decoration:none;padding:10px;border-radius:8px;cursor:pointer}.side a:hover{background:#222}.main{flex:1;padding:14px}.card{background:#16161d;border:1px solid #2a2a33;border-radius:12px;padding:12px;margin-bottom:12px}.btn{background:#FFD700;color:#000;border:0;padding:10px 12px;border-radius:8px;font-weight:800;cursor:pointer}.btn2{background:#222;color:#fff;border:1px solid #444;padding:10px 12px;border-radius:8px;cursor:pointer}.btnG{background:#14532d;color:#4ade80;border:0;padding:10px 12px;border-radius:8px;font-weight:800;cursor:pointer}input,select{padding:10px;background:#0f0f14;color:#fff;border:1px solid #333;border-radius:8px;margin:4px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid #26262e;text-align:left}.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:800;background:#333}.agent{background:#14532d;color:#4ade80}.dealer{background:#7c3aed;color:#fff}</style>
+</head><body>
+<div class="side"><b style="color:#FFD700;font-size:18px">KRATIS CEO</b><p style="color:#aaa;font-size:12px">FIXED VERSION</p>
+<a onclick="view('dash')">Dashboard</a><a onclick="view('users')">All Users / Agents</a><a onclick="view('orders')">All Orders</a><a onclick="view('pending')">Pending Approvals</a>
+<a href="ecg-utility-manager.html">ECG / Utility Manager</a>
+<a onclick="sessionStorage.removeItem('kratis_ceo');location.href='admin-login.html'">Logout CEO</a>
+<p id="cloudCount" style="color:#4ade80;font-size:12px">● CLOUD LIVE</p></div>
 <div class="main">
-<div class="topbar"><div><b>CEO ADMIN: Phillip</b> <span class="super">YOU HAVE SUPER ACCESS</span><br>
-<button class="btn" onclick="syncNow()">SYNC TO CLOUD</button> <button class="btn" onclick="syncNow()">LOAD FROM CLOUD</button> <br><small id="lastSync">Last Sync: -</small><br>
-  <button class="btn-green" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button>
-<div style="text-align:right"><small>Today Profit</small><br><b style="color:#f5c518;font-size:20px">GHS <span id="profit">0</span></b></div></div>
+<div class="card"><b>CEO ADMIN: Phillip</b> <span style="background:#FFD700;color:#000;padding:2px 8px;border-radius:20px;font-size:11px">SUPER ACCESS</span><br><br>
+<button class="btn" onclick="pushToCloud()">SYNC TO CLOUD (Push Only)</button>
+<button class="btn2" onclick="loadFromCloud()">LOAD FROM CLOUD (Pull Only)</button>
+<button class="btnG" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button><br><small id="lastSync">Last Sync: -</small>
+<div style="float:right;text-align:right"><small>Today Profit</small><br><b style="color:#FFD700;font-size:20px">GHS <span id="profit">0</span></b></div></div>
 
-<div id="view-dash">
-<div class="stats"><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Today</small></div><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Weekly</small></div><div class="card"><h2>GHS <span class="amt">0</span></h2><small>Monthly</small></div><div class="card green"><h2>GHS <span class="amt">0</span></h2><small>Total</small></div></div>
-<div class="substats"><div class="sub"><b id="cUsers">0</b><br>Users</div><div class="sub"><b id="cAgents">0</b><br>Agents</div><div class="sub"><b id="cDealers">0</b><br>Dealers</div><div class="sub"><b id="cPending">0</b><br>Pending</div></div>
+<div id="v-dash"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+<div class="card"><h2 id="cUsers">0</h2><small>Users</small></div><div class="card"><h2 id="cAgents">0</h2><small>Agents</small></div><div class="card"><h2 id="cDealers">0</h2><small>Dealers</small></div><div class="card"><h2 id="cOrders">0</h2><small>Orders</small></div></div>
+<div class="card"><b>Create User</b><br><input id="nName" placeholder="Name"><input id="nEmail" placeholder="Email"><input id="nPhone" placeholder="Phone"><input id="nPass" placeholder="Password"><button class="btn" onclick="createUser()">Create</button></div></div>
 
-<div class="layout"><div>
-<div class="box"><b>All Network Orders - CEO View</b> <small style="float:right" id="orderCount">0 orders</small>
-<div class="tabs"><button class="active" onclick="filterOrders('ALL',this)">ALL</button><button onclick="filterOrders('ECG',this)">ECG Prepaid</button><button onclick="filterOrders('AFA',this)">AFA</button><button onclick="filterOrders('WASSCE',this)">WASSCE</button><button onclick="filterOrders('GIFT',this)">Gift Cards</button><button onclick="filterOrders('MTN',this)">MTN Bundle</button><button onclick="filterOrders('AIRLINE',this)">Airline</button></div>
-<div id="ordersList"></div></div>
-
-<div class="box"><b>TEST: Create New User (make e appear for Pending)</b><br>
-<input id="tName" placeholder="Full Name"><input id="tPhone" placeholder="Phone 024xxxxxxx"><input id="tPass" placeholder="Password">
-<button class="btn" onclick="createUser()">Create User Account</button>
-<button class="btn-red" onclick="clearAll()">CLEAR ALL USERS / AGENTS / ORDERS</button>
-<p style="font-size:12px;color:#aaa;margin-top:8px">This user go enter Pending. CEO go approve am to Agent or Dealer for right side.</p></div>
-
-<div class="box"><b>INTERNATIONAL Prices - CEO Controls</b><div id="priceTable"></div></div>
+<div id="v-users" style="display:none" class="card"><b>All Users - Wallet be per user now</b><div style="overflow:auto"><table><thead><tr><th>User</th><th>Email</th><th>Wallet</th><th>Role</th><th>Change Role</th></tr></thead><tbody id="usersList"></tbody></table></div></div>
+<div id="v-orders" style="display:none" class="card"><b>All Orders (All Users)</b><div style="overflow:auto"><table><thead><tr><th>Customer</th><th>Product</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ordersList"></tbody></table></div></div>
+<div id="v-pending" style="display:none" class="card"><b>Pending Agent Applications</b><div id="pendingList"></div></div>
 </div>
-
-<div class="pending"><h3>Pending Agent / Dealer <span style="background:#f5c518;color:#000;padding:2px 6px;border-radius:10px;font-size:10px">CEO ONLY</span></h3>
-<div class="agentbox"><span id="pendingText">0 PENDING</span></div><div id="pendingList"></div>
-<div style="text-align:center;margin-top:10px"><b style="color:#f5c518;font-size:22px" id="cloudBig">0</b><br><small>Cloud Users</small><br><b style="color:#4da3ff" id="clock">--:--</b></div></div>
-</div></div>
-
-<div id="view-users" style="display:none"><div class="box"><b>All Users / Agents / Dealers</b><div id="usersList"></div></div></div>
-<div id="view-orders" style="display:none"><div class="box"><b>All Orders</b><div id="allOrdersList"></div></div></div>
-<div id="view-prices" style="display:none"><div class="box"><b>Set Prices - Users / Agents / Dealers</b><div id="priceEditor"></div><button class="btn" onclick="savePrices()">SAVE ALL PRICES</button></div></div>
-</div>
-
 <script>
-// CEO LOGIN LOCK - KratisData.com CEO Only
-if(sessionStorage.getItem('kratis_ceo') !== 'true'){
-  const email = prompt('CEO LOGIN\nEmail:');
-  const pass = prompt('Password:');
-  if(email === 'ceo@kratisdata.com' && pass === 'KratisCEO2025!'){
-    sessionStorage.setItem('kratis_ceo','true');
-    alert('Welcome CEO Phillip - SUPER ACCESS');
-  } else {
-    alert('Wrong CEO login! Redirect to manager login...');
-    location.href='admin-login.html';
-  }
+if(sessionStorage.getItem('kratis_ceo')!=='true'){let e=prompt('CEO Email:'),p=prompt('Password:');if(e==='ceo@kratisdata.com'&&p==='KratisCEO2025!'){sessionStorage.setItem('kratis_ceo','true')}else{location.href='admin-login.html'}}
+const UKEY='kratis_users',OKEY='kratis_orders';let autoSync=true;
+function db(){try{return window.db||firebase.firestore()}catch(e){return null}}
+function getUsers(){return JSON.parse(localStorage.getItem(UKEY)||'{}')}
+function setUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
+function getOrders(){return JSON.parse(localStorage.getItem(OKEY)||'[]')}
+function view(v){['dash','users','orders','pending'].forEach(x=>document.getElementById('v-'+x).style.display=x===v?'':'none');render()}
+function toggleAuto(){autoSync=!autoSync;document.getElementById('autoBtn').innerText=autoSync?'AUTO-SYNC ON':'AUTO-SYNC OFF';if(autoSync)loadFromCloud()}
+async function setRole(email,role){
+ let users=getUsers();if(!users[email])return alert('User no dey');
+ users[email].tier=role;users[email].role=role.toLowerCase();setUsers(users);
+ try{await db().collection('kratis_users').doc(email).set(users[email],{merge:true})}catch(e){}
+ document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();
+ render();alert('Changed '+email+' to '+role+' - Saved to Cloud! No click SYNC again.');
 }
-const UKEY='kratis_users', OKEY='kratis_orders', EKEY='ecg_orders', PKEY='kratis_prices';
-function users(){
-  let raw = localStorage.getItem(UKEY);
-  if(!raw) return [];
-  try{
-    let data = JSON.parse(raw);
-    if(Array.isArray(data)) return data;
-    // index.html save as object {email: {...}} - convert am for CEO
-    return Object.keys(data).map(email=>{
-      let u = data[email] || {};
-      return {
-        name: u.name || u.fullname || email.split('@')[0],
-        email: email,
-        phone: u.phone || u.whatsapp || '-',
-        status: (u.tier || u.role || 'USER').toLowerCase(),
-        role: (u.tier || u.role || 'USER').toLowerCase(),
-        tier: u.tier || 'USER',
-        wallet: u.wallet || localStorage.getItem('kratis_wallet') || '0',
-        date: u.date || new Date().toLocaleString()
-      };
-    });
-  }catch(e){ return []; }
+async function pushToCloud(){ // PUSH ONLY - no pull, no overwrite
+ let d=db(),users=getUsers(),orders=getOrders();
+ for(let e in users){await d.collection('kratis_users').doc(e).set(users[e],{merge:true})}
+ for(let o of orders){if(o.id)await d.collection('kratis_orders').doc(o.id).set(o,{merge:true})}
+ document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();alert('Push Done! Users: '+Object.keys(users).length);
 }
-function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
-function saveUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
-function ecg(){return JSON.parse(localStorage.getItem(EKEY)||'[]')}
-function allOrders(){   let ecgOrders = ecg().map(o=>({...o, type:'ECG', product:o.type||'ECG', amount:o.amount||o.amt||0, phone:o.meter||o.phone||'', status:o.status||'Pending'}));   let mainOrders = [];   try{ mainOrders = JSON.parse(localStorage.getItem(OKEY)||'[]'); }catch(e){}   mainOrders = mainOrders.map(o=>({     ...o,     type: o.cat || o.type || 'GHANA_GB',     product: o.name || o.size || o.product || 'Order',     amount: o.amount || o.amt || o.price || 0,     phone: o.recipient || o.to || o.phone || '',     meter: o.recipient || o.to || o.phone || '',     status: o.status || 'Pending',     id: o.id || '-'   }));   return [...ecgOrders, ...mainOrders]; }
-function prices(){return JSON.parse(localStorage.getItem(PKEY)||'null')||[
-{name:'International 5',user:5,agent:4.2,dealer:3.8,cost:3},
-{name:'International 12',user:12,agent:10.5,dealer:9.8,cost:9},
-{name:'International 80',user:80,agent:75,dealer:72,cost:70},
-{name:'MTN 10GB',user:5,agent:4.2,dealer:3.8,cost:3},
-{name:'AFA Registration',user:10,agent:8,dealer:7,cost:6},
-{name:'WASSCE Voucher',user:15,agent:13,dealer:12,cost:11},
-{name:'ECG Token',user:20,agent:19,dealer:18,cost:17},
-{name:'Gift Card $10',user:70,agent:65,dealer:60,cost:55}]}
-function showView(v){['dash','users','orders','prices'].forEach(x=>document.getElementById('view-'+x).style.display=x===v?'block':'none'); render();}
+async function loadFromCloud(){ // PULL ONLY - cloud be master
+ let d=db();if(!d)return;let users=getUsers();
+ let s=await d.collection('kratis_users').get();s.forEach(doc=>{users[doc.id]=doc.data()});setUsers(users);
+ let os=await d.collection('kratis_orders').get();let local=getOrders();os.forEach(doc=>{let co=doc.data();let i=local.findIndex(x=>x.id===co.id);if(i>-1)local[i]=co;else local.push(co)});localStorage.setItem(OKEY,JSON.stringify(local));
+ document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();render();
+}
+function createUser(){let e=document.getElementById('nEmail').value.trim().toLowerCase();if(!e)return alert('Enter email');let u=getUsers();u[e]={name:document.getElementById('nName').value,email:e,phone:document.getElementById('nPhone').value,pass:document.getElementById('nPass').value||'1234',tier:'USER',role:'user',wallet:0,date:new Date().toLocaleString()};setUsers(u);pushToCloud();render();alert('User Created!')}
 function render(){
- let u=users(), o=allOrders(), p=prices();
-u=u.map(x=>{ if(!x.status && x.role){ x.status = x.role==='pending_agent' ? 'pending' : x.role; } if(x.role==='pending_agent' && (!x.status || x.status==='pending')){ x.status='pending'; } return x; });
-const pending=u.filter(x=>x.status==='pending'), agents=u.filter(x=>x.status==='agent'), dealers=u.filter(x=>x.status==='dealer');
- const total=o.reduce((s,x)=>s+parseFloat(x.amount||0),0);
- document.querySelectorAll('.amt').forEach(e=>e.textContent=total); document.getElementById('profit').textContent=total;
- cUsers.textContent=u.length; cAgents.textContent=agents.length; cDealers.textContent=dealers.length; cPending.textContent=pending.length;
- pendingText.textContent=pending.length+' PENDING - REAL'; cloudBig.textContent=u.length; cloudCount.textContent=u.length+' users in cloud';
- orderCount.textContent=o.length+' orders';
-pendingList.innerHTML=pending.length?pending.map(x=>`<div class="order"><b>${x.name}</b><br>${x.phone}<br>${x.email||'No Email'}<br>${x.loc||''}<br><select id="role-${x.phone}"><option value="agent">Agent</option><option value="dealer">Dealer</option></select> <button class="btn" onclick="approve('${x.phone}')">APPROVE</button> <button class="btn-red" onclick="reject('${x.phone}')">Reject</button></div>`).join(''):'No pending agents yet';
- usersList.innerHTML=u.length?`<table><tr><th>Name</th><th>Phone</th><th>Status</th><th>Action</th></tr>${u.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td><td>${x.status||x.role||'user'}</td><td><button onclick="setRole('${x.phone}','agent')">Make Agent</button> <button onclick="setRole('${x.phone}','dealer')">Make Dealer</button> <button onclick="setRole('${x.phone}','user')">Make User</button></td></tr>`).join('')}</table>`:'No users yet. Create one for top.';
-document.getElementById('allOrdersList').innerHTML=o.length?o.map(x=>`<div class="order">${x.type||x.product||'ECG'} | ${x.meter||x.phone||''} | GH₵${x.amount} | ${x.status||'Pending'}</div>`).join(''):'No orders yet';
- priceTable.innerHTML=`<table><tr><th>Product</th><th>User</th><th>Agent</th><th>Dealer</th><th>Cost</th></tr>${p.map(x=>`<tr><td>${x.name}</td><td>GHS ${x.user}</td><td>GHS ${x.agent}</td><td>GHS ${x.dealer}</td><td>GHS ${x.cost}</td></tr>`).join('')}</table>`;
- priceEditor.innerHTML=p.map((x,i)=>`<div style="margin:8px 0"><b>${x.name}</b><br>User <input type="number" step="0.1" id="pu${i}" value="${x.user}"> Agent <input type="number" step="0.1" id="pa${i}" value="${x.agent}"> Dealer <input type="number" step="0.1" id="pd${i}" value="${x.dealer}"> Cost <input type="number" step="0.1" id="pc${i}" value="${x.cost}"></div>`).join('');
- renderOrders('ALL');
+ let users=getUsers(),orders=getOrders(),list=Object.values(users);
+ document.getElementById('cUsers').innerText=list.length;
+ document.getElementById('cAgents').innerText=list.filter(u=>u.tier==='AGENT').length;
+ document.getElementById('cDealers').innerText=list.filter(u=>u.tier==='DEALER').length;
+ document.getElementById('cOrders').innerText=orders.length;
+ document.getElementById('cloudCount').innerText='● CLOUD LIVE - '+list.length+' users';
+ document.getElementById('profit').innerText=orders.reduce((a,o)=>a+(+o.amount||0),0).toFixed(2);
+ document.getElementById('usersList').innerHTML=list.map(u=>`<tr><td>${u.name||'-'}</td><td>${u.email}</td><td>GHS ${(+u.wallet||0).toFixed(2)}</td><td><span class="badge ${u.tier==='AGENT'?'agent':u.tier==='DEALER'?'dealer':''}">${u.tier||'USER'}</span></td><td><select id="r-${u.email}"><option>USER</option><option>AGENT</option><option>DEALER</option></select><button class="btn" onclick="setRole('${u.email}',document.getElementById('r-${u.email}').value)">Save</button></td></tr>`).join('');
+ document.getElementById('ordersList').innerHTML=orders.map(o=>`<tr><td>${o.userEmail||o.email||'-'}</td><td>${o.product||o.name||o.type||'-'}</td><td>GHS ${o.amount||''}</td><td>${o.date||o.createdAt||''}</td></tr>`).join('');
+ document.getElementById('pendingList').innerHTML=list.filter(u=>u.role==='pending_agent').map(u=>`<div style="padding:8px;border-bottom:1px solid #222">${u.name} - ${u.email} - ${u.phone} <button class="btn" onclick="setRole('${u.email}','AGENT')">Approve AGENT</button></div>`).join('')||'No pending';
 }
-function renderOrders(t){   const o=allOrders().filter(x=>{     if(t==='ALL') return true;     let hay = ((x.type||'')+' '+(x.product||'')+' '+(x.name||'')+' '+(x.cat||'')).toUpperCase();     if(t==='MTN') return hay.includes('MTN') || hay.includes('GHANA_GB');     return hay.includes(t.toUpperCase());   });   ordersList.innerHTML=o.length?o.map(x=>`<div class="order"><b>${x.id||''}</b> | ${x.product||x.type} | ${x.phone||x.meter||''} | GH₵${x.amount} | ${x.status||'Pending'}<br><small>${x.date||''}</small></div>`).join(''):'No Real Orders Yet 🚀'; }
-function filterOrders(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); renderOrders(t);}
-function createUser(){ const n=tName.value.trim(), ph=tPhone.value.trim(); if(!n||!ph) return alert('Name and Phone required'); let u=users(); if(u.find(x=>x.phone===ph)) return alert('Phone already exist'); u.push({name:n,phone:ph,pass:tPass.value||'1234',status:'pending',date:new Date().toLocaleString()}); saveUsers(u); tName.value=tPhone.value=tPass.value=''; render(); alert('User created! E dey Pending for right side now. Approve am.'); }
-function approve(ph){ const role=document.getElementById('role-'+ph).value; setRole(ph,role); }
-async function setRole(ph, role){
-  let u = users();
-  u = u.map(x => x.phone===ph ? {...x, status:role, role:role, tier:role.toUpperCase()} : x);
-  saveUsers(u);
-  render();
-  // PUSH to cloud immediately - na the main fix be this
-  try{
-    let target = u.find(x=>x.phone===ph);
-    if(target && target.email){
-      await db.collection('kratis_users').doc(target.email).set(target, {merge:true});
-    }
-    lastSync.textContent = 'Last Sync: '+new Date().toLocaleTimeString();
-  }catch(e){ alert('Saved local, cloud fail: '+e.message); }
-  alert('Changed to '+role.toUpperCase()+' - Saved to Cloud!');
-}
-function reject(ph){ saveUsers(users().filter(x=>x.phone!==ph)); render(); }
-function clearAll(){ if(!confirm('Clear ALL users, agents, dealers, ECG orders?')) return; localStorage.removeItem(UKEY); localStorage.removeItem(EKEY); localStorage.removeItem(OKEY); render(); alert('All cleared. Create new user now.'); }
-function savePrices(){ let p=prices(); p=p.map((x,i)=>({name:x.name,user:+document.getElementById('pu'+i).value,agent:+document.getElementById('pa'+i).value,dealer:+document.getElementById('pd'+i).value,cost:+document.getElementById('pc'+i).value})); localStorage.setItem(PKEY,JSON.stringify(p)); render(); alert('Prices saved for Users, Agents, Dealers!'); }
-async function syncNow(){
-  lastSync.textContent='Syncing...';
-  try{
-    // PUSH local users to cloud first (so agent no go lost)
-    let localUsers = users();
-    for(let u of localUsers){
-      if(u.email){
-        await db.collection('kratis_users').doc(u.email).set(u, {merge:true});
-      }
-    }
-    // PUSH local orders to cloud
-    let localOrders = JSON.parse(localStorage.getItem(OKEY)||'[]');
-    for(let o of localOrders){
-      if(o.id) await db.collection('kratis_orders').doc(o.id).set(o, {merge:true});
-    }
-    // THEN pull cloud orders back
-    const snap = await db.collection('kratis_orders').get();
-    let cloudOrders = [];
-    snap.forEach(d=> cloudOrders.push(d.data()));
-    if(cloudOrders.length){
-      let local = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
-      cloudOrders.forEach(co=>{
-        let i = local.findIndex(x=>x.id==co.id);
-        if(i>-1) local[i]=co; else local.push(co);
-      });
-      localStorage.setItem('kratis_orders', JSON.stringify(local));
-    }
-    // THEN pull cloud users back - but no overwrite new agent status
-    const usnap = await db.collection('kratis_users').get();
-    let cloudUsers = [];
-    usnap.forEach(d=> cloudUsers.push(d.data()));
-    if(cloudUsers.length){
-      let raw = JSON.parse(localStorage.getItem('kratis_users')||'{}');
-      let obj = Array.isArray(raw) ? {} : raw;
-      cloudUsers.forEach(u=>{
-        if(u.email) obj[u.email] = {...obj[u.email], ...u};
-      });
-      localStorage.setItem('kratis_users', JSON.stringify(obj));
-    }
-    lastSync.textContent='Last Sync: '+new Date().toLocaleTimeString();
-    render();
-    alert('CEO Cloud Sync Done! Users: '+users().length+' | Orders: '+allOrders().length);
-  }catch(e){
-    lastSync.textContent='Sync Fail: '+e.message;
-    alert('Sync Fail: '+e.message);
-  }
-}
-// auto listen - when customer buy for another phone, CEO go see am automatic
-try{
-  db.collection('kratis_orders').onSnapshot(()=>{ if(autoSync) render(); });
-  db.collection('kratis_users').onSnapshot(()=>{ if(autoSync) render(); });
-}catch(e){}
-let autoSync=true;
-function toggleAuto(){
-  autoSync=!autoSync;
-  document.getElementById('autoBtn').textContent = autoSync ? 'AUTO-SYNC ON' : 'AUTO-SYNC OFF';
-  document.getElementById('autoBtn').style.background = autoSync ? '#28a745' : '#666';
-  alert(autoSync ? 'Auto-sync ON' : 'Auto-sync OFF');
-}
-  setInterval(()=>clock.textContent=new Date().toLocaleTimeString(),1000);
+try{db().collection('kratis_orders').onSnapshot(()=>{if(autoSync)loadFromCloud()})}catch(e){}
 render();
 </script></body></html>
