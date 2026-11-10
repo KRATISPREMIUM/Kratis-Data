@@ -69,10 +69,20 @@ async function confirmManual(docId, orderId){
   if(!confirm('Place '+orderId+' manually and Confirm Delivered?')) return;
   try{
     await db.collection('kratis_orders').doc(docId).update({status:'Delivered'});
-    const q = await db.collection('orders').where('id','==',orderId).get();
-    if(!q.empty){ q.forEach(d=> d.ref.update({status:'Delivered'})); }
-    else { await db.collection('orders').doc(orderId).set({status:'Delivered'}, {merge:true}); }
-    alert('Updated to Delivered');
+    const all = await db.collection('orders').get();
+    let found = 0;
+    all.forEach(d=>{
+      const data = d.data();
+      const str = JSON.stringify(data);
+      if(str.includes(orderId)){
+        d.ref.update({status:'Delivered'});
+        found++;
+      }
+    });
+    if(found==0){
+      await db.collection('orders').doc(orderId).set({status:'Delivered', id:orderId}, {merge:true});
+    }
+    alert('Updated to Delivered - CEO sync found: '+found);
     loadOrders();
   }catch(e){ alert('Fail: '+e.message); }
 }
