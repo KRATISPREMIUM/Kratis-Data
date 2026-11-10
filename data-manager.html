@@ -68,21 +68,26 @@ async function setStatus(docId, status){
 async function confirmManual(docId, orderId){
   if(!confirm('Place '+orderId+' manually and Confirm Delivered?')) return;
   try{
-    await db.collection('kratis_orders').doc(docId).update({status:'Delivered'});
+    await db.collection('kratis_orders').doc(docId).update({status:'Delivered', state:'Delivered', orderStatus:'Delivered', deliveryStatus:'Delivered'});
     const all = await db.collection('orders').get();
     let found = 0;
-    all.forEach(d=>{
+    for(const d of all.docs){
       const data = d.data();
-      const str = JSON.stringify(data);
-      if(str.includes(orderId)){
-        d.ref.update({status:'Delivered'});
+      if(JSON.stringify(data).includes(orderId)){
+        const updates = {status:'Delivered', state:'Delivered', orderStatus:'Delivered', deliveryStatus:'Delivered', managerStatus:'Delivered'};
+        for(const k in data){
+          if(typeof data[k]==='string' && data[k].includes('Pending')){
+            updates[k] = data[k].replaceAll('Pending','Delivered');
+          }
+        }
+        await d.ref.update(updates);
         found++;
       }
-    });
-    if(found==0){
-      await db.collection('orders').doc(orderId).set({status:'Delivered', id:orderId}, {merge:true});
     }
-    alert('Updated to Delivered - CEO sync found: '+found);
+    if(found==0){
+      await db.collection('orders').doc(orderId).set({status:'Delivered', state:'Delivered', orderStatus:'Delivered', id:orderId}, {merge:true});
+    }
+    alert('V3 Updated - CEO sync found: '+found);
     loadOrders();
   }catch(e){ alert('Fail: '+e.message); }
 }
