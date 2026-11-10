@@ -1,4 +1,170 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ECG Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#ff6b00;color:#000;padding:2px 6px;border-radius:4px;font-size:8px">ECG MANAGER</span></b></div><h2 style="margin-top:14px">ECG <span style="color:#FFD700">Login</span></h2><div class="field"><input type="email" id="e" value="ecg@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="ECG2025!"></div><button class="btn" onclick="login()">Login to ECG Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">ecg@kratisdata.com / ECG2025!</p></div></div>
-<div id="dash"><h2>💡 ECG & Prepaid Manager — ONLY ECG</h2><p style="font-size:11px;color:#888">Logged as: <span id="who" style="color:#FFD700"></span></p><div class="card"><h4>🇬🇭 Ghana ECG Prepaid (NO API - Manual)</h4><p style="font-size:12px;margin-top:8px">Meter: 54XXXXXX | GHS 100<br><br><button style="background:#FFD700;color:#000;border:none;padding:8px 14px;border-radius:8px;font-weight:800">Send Token + Upload Receipt Image</button></p></div><div class="card"><h4>🌍 Other Countries Prepaid (API)</h4><p style="font-size:12px">Nigeria Prepaid • API Status: OK</p></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
-<script>function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'ecg@kratisdata.com';}function login(){const e=document.getElementById('e').value.trim().toLowerCase();const p=document.getElementById('p').value.trim();if(e==='ecg@kratisdata.com'&&p==='ECG2025!'){localStorage.setItem('kratis_role',e);showDash();}else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Must be ecg@kratisdata.com / ECG2025!';}}window.onload=function(){if(localStorage.getItem('kratis_role')==='ecg@kratisdata.com'){showDash();}}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kratis ECG + Utility Manager - CEO</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#0b0b0f;color:#fff}
+header{background:#111;padding:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.logo{color:#FFD700;font-weight:900;font-size:20px}
+.btn{background:#FFD700;color:#000;border:0;padding:10px 14px;border-radius:8px;font-weight:800;cursor:pointer}
+.btn2{background:#222;color:#fff;border:1px solid #444;padding:10px 14px;border-radius:8px;cursor:pointer}
+.tabs{display:flex;gap:8px;padding:12px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:12px;border-radius:10px;border:0;background:#1a1a22;color:#fff;font-weight:800;cursor:pointer}
+.tabs button.on{background:#FFD700;color:#000}
+.wrap{padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{background:#16161d;border:1px solid #2a2a33;border-radius:14px;padding:14px}
+.card h3{margin:0 0 10px;color:#FFD700}
+input,select{width:100%;padding:11px;margin:6px 0;background:#0f0f14;color:#fff;border:1px solid #333;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px;border-bottom:1px solid #26262e;text-align:left}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:800}
+.pend{background:#7c5a00;color:#FFD700}.paid{background:#14532d;color:#4ade80}.fail{background:#7f1d1d;color:#fca5a5}
+.small{color:#aaa;font-size:12px}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+<div><div class="logo">KRATIS PREMIUM</div><div class="small">ECG Prepaid + Utility Payments Manager</div></div>
+<div class="row">
+<button class="btn" onclick="loadAll()">⟳ LOAD FROM CLOUD</button>
+<button class="btn2" onclick="location.href='ceo.html'">← CEO Dashboard</button>
+</div>
+</header>
+
+<div class="tabs">
+<button id="t-ecg" class="on" onclick="tab('ecg')">⚡ ECG PREPAID</button>
+<button id="t-util" onclick="tab('util')">💧 UTILITY PAYMENTS</button>
+<button onclick="tab('orders')">🧾 ALL ORDERS</button>
+<button onclick="tab('settings')">⚙️ SET CHARGES</button>
+</div>
+
+<div id="v-ecg" class="wrap">
+<div class="card">
+<h3>⚡ New ECG Top-Up (Manual)</h3>
+<input id="e-name" placeholder="Customer Name">
+<input id="e-phone" placeholder="Phone Number">
+<input id="e-meter" placeholder="Meter Number (11 digits)">
+<input id="e-amt" type="number" placeholder="Amount GHS e.g. 20">
+<input id="e-token" placeholder="Token (after purchase)">
+<button class="btn" style="width:100%" onclick="addECG()">SAVE ECG ORDER</button>
+<p class="small">E go save for local + Firebase `kratis_ecg_orders`</p>
+</div>
+<div class="card">
+<h3>ECG Quick Calculator</h3>
+<input id="calc" type="number" placeholder="Enter GHS" oninput="calcECG()">
+<div id="calcOut" class="small">Units / Charge go show here...</div>
+</div>
+</div>
+
+<div id="v-util" class="wrap" style="display:none">
+<div class="card">
+<h3>💧 New Utility Payment (Manual)</h3>
+<select id="u-provider">
+<option>ECG Bill</option><option>Ghana Water</option><option>DSTV</option>
+<option>GOTV</option><option>AirTiGo</option><option>Vodafone</option><option>Internet / Fibre</option>
+</select>
+<input id="u-name" placeholder="Customer Name">
+<input id="u-phone" placeholder="Phone Number">
+<input id="u-account" placeholder="Account / Smartcard / Meter No">
+<input id="u-amt" type="number" placeholder="Amount GHS">
+<button class="btn" style="width:100%" onclick="addUtil()">SAVE UTILITY ORDER</button>
+</div>
+<div class="card">
+<h3>Providers & Charges</h3>
+<div id="provList" class="small"></div>
+</div>
+</div>
+
+<div id="v-orders" style="display:none;padding:12px">
+<div class="card">
+<div class="row" style="justify-content:space-between">
+<h3 style="margin:0">All ECG + Utility Orders</h3>
+<input id="search" placeholder="Search name, phone, meter..." style="max-width:260px" oninput="render()">
+</div>
+<div style="overflow:auto"><table>
+<thead><tr><th>Type</th><th>Customer</th><th>Detail</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table></div>
+</div>
+</div>
+
+<div id="v-settings" style="display:none;padding:12px">
+<div class="card">
+<h3>⚙️ Set Service Charges (GHS)</h3>
+<label class="small">ECG Charge</label><input id="s-ecg" type="number" step="0.1">
+<label class="small">Utility Charge</label><input id="s-util" type="number" step="0.1">
+<label class="small">Minimum Amount</label><input id="s-min" type="number" step="0.1">
+<button class="btn" onclick="saveSettings()">SAVE SETTINGS</button>
+<p class="small" id="setMsg"></p>
+</div>
+</div>
+
+<script>
+if(sessionStorage.getItem('kratis_ceo')!=='true'){alert('CEO Only!');location.href='admin-login.html'}
+const EKEY='kratis_ecg_orders', UKEY='kratis_utility_orders', SKEY='kratis_utility_settings';
+let ecg=JSON.parse(localStorage.getItem(EKEY)||'[]');
+let util=JSON.parse(localStorage.getItem(UKEY)||'[]');
+let settings=JSON.parse(localStorage.getItem(SKEY)||'{"ecg":1,"util":1.5,"min":5}');
+function db(){try{return window.db||firebase.firestore()}catch(e){return null}}
+function save(){localStorage.setItem(EKEY,JSON.stringify(ecg));localStorage.setItem(UKEY,JSON.stringify(util));localStorage.setItem(SKEY,JSON.stringify(settings));render()}
+function tab(t){
+['ecg','util','orders','settings'].forEach(x=>{
+document.getElementById('v-'+x).style.display=x===t?'':'none';
+let b=document.getElementById('t-'+x); if(b) b.className=x===t?'on':'';
+}); render();
+}
+function addECG(){
+let o={id:'ECG'+Date.now(),type:'ECG Prepaid',name:val('e-name'),phone:val('e-phone'),meter:val('e-meter'),amount:+val('e-amt')||0,token:val('e-token'),charge:settings.ecg,status:'PENDING',date:new Date().toLocaleString()};
+if(!o.meter||!o.amount)return alert('Enter Meter + Amount');
+ecg.unshift(o);push(o,'kratis_ecg_orders');save();alert('ECG Order Saved!');clearIds(['e-name','e-phone','e-meter','e-amt','e-token']);
+}
+function addUtil(){
+let o={id:'UT'+Date.now(),type:val('u-provider'),name:val('u-name'),phone:val('u-phone'),account:val('u-account'),amount:+val('u-amt')||0,charge:settings.util,status:'PENDING',date:new Date().toLocaleString()};
+if(!o.account||!o.amount)return alert('Enter Account + Amount');
+util.unshift(o);push(o,'kratis_utility_orders');save();alert('Utility Order Saved!');clearIds(['u-name','u-phone','u-account','u-amt']);
+}
+function push(o,col){let d=db();if(d)d.collection(col).doc(o.id).set(o,{merge:true}).catch(e=>console.log(e))}
+function setStatus(id,st){
+let all=[...ecg,...util];let o=all.find(x=>x.id===id);if(!o)return;o.status=st;
+ecg=ecg.map(x=>x.id===id?o:x);util=util.map(x=>x.id===id?o:x);
+push(o,o.type==='ECG Prepaid'?'kratis_ecg_orders':'kratis_utility_orders');save();
+}
+function del(id){ecg=ecg.filter(x=>x.id!==id);util=util.filter(x=>x.id!==id);save()}
+function render(){
+let q=(document.getElementById('search')?.value||'').toLowerCase();
+let all=[...ecg,...util].filter(o=>!q||JSON.stringify(o).toLowerCase().includes(q));
+document.getElementById('tbody').innerHTML=all.map(o=>`<tr>
+<td><b>${o.type}</b><br><small class="small">${o.id}</small></td>
+<td>${o.name||'-'}<br><small class="small">${o.phone||''}</small></td>
+<td>${o.meter?'Meter: '+o.meter+'<br>Token: '+(o.token||'-'): 'Acct: '+(o.account||'-')}<br><small class="small">${o.date}</small></td>
+<td><b>GHS ${o.amount}</b><br><small class="small">+ charge ${o.charge}</small></td>
+<td><span class="badge ${o.status==='PAID'?'paid':o.status==='FAILED'?'fail':'pend'}">${o.status}</span></td>
+<td><div class="row">
+<button class="btn" onclick="setStatus('${o.id}','PAID')">Paid</button>
+<button class="btn2" onclick="setStatus('${o.id}','FAILED')">Fail</button>
+<button class="btn2" onclick="del('${o.id}')">Delete</button>
+</div></td></tr>`).join('')||'<tr><td colspan="6">No orders yet</td></tr>';
+document.getElementById('provList').innerHTML=['ECG Bill','Ghana Water','DSTV','GOTV','AirTiGo','Vodafone','Internet'].map(p=>`<div style="padding:6px 0;border-bottom:1px solid #222">${p} — charge GHS ${settings.util}</div>`).join('');
+document.getElementById('s-ecg').value=settings.ecg;document.getElementById('s-util').value=settings.util;document.getElementById('s-min').value=settings.min;
+}
+function saveSettings(){settings={ecg:+val('s-ecg'),util:+val('s-util'),min:+val('s-min')};save();document.getElementById('setMsg').innerText='Saved! '+new Date().toLocaleTimeString()}
+function calcECG(){let a=+val('calc')||0;document.getElementById('calcOut').innerHTML=a?`Amount: <b>GHS ${a}</b> + ECG Charge: <b>GHS ${settings.ecg}</b><br>Total Customer Pay: <b>GHS ${(a+settings.ecg).toFixed(2)}</b>`:'Enter amount'}
+async function loadAll(){
+let d=db();if(!d)return alert('Firebase no load');
+let s1=await d.collection('kratis_ecg_orders').get();ecg=[];s1.forEach(x=>ecg.push(x.data()));
+let s2=await d.collection('kratis_utility_orders').get();util=[];s2.forEach(x=>util.push(x.data()));
+save();alert('Cloud Loaded! ECG: '+ecg.length+' | Utility: '+util.length);
+}
+function val(id){return document.getElementById(id)?.value.trim()||''}
+function clearIds(a){a.forEach(id=>document.getElementById(id).value='')}
+render();
+</script>
+</body>
+</html>
