@@ -171,7 +171,7 @@ async function syncNow(){
     if(cloudOrders.length){
       let local = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
       cloudOrders.forEach(co=>{
-        if(co.id && !local.find(x=>x.id===co.id)) local.push(co);
+       let i=local.findIndex(x=>x.id==co.id); if(i>-1)local[i]=co; else local.push(co);
       });
       localStorage.setItem('kratis_orders', JSON.stringify(local));
     }
