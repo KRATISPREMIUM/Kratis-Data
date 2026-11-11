@@ -10,9 +10,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}
 body{min-height:100vh;background:#070707;display:flex;color:#fff}
-.left{flex:1.1;padding:40px 30px;display:flex;flex-direction:column;justify-content:center}
+.left{flex:1.1;padding:30px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 .right{flex:0.9;background:#121212;border-left:1px solid #1f1f1f;padding:30px;display:flex;flex-direction:column;justify-content:center}
-.hero{margin-top:40px;font-size:38px;font-weight:900;line-height:1.05}.hero span{color:#FFD700}
+.logo{width:280px;max-width:100%;height:auto;object-fit:contain}
+.hero{margin-top:20px;font-size:34px;font-weight:900;line-height:1.05}.hero span{color:#FFD700}
 .desc{color:#777;font-size:13px;line-height:1.7;margin-top:14px;max-width:460px}
 .box{max-width:420px;width:100%;margin:0 auto}
 .badge{display:inline-block;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.25);color:#FFD700;padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800}
@@ -23,11 +24,12 @@ h2{font-size:28px;margin-top:14px;font-weight:900}.sub{color:#666;font-size:12px
 .link{margin-top:16px;text-align:center;font-size:12px;color:#666}.link a{color:#FFD700;text-decoration:none;font-weight:700}
 #err{margin-top:12px;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.15);color:#ff6b6b;padding:10px;border-radius:10px;font-size:12px;display:none}
 #signupFields{display:none}
+@media(max-width:768px){body{flex-direction:column}.left{padding:20px}.logo{width:200px}.right{border-left:none;border-top:1px solid #1f1f1f}}
 </style>
 </head>
 <body>
 <div class="left">
-<div style="font-weight:900;letter-spacing:2px">KRATIS <span style="color:#00d4ff">PREMIUM</span></div>
+<img src="logo.png" class="logo" alt="KRATIS PREMIUM">
 <div class="hero">All Data, Airtime, <span>Giftcards & Bills</span> in One Place.</div>
 <p class="desc">MTN, Telecel, AirtelTigo GB, AFA Registration, WASSCE Voucher, Gift Cards, ECG Prepaid - KratisData.com powers agents and dealers nationwide.</p>
 </div>
@@ -43,8 +45,6 @@ h2{font-size:28px;margin-top:14px;font-weight:900}.sub{color:#666;font-size:12px
 <select id="country">
 <option>Ghana</option><option>Nigeria</option><option>United Kingdom</option><option>United States</option><option>Canada</option><option>Germany</option><option>South Africa</option><option>Kenya</option><option>Cote d'Ivoire</option><option>Other</option>
 </select></div>
-<div class="field"><label>Select Currency</label>
-<select id="currency"><option value="GHS">GHS - Ghana Cedi</option><option value="USD">USD - Dollar</option><option value="GBP">GBP - Pound</option><option value="NGN">NGN - Naira</option><option value="EUR">EUR - Euro</option></select></div>
 </div>
 
 <div class="field"><label>Email Address</label><input type="email" id="email" placeholder="you@gmail.com"></div>
@@ -63,39 +63,28 @@ function toggleMode(){
   document.getElementById('mainBtn').innerText=isSignup?'Create Account → Dashboard':'Sign In → Dashboard';
 }
 function showErr(m){let e=document.getElementById('err');e.style.display='block';e.innerText='❌ '+m;}
-
 function getUsers(){ return JSON.parse(localStorage.getItem('kratis_users')||'{}'); }
 function saveUsers(u){ localStorage.setItem('kratis_users',JSON.stringify(u)); }
-
 function nextKDP(users){
   let max=0;
   Object.values(users).forEach(u=>{ if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }});
   return 'KDP-' + String(max+1).padStart(3,'0');
 }
-
 function login(){
   const email=document.getElementById('email').value.trim().toLowerCase();
   const pass=document.getElementById('pass').value.trim();
   if(!email||!pass) return showErr('Enter email and password');
   if(!email.includes('@')) return showErr('Enter valid email');
   if(pass.length<6) return showErr('Password must be at least 6 characters');
-
   let users=getUsers();
-
   if(isSignup){
     const name=document.getElementById('name').value.trim();
     const phone=document.getElementById('phone').value.trim();
     const country=document.getElementById('country').value;
-    const currency=document.getElementById('currency').value;
     if(!name||!phone) return showErr('Enter Full Name and WhatsApp Number');
     if(users[email]) return showErr('Account already exists! Click Sign In');
-
     const kdp=nextKDP(users);
-    users[email]={
-      pass:pass, name:name, phone:phone, country:country, currency:currency,
-      kdp:kdp, tier:'USER', role:'USER', wallet:0, active:true,
-      created:new Date().toISOString()
-    };
+    users[email]={ pass:pass, name:name, phone:phone, country:country, kdp:kdp, tier:'USER', role:'USER', wallet:0, active:true, created:new Date().toISOString() };
     saveUsers(users);
     localStorage.setItem('wallet_'+email,'0');
     try{ db.collection('kratis_users').doc(email).set(users[email],{merge:true}); }catch(e){}
@@ -103,16 +92,13 @@ function login(){
   } else {
     if(!users[email]) return showErr('Account no exist! Create account first');
     if(users[email].pass!==pass) return showErr('Wrong password!');
-    // Old users: auto give KDP, name, country if missing
     if(!users[email].kdp) users[email].kdp=nextKDP(users);
     if(!users[email].name) users[email].name=email.split('@')[0];
     if(!users[email].country) users[email].country='Ghana';
     if(!users[email].phone) users[email].phone='';
     saveUsers(users);
   }
-
   const u=users[email];
-  // PER-USER SESSION - THIS FIX WALLET/ORDERS SHARING
   localStorage.setItem('kratis_logged_user',email);
   localStorage.setItem('kratis_user_email',email);
   localStorage.setItem('kratis_logged','yes');
@@ -122,10 +108,8 @@ function login(){
   localStorage.setItem('kratis_name',u.name);
   localStorage.setItem('kratis_phone',u.phone||'');
   localStorage.setItem('kratis_country',u.country||'Ghana');
-  localStorage.setItem('kratis_currency',u.currency||'GHS');
-
+  localStorage.setItem('kratis_currency','GHS');
   window.location.href='index.html';
 }
-function forgot(){ alert('Contact CEO on WhatsApp to reset password'); }
 </script>
 </body></html>
