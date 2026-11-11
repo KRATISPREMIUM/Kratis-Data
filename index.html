@@ -37,20 +37,20 @@ function pushUserToCloud(){
   try{
     const db = getDB(); if(!db) return;
     const email = localStorage.getItem('kratis_logged_user'); if(!email) return;
-    const users = JSON.parse(localStorage.getItem('kratis_users')||'[]');
-    const me = users.find(u=>u.email===email) || {email:email};
-    const payload = Object.assign({}, me, {
-      email: email,
-      tier: localStorage.getItem('kratis_tier')||'USER',
-      wallet: localStorage.getItem('kratis_wallet')||'0',
-      updatedAt: new Date().toISOString()
-    });
-    db.collection('kratis_users').doc(email.replace(/[^a-zA-Z0-9]/g,'_')).set(payload,{merge:true}).catch(()=>{});
-    db.collection('users').doc(email.replace(/[^a-zA-Z0-9]/g,'_')).set(payload,{merge:true}).catch(()=>{});
+    const users = JSON.parse(localStorage.getItem('kratis_users')||'{}');
+    const me = users[email]; if(!me) return;
+    // NO push tier/wallet again - CEO be master for tier, wallet be per user
+    const payload = Object.assign({}, me, { email: email, updatedAt: new Date().toISOString() });
+    delete payload.pass;
+    db.collection('kratis_users').doc(email).set(payload,{merge:true}).catch(()=>{});
   }catch(e){}
 }
-setInterval(pushUserToCloud, 15000);
-window.addEventListener('load', pushUserToCloud);
+// STOP auto push - e be the killer
+// setInterval(pushUserToCloud, 15000);
+// window.addEventListener('load', pushUserToCloud);
+    // setInterval(pushUserToCloud, 15000);
+    // window.addEventListener('load', pushUserToCloud);
+    pullTierFromCloud();
 </script>
 <script>
 // 🔐 AUTH PROTECTION - Must login first!
@@ -629,7 +629,8 @@ async function submitAFA(){
 
 <script>
 let TIER=localStorage.getItem('kratis_tier')||'USER';
-let WALLET=parseFloat(localStorage.getItem('kratis_wallet')||'0');
+let _e = localStorage.getItem('kratis_logged_user')||'guest';
+let WALLET=parseFloat(localStorage.getItem('kratis_wallet_'+_e)||localStorage.getItem('kratis_wallet')||'0');
 let ORDERS=JSON.parse(localStorage.getItem('kratis_orders')||'[]');
 let CUR=null;
 let CUR_GB='all', CUR_V='all', CUR_H='all';
@@ -761,7 +762,19 @@ function setTier(t){
  updateTierUI(); 
  renderAll();
 }
-function updateTierUI(){
+async function pullTierFromCloud(){
+  try{
+    const db=getDB(); const email=localStorage.getItem('kratis_logged_user'); if(!db||!email) return;
+    const doc=await db.collection('kratis_users').doc(email).get();
+    if(doc.exists){
+      let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+      users[email]={...users[email],...doc.data()};
+      localStorage.setItem('kratis_users',JSON.stringify(users));
+      localStorage.setItem('kratis_tier', users[email].tier||'USER');
+      if(typeof updateTierUI==='function') updateTierUI();
+    }
+  }catch(e){}
+}function updateTierUI(){
  document.querySelectorAll('.tier-switch button').forEach(b=>b.classList.remove('active'));
  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
  let loggedEmail=localStorage.getItem('kratis_logged_user');
@@ -887,7 +900,7 @@ function confirmBuy(){
  if(!rec){alert('Enter recipient');return;}
  const amt=CUR.prices[TIER];
  if(WALLET<amt){alert('Insufficient wallet! Top-up first.');renderWallet();closeM('buyModal');return;}
- WALLET=parseFloat((WALLET-amt).toFixed(2)); localStorage.setItem('kratis_wallet',WALLET);
+ WALLET=parseFloat((WALLET-amt).toFixed(2));localStorage.setItem('kratis_wallet_'+(localStorage.getItem('kratis_logged_user')||'guest'),
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(order);
  closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
@@ -895,7 +908,7 @@ function confirmBuy(){
 function dowallet(){
  const amt=parseFloat(document.getElementById('walletAmt').value);
  if(!amt||amt<1){alert('Enter valid amount');return;}
- WALLET+=amt; localStorage.setItem('kratis_wallet',WALLET);
+ WALLET+=amt;localStorage.setItem('kratis_wallet_'+(localStorage.getItem('kratis_logged_user')||'guest'),,WALLET);
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',phone:'Wallet',to:'Wallet',net:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
  ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(dep);
   saveRealDeposit(amt,'Auto','paystack');
@@ -914,12 +927,12 @@ function applyAsAgent(){
   apps.push({email:loggedEmail,name:name,phone:phone,location:loc,date:new Date().toLocaleString(),status:'PENDING'});
   localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));
   // 2. Save for CEO Pending (array format wey CEO dey read)
-  let users=JSON.parse(localStorage.getItem('kratis_users')||'[]');
-  if(!Array.isArray(users)){ users=Object.values(users); }
-  let exist=users.find(u=>u.phone===phone);
-  if(exist){ exist.role='pending_agent'; exist.name=name; exist.location=loc; }
-  else { users.push({name:name,phone:phone,location:loc,role:'pending_agent',pass:'1234',email:loggedEmail,date:new Date().toLocaleString()}); }
-  localStorage.setItem('kratis_users',JSON.stringify(users));
+  let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
+if(Array.isArray(users)){ let o={}; users.forEach(u=>{if(u.email)o[u.email]=u}); users=o; }
+let exist=users[loggedEmail];
+if(exist){ exist.role='pending_agent'; exist.name=name; exist.location=loc; }
+else { users[loggedEmail]={name:name,phone:phone,location:loc,role:'pending_agent',pass:'1234',email:loggedEmail,tier:'USER',wallet:0,date:new Date().toLocaleString()}; }
+localStorage.setItem('kratis_users',JSON.stringify(users));
   let statusEl=document.getElementById('agentApplyStatus');
   if(statusEl){ statusEl.style.display='block'; statusEl.innerHTML='✅ Application Sent! CEO will approve you in ceo.html.<br>Your Email: '+loggedEmail+'<br>WhatsApp: '+phone; }
   alert('✅ AGENT Application Sent to CEO! CEO will see you in ceo.html → Pending Agent Approval → Approve → You become AGENT!');
