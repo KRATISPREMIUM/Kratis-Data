@@ -1,123 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<head>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="firebase.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login - Kratis Premium Data</title>
+<script src="firebase.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Kratis Premium Data</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui}
-body{min-height:100vh;background:radial-gradient(circle at top left,rgba(255,215,0,0.18),#000),#070707;display:flex;color:#fff}
+body{min-height:100vh;background:#070707;display:flex;color:#fff}
 .left{flex:1.1;padding:40px 30px;display:flex;flex-direction:column;justify-content:center}
-.right{flex:0.9;background:rgba(18,18,18,0.98);border-left:1px solid #1f1f1f;padding:30px;display:flex;flex-direction:column;justify-content:center}
-.logo{font-weight:900;letter-spacing:2px;font-size:13px}
-.logo span{color:#00d4ff}
-.hero{margin-top:40px;font-size:38px;font-weight:900;line-height:1.05}
-.hero span{color:#FFD700}
+.right{flex:0.9;background:#121212;border-left:1px solid #1f1f1f;padding:30px;display:flex;flex-direction:column;justify-content:center}
+.hero{margin-top:40px;font-size:38px;font-weight:900;line-height:1.05}.hero span{color:#FFD700}
 .desc{color:#777;font-size:13px;line-height:1.7;margin-top:14px;max-width:460px}
-.feat{margin-top:18px;background:#121212;border:1px solid #1e1e1e;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center}
-.feat i{width:32px;height:32px;background:#1a1a1a;border-radius:8px;display:grid;place-items:center;color:#FFD700}
 .box{max-width:420px;width:100%;margin:0 auto}
-.badge{display:inline-block;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.25);color:#FFD700;padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1px}
-h2{font-size:28px;margin-top:14px;font-weight:900}
-.sub{color:#666;font-size:12px;margin-top:6px}
-.field{margin-top:18px}
-.field label{font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase}
-.field input{width:100%;margin-top:6px;background:#09090b;border:1px solid #222;border-radius:12px;padding:14px;color:#fff;outline:none}
-.field input:focus{border-color:#FFD700}
-.btn{width:100%;margin-top:20px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:12px;padding:15px;font-weight:900;cursor:pointer}
-.btn2{display:flex;gap:10px;margin-top:14px}
-.btn2 button{flex:1;background:#121212;border:1px solid #222;border-radius:12px;padding:12px;color:#aaa;font-weight:700;font-size:12px;cursor:pointer}
-.link{margin-top:16px;text-align:center;font-size:12px;color:#666}
-.link a{color:#FFD700;text-decoration:none;font-weight:700}
-#err{margin-top:12px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.15);color:#ff6b6b;padding:10px;border-radius:10px;font-size:12px;display:none}
-.motto{margin-top:20px;color:#333;font-size:10px}
+.badge{display:inline-block;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.25);color:#FFD700;padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800}
+h2{font-size:28px;margin-top:14px;font-weight:900}.sub{color:#666;font-size:12px;margin-top:6px}
+.field{margin-top:14px}.field label{font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase}
+.field input,.field select{width:100%;margin-top:6px;background:#09090b;border:1px solid #222;border-radius:12px;padding:14px;color:#fff;outline:none}
+.btn{width:100%;margin-top:20px;background:#FFD700;color:#000;border:none;border-radius:12px;padding:15px;font-weight:900;cursor:pointer}
+.link{margin-top:16px;text-align:center;font-size:12px;color:#666}.link a{color:#FFD700;text-decoration:none;font-weight:700}
+#err{margin-top:12px;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.15);color:#ff6b6b;padding:10px;border-radius:10px;font-size:12px;display:none}
+#signupFields{display:none}
 </style>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="left">
-<div class="logo">KRATIS<br><span>PREMIUM</span><div style="font-size:10px;letter-spacing:3px;color:#FFD700;margin-top:4px">DATA.COM <span style="background:#FFD700;color:#000;padding:2px 6px;border-radius:4px;margin-left:6px">SPECIAL</span></div></div>
+<div style="font-weight:900;letter-spacing:2px">KRATIS <span style="color:#00d4ff">PREMIUM</span></div>
 <div class="hero">All Data, Airtime, <span>Giftcards & Bills</span> in One Place.</div>
-<p class="desc">From MTN, Telecel, AirtelTigo normal bundle and airtime of nations using this networks, GB bundles, AFA Registration, WASSCE Voucher, Postpaid, Gift Cards, Gaming Cards, prepaid to ECG Prepaid and other Data Services - KratisData.com powers 4,500+ agents and dealers nationwide.</p>
-<div class="feat"><i class="fa-solid fa-bolt"></i><div><b style="font-size:12px">Instant Delivery 30 Secs</b><div style="font-size:11px;color:#666">Instant MTN, AirtelTigo, Telecel bundles and Airtime - Auto Delivered</div></div></div>
-<div class="feat"><i class="fa-solid fa-shield"></i><div><b style="font-size:12px">SPECIAL: Auto-Refund Guarantee</b><div style="font-size:11px;color:#666">Failed? Money back + WhatsApp receipt instantly</div></div></div>
-<div class="feat"><i class="fa-solid fa-crown"></i><div><b style="font-size:12px">VIP Agent Bonus 5% OFF</b><div style="font-size:11px;color:#666">Buy more, earn more — Free 1GB on 10GB orders</div></div></div>
-<div class="motto">System Online • 4,500+ Agents • © 2025 KratisData.com • Successful Operation Is Our Goal</div>
+<p class="desc">MTN, Telecel, AirtelTigo GB, AFA Registration, WASSCE Voucher, Gift Cards, ECG Prepaid - KratisData.com powers agents and dealers nationwide.</p>
+</div>
+<div class="right"><div class="box">
+<span class="badge">⭐ WELCOME TO KRATIS PREMIUM</span>
+<h2 id="title">Sign In to KratisData</h2>
+<p class="sub">Use your credentials to access Dashboard</p>
+
+<div id="signupFields">
+<div class="field"><label>Full Name</label><input id="name" placeholder="e.g. Kwame Mensah"></div>
+<div class="field"><label>WhatsApp Number</label><input id="phone" placeholder="0241234567"></div>
+<div class="field"><label>Country</label>
+<select id="country">
+<option>Ghana</option><option>Nigeria</option><option>United Kingdom</option><option>United States</option><option>Canada</option><option>Germany</option><option>South Africa</option><option>Kenya</option><option>Cote d'Ivoire</option><option>Other</option>
+</select></div>
+<div class="field"><label>Select Currency</label>
+<select id="currency"><option value="GHS">GHS - Ghana Cedi</option><option value="USD">USD - Dollar</option><option value="GBP">GBP - Pound</option><option value="NGN">NGN - Naira</option><option value="EUR">EUR - Euro</option></select></div>
 </div>
 
-<div class="right">
-<div class="box">
-<span class="badge">⭐ WELCOME BACK - SPECIAL EDITION</span>
-<h2>Sign In to KratisData</h2>
-<p class="sub">Use your credentials to access Dashboard • Must create account first</p>
-
-<div class="field"><label>Email Address</label><input type="email" id="email" placeholder="e.g. addophilisa32@gmail.com"></div>
+<div class="field"><label>Email Address</label><input type="email" id="email" placeholder="you@gmail.com"></div>
 <div class="field"><label>Password</label><input type="password" id="pass" placeholder="••••••••"></div>
-<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:#666"><label><input type="checkbox" id="remember"> Remember me</label><a href="#" style="color:#FFD700;text-decoration:none" onclick="forgot()">Forgot password?</a></div>
 <div id="err"></div>
-<button class="btn" onclick="login()">Sign In → Dashboard</button>
-
-<div style="text-align:center;margin-top:12px;font-size:11px;color:#555">OR CONTINUE WITH</div>
-<div class="btn2"><button onclick="alert('Google Login Coming Soon - Use Email for now')"><i class="fa-brands fa-google"></i> Google</button><button onclick="window.open('https://wa.me/233000000000?text=I need help logging into KratisData','_blank')"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button></div>
-
-<div class="link">New agent? <a href="#" onclick="toggleMode()">Create Agent Account - Get 5% Bonus</a></div>
-<div style="margin-top:14px;background:#0a0a0a;border:1px solid #151515;border-radius:12px;padding:10px;display:flex;justify-content:space-between;font-size:10px;color:#666"><span>👥 4,500+ Agents Online</span><span>GHS 1.10 Wallet</span><span style="color:#FFD700">42 Orders</span></div>
-</div>
-</div>
+<button class="btn" id="mainBtn" onclick="login()">Sign In → Dashboard</button>
+<div class="link"><a href="#" onclick="toggleMode();return false;">Create Agent Account - Get 5% Bonus</a></div>
+</div></div>
 
 <script>
 let isSignup=false;
 function toggleMode(){
- isSignup=!isSignup;
- document.querySelector('h2').innerText=isSignup?'Create Account - KratisData':'Sign In to KratisData';
- document.querySelector('.btn').innerText=isSignup?'Create Account → Dashboard':'Sign In → Dashboard';
- document.querySelector('.link a').innerText=isSignup?'Already have account? Sign In':'Create Agent Account - Get 5% Bonus';
+  isSignup=!isSignup;
+  document.getElementById('signupFields').style.display=isSignup?'block':'none';
+  document.getElementById('title').innerText=isSignup?'Create Account - KratisData':'Sign In to KratisData';
+  document.getElementById('mainBtn').innerText=isSignup?'Create Account → Dashboard':'Sign In → Dashboard';
 }
-function showErr(msg){const e=document.getElementById('err');e.style.display='block';e.innerText='❌ '+msg;}
+function showErr(m){let e=document.getElementById('err');e.style.display='block';e.innerText='❌ '+m;}
+
+function getUsers(){ return JSON.parse(localStorage.getItem('kratis_users')||'{}'); }
+function saveUsers(u){ localStorage.setItem('kratis_users',JSON.stringify(u)); }
+
+function nextKDP(users){
+  let max=0;
+  Object.values(users).forEach(u=>{ if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }});
+  return 'KDP-' + String(max+1).padStart(3,'0');
+}
+
 function login(){
- const email=document.getElementById('email').value.trim().toLowerCase();
- const pass=document.getElementById('pass').value.trim();
- if(!email||!pass){showErr('Enter email and password');return;}
- if(!email.includes('@')){showErr('Enter valid email');return;}
- if(pass.length<6){showErr('Password must be at least 6 characters');return;}
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const pass=document.getElementById('pass').value.trim();
+  if(!email||!pass) return showErr('Enter email and password');
+  if(!email.includes('@')) return showErr('Enter valid email');
+  if(pass.length<6) return showErr('Password must be at least 6 characters');
 
- // Check if existing user
- let users=JSON.parse(localStorage.getItem('kratis_users')||'{}');
- 
- if(isSignup){
-   if(users[email]){showErr('Account already exists! Click Sign In');return;}
-   users[email]={pass:pass, created:new Date().toISOString(), tier:'USER'};
-   localStorage.setItem('kratis_users',JSON.stringify(users));
-  let pend=JSON.parse(localStorage.getItem('kratis_pending_agents')||'[]'); pend.push({email:email, date:new Date().toLocaleString()}); localStorage.setItem('kratis_pending_agents',JSON.stringify(pend));
- }else{
-   // Sign In mode - if user not exists, auto-create for demo (so first time works)
-   if(!users[email]){
-     users[email]={pass:pass, created:new Date().toISOString(), tier:'USER'};
-     localStorage.setItem('kratis_users',JSON.stringify(users));
-   }else{
-     if(users[email].pass!==pass){showErr('Wrong password!');return;}
-   }
- }
+  let users=getUsers();
 
- // SUCCESS - Save session
- localStorage.setItem('kratis_logged_user',email);
- localStorage.setItem('kratis_logged','yes');
- localStorage.setItem('kratis_tier',users[email].tier||'USER');
- 
- // Redirect to dashboard
- window.location.href='index.html';
+  if(isSignup){
+    const name=document.getElementById('name').value.trim();
+    const phone=document.getElementById('phone').value.trim();
+    const country=document.getElementById('country').value;
+    const currency=document.getElementById('currency').value;
+    if(!name||!phone) return showErr('Enter Full Name and WhatsApp Number');
+    if(users[email]) return showErr('Account already exists! Click Sign In');
+
+    const kdp=nextKDP(users);
+    users[email]={
+      pass:pass, name:name, phone:phone, country:country, currency:currency,
+      kdp:kdp, tier:'USER', role:'USER', wallet:0, active:true,
+      created:new Date().toISOString()
+    };
+    saveUsers(users);
+    localStorage.setItem('wallet_'+email,'0');
+    try{ db.collection('kratis_users').doc(email).set(users[email],{merge:true}); }catch(e){}
+    alert('Account Created! Your Number is '+kdp);
+  } else {
+    if(!users[email]) return showErr('Account no exist! Create account first');
+    if(users[email].pass!==pass) return showErr('Wrong password!');
+    // Old users: auto give KDP, name, country if missing
+    if(!users[email].kdp) users[email].kdp=nextKDP(users);
+    if(!users[email].name) users[email].name=email.split('@')[0];
+    if(!users[email].country) users[email].country='Ghana';
+    if(!users[email].phone) users[email].phone='';
+    saveUsers(users);
+  }
+
+  const u=users[email];
+  // PER-USER SESSION - THIS FIX WALLET/ORDERS SHARING
+  localStorage.setItem('kratis_logged_user',email);
+  localStorage.setItem('kratis_user_email',email);
+  localStorage.setItem('kratis_logged','yes');
+  localStorage.setItem('kratis_tier',u.tier||'USER');
+  localStorage.setItem('kratis_role',u.role||u.tier||'USER');
+  localStorage.setItem('kratis_kdp',u.kdp);
+  localStorage.setItem('kratis_name',u.name);
+  localStorage.setItem('kratis_phone',u.phone||'');
+  localStorage.setItem('kratis_country',u.country||'Ghana');
+  localStorage.setItem('kratis_currency',u.currency||'GHS');
+
+  window.location.href='index.html';
 }
-function forgot(){
- const email=prompt('Enter your email to reset password:');
- if(email) alert('Reset link sent to '+email+' (Demo - Use your same password to login)');
-}
-// Auto-redirect if already logged
-window.onload=function(){
- if(localStorage.getItem('kratis_logged_user') && localStorage.getItem('kratis_logged')==='yes'){
-   // Optional: auto go to dashboard if already logged
-   // window.location.href='index.html';
- }
-}
+function forgot(){ alert('Contact CEO on WhatsApp to reset password'); }
 </script>
-</body>
-</html>
+</body></html>
