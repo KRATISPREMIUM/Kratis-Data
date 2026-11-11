@@ -29,7 +29,7 @@
 <script>
 if(sessionStorage.getItem('kratis_ceo')!=='true'){let e=prompt('CEO Email:'),p=prompt('Password:');if(e==='ceo@kratisdata.com'&&p==='KratisCEO2025!'){sessionStorage.setItem('kratis_ceo','true')}else{location.href='admin-login.html'}}
 const UKEY='kratis_users',OKEY='kratis_orders';let autoSync=true;
-function db(){try{return window.db||firebase.firestore()}catch(e){return null}}
+function getDb(){try{return firebase.firestore()}catch(e){return null}}
 function getUsers(){return JSON.parse(localStorage.getItem(UKEY)||'{}')}
 function setUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
 function getOrders(){return JSON.parse(localStorage.getItem(OKEY)||'[]')}
@@ -38,18 +38,18 @@ function toggleAuto(){autoSync=!autoSync;document.getElementById('autoBtn').inne
 async function setRole(email,role){
  let users=getUsers();if(!users[email])return alert('User no dey');
  users[email].tier=role;users[email].role=role.toLowerCase();setUsers(users);
- try{await db().collection('kratis_users').doc(email).set(users[email],{merge:true})}catch(e){}
+ try{await getDb().collection('kratis_users').doc(email).set(users[email],{merge:true})}catch(e){}
  document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();
  render();alert('Changed '+email+' to '+role+' - Saved to Cloud! No click SYNC again.');
 }
-async function pushToCloud(){ // PUSH ONLY - no pull, no overwrite
- let d=db(),users=getUsers(),orders=getOrders();
+async function pushToCloud(){
+ let d=getDb(),users=getUsers(),orders=getOrders();
  for(let e in users){await d.collection('kratis_users').doc(e).set(users[e],{merge:true})}
  for(let o of orders){if(o.id)await d.collection('kratis_orders').doc(o.id).set(o,{merge:true})}
  document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();alert('Push Done! Users: '+Object.keys(users).length);
 }
-async function loadFromCloud(){ // PULL ONLY - cloud be master
- let d=db();if(!d)return;let users=getUsers();
+async function loadFromCloud(){
+ let d=getDb();if(!d)return;let users=getUsers();
  let s=await d.collection('kratis_users').get();s.forEach(doc=>{users[doc.id]=doc.data()});setUsers(users);
  let os=await d.collection('kratis_orders').get();let local=getOrders();os.forEach(doc=>{let co=doc.data();let i=local.findIndex(x=>x.id===co.id);if(i>-1)local[i]=co;else local.push(co)});localStorage.setItem(OKEY,JSON.stringify(local));
  document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();render();
@@ -67,6 +67,6 @@ function render(){
  document.getElementById('ordersList').innerHTML=orders.map(o=>`<tr><td>${o.userEmail||o.email||'-'}</td><td>${o.product||o.name||o.type||'-'}</td><td>GHS ${o.amount||''}</td><td>${o.date||o.createdAt||''}</td></tr>`).join('');
  document.getElementById('pendingList').innerHTML=list.filter(u=>u.role==='pending_agent').map(u=>`<div style="padding:8px;border-bottom:1px solid #222">${u.name} - ${u.email} - ${u.phone} <button class="btn" onclick="setRole('${u.email}','AGENT')">Approve AGENT</button></div>`).join('')||'No pending';
 }
-try{db().collection('kratis_orders').onSnapshot(()=>{if(autoSync)loadFromCloud()})}catch(e){}
+try{getDb().collection('kratis_orders').onSnapshot(()=>{if(autoSync)loadFromCloud()})}catch(e){}
 render();
 </script></body></html>
