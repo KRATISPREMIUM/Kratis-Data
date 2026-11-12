@@ -880,15 +880,15 @@ async function pullTierFromCloud(){
  }
  document.getElementById('tierBadge').innerText=realTier+' MODE';
  if(realTier==='USER') document.getElementById('tierBadge').innerText='USER MODE - CEO Approval Needed';
- document.getElementById('bal').innerText='GHS '+WALLET.toFixed(2);
- document.getElementById('s-wallet').innerText='GHS '+WALLET.toFixed(2);
+ document.getElementById('bal').innerText=convert(WALLET);
+ document.getElementById('s-wallet').innerText=convert(WALLET);
  const apiBtn=document.getElementById('apiBtn');
  if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
 
 function makeCard(p){
  const price=p.prices[TIER];
- return `<div class="card"><span class="tag" style="border-color:#222;color:#FFD700;background:rgba(255,215,0,0.08)">${p.sub} • ${p.country||''}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="priceBox"><div class="${TIER==='USER'?'active':''}"><span>USER</span><b>GHS ${p.prices.USER}</b></div><div class="${TIER==='AGENT'?'active':''}"><span>AGENT</span><b>GHS ${p.prices.AGENT}</b></div><div class="${TIER==='DEALER'?'active':''}"><span>DEALER</span><b>GHS ${p.prices.DEALER}</b></div></div><button class="buy active" onclick="openBuy('${p.id}')">Buy • GHS ${price}</button></div>`;
+ return `<div class="card"><span class="tag" style="border-color:#222;color:#FFD700;background:rgba(255,215,0,0.08)">${p.sub} • ${p.country||''}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="priceBox"><div class="${TIER==='USER'?'active':''}"><span>USER</span><b>${convert(p.prices.USER)}</b></div><div class="${TIER==='AGENT'?'active':''}"><span>AGENT</span><b>${convert(p.prices.AGENT)}</b></div><div class="${TIER==='DEALER'?'active':''}"><span>DEALER</span><b>${convert(p.prices.DEALER)}</b></div></div><button class="buy active" onclick="openBuy('${p.id}')">Buy • ${convert(price)}</button></div>`;
 }
 
 function renderDashboard(){
@@ -970,9 +970,9 @@ function openBuy(id){
  CUR=PRODUCTS.find(p=>p.id===id);
  document.getElementById('buyTitle').innerText=CUR.name;
  document.getElementById('buyMeta').innerText=CUR.cat+' • '+CUR.sub+' • '+(CUR.country||'')+' • '+CUR.desc;
- document.getElementById('buyPay').innerText='GHS '+CUR.prices[TIER];
+ document.getElementById('buyPay').innerText=convert(CUR.prices[TIER]);
  document.getElementById('buyTier').innerText=TIER;
- document.getElementById('buyBal').innerText='GHS '+WALLET.toFixed(2);
+ document.getElementById('buyBal').innerText=convert(WALLET);
  document.getElementById('buyModal').style.display='flex';
 }
 function closeM(id){document.getElementById(id).style.display='none';}
