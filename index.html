@@ -675,17 +675,18 @@ async function submitAFA(){
 <script>
 let TIER=localStorage.getItem('kratis_tier')||'USER';
 let _e = localStorage.getItem('kratis_logged_user')||'guest';
-  // === Show Name + KDP under Successful Operation ===
-let _users = JSON.parse(localStorage.getItem('kratis_users')||'[]');
-let _me = _users.find(x=>x.email===_e) || {};
-let _name = _me.name || _e.split('@')[0] || 'My User';
-let _kdp = _me.kdpNumber || _me.kdpId;
-if(!_kdp){
-  let _h=0; for(let i=0;i<_e.length;i++){_h=(_h*31 + _e.charCodeAt(i))%9000;}
-  _kdp = 'KDP-' + (1000+_h);
-}
-document.getElementById('badgeName').innerText = _name;
-document.getElementById('badgeKdp').innerText = _kdp;
+try{
+  let _name = _e.split('@')[0] || 'My User';
+  let _kdp = 'KDP-' + (1000 + (_e.length * 137 + _e.charCodeAt(0)) % 9000);
+  let _raw = localStorage.getItem('kratis_users');
+  if(_raw){
+    let _obj = JSON.parse(_raw);
+    let _me = Array.isArray(_obj) ? _obj.find(x=>x.email===_e) : _obj[_e];
+    if(_me){ _name = _me.name || _name; _kdp = _me.kdpNumber || _me.kdpId || _kdp; }
+  }
+  document.getElementById('badgeName').innerText = _name;
+  document.getElementById('badgeKdp').innerText = _kdp;
+}catch(err){ console.log(err); }
 let WALLET=getWallet();
 let ORDERS=getMyOrders();
 let CUR=null;
