@@ -26,7 +26,7 @@ function saveMyOrder(order){
   localStorage.setItem('kratis_orders', JSON.stringify(all));
   try{ db.collection('kratis_orders').doc(order.id).set(order,{merge:true}); }catch(e){}
 }
-const RATES = {GHS:1, USD:0.065, GBP:0.051, NGN:98, EUR:0.060};
+const RATES = {GHS:1, USD:0.065, GBP:0.051, NGN:98, EUR:0.060, CAD:0.090, AUD:0.098, CHF:0.058, ZAR:1.18, KES:8.4, UGX:240, TZS:165, RWF:85, XOF:39, XAF:39, ZMW:1.7, BWP:0.88, ETB:8.2, EGP:3.2, MAD:0.64, AED:0.24, INR:5.5, CNY:0.47};
 function convert(ghs){
   let cur = localStorage.getItem('kratis_currency')||'GHS';
   return (ghs*(RATES[cur]||1)).toFixed(2) + ' ' + cur;
@@ -35,6 +35,11 @@ function changeCurrency(cur){
   localStorage.setItem('kratis_currency', cur);
   location.reload();
 }
+    window.addEventListener('load', function(){
+  let _c = localStorage.getItem('kratis_currency')||'GHS';
+  let _s = document.getElementById('curSelect');
+  if(_s) _s.value = _c;
+});
 </script>
   <script>
 // KRATIS CLOUD BRIDGE - CEO SYNC FIX
