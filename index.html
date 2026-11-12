@@ -677,12 +677,31 @@ let TIER=localStorage.getItem('kratis_tier')||'USER';
 let _e = localStorage.getItem('kratis_logged_user')||'guest';
 try{
   let _name = _e.split('@')[0] || 'My User';
-  let _kdp = 'KDP-' + (1000 + (_e.length * 137 + _e.charCodeAt(0)) % 9000);
+  let _kdp = '';
   let _raw = localStorage.getItem('kratis_users');
+  let _me = null;
+  let _list = [];
   if(_raw){
     let _obj = JSON.parse(_raw);
-    let _me = Array.isArray(_obj) ? _obj.find(x=>x.email===_e) : _obj[_e];
-    if(_me){ _name = _me.name || _name; _kdp = _me.kdpNumber || _me.kdpId || _kdp; }
+    if(Array.isArray(_obj)){ _list = _obj; _me = _obj.find(x=>x.email===_e); }
+    else { _list = Object.values(_obj); _me = _obj[_e]; }
+  }
+  if(_me){
+    _name = _me.name || _name;
+    if(_me.kdpNumber && /KDP-\d{3}$/.test(_me.kdpNumber)){ _kdp = _me.kdpNumber; }
+  }
+  if(!_kdp){
+    let _idx = _list.findIndex(x=>x.email===_e);
+    if(_idx < 0) _idx = _list.length;
+    _kdp = 'KDP-' + String(_idx + 1).padStart(3,'0');
+    // save am so e no change again
+    if(_me){ _me.kdpNumber = _kdp; }
+    if(Array.isArray(JSON.parse(_raw||'[]'))){
+      let _arr = JSON.parse(_raw); let _i = _arr.findIndex(x=>x.email===_e);
+      if(_i>=0){ _arr[_i].kdpNumber = _kdp; localStorage.setItem('kratis_users', JSON.stringify(_arr)); }
+    } else if(_raw){
+      let _o = JSON.parse(_raw); if(_o[_e]){ _o[_e].kdpNumber = _kdp; localStorage.setItem('kratis_users', JSON.stringify(_o)); }
+    }
   }
   document.getElementById('badgeName').innerText = _name;
   document.getElementById('badgeKdp').innerText = _kdp;
