@@ -87,7 +87,7 @@ function pushUserToCloud(){
 // window.addEventListener('load', pushUserToCloud);
     // setInterval(pushUserToCloud, 15000);
     // window.addEventListener('load', pushUserToCloud);
-    pullTierFromCloud();
+    // pullTierFromCloud();
 </script>
 <script>
 // 🔐 AUTH PROTECTION - Must login first!
@@ -892,6 +892,7 @@ window.addEventListener('load',function(){updateBell();setInterval(function(){va
  const apiBtn=document.getElementById('apiBtn'); if(apiBtn){
  if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
+}                                          
 });
 function makeCard(p){
  const price=p.prices[TIER];
