@@ -1,72 +1,79 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kratis CEO - FIXED</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="firebase.js"></script>
-<style>*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#0b0b0f;color:#fff;display:flex}.side{width:230px;background:#111;min-height:100vh;padding:14px}.side a{display:block;color:#ddd;text-decoration:none;padding:10px;border-radius:8px;cursor:pointer}.side a:hover{background:#222}.main{flex:1;padding:14px}.card{background:#16161d;border:1px solid #2a2a33;border-radius:12px;padding:12px;margin-bottom:12px}.btn{background:#FFD700;color:#000;border:0;padding:10px 12px;border-radius:8px;font-weight:800;cursor:pointer}.btn2{background:#222;color:#fff;border:1px solid #444;padding:10px 12px;border-radius:8px;cursor:pointer}.btnG{background:#14532d;color:#4ade80;border:0;padding:10px 12px;border-radius:8px;font-weight:800;cursor:pointer}input,select{padding:10px;background:#0f0f14;color:#fff;border:1px solid #333;border-radius:8px;margin:4px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid #26262e;text-align:left}.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:800;background:#333}.agent{background:#14532d;color:#4ade80}.dealer{background:#7c3aed;color:#fff}</style>
-</head><body>
-<div class="side"><b style="color:#FFD700;font-size:18px">KRATIS CEO</b><p style="color:#aaa;font-size:12px">FIXED VERSION</p>
-<a onclick="view('dash')">Dashboard</a><a onclick="view('users')">All Users / Agents</a><a onclick="view('orders')">All Orders</a><a onclick="view('pending')">Pending Approvals</a>
-<a href="ecg-utility-manager.html">ECG / Utility Manager</a>
-<a onclick="sessionStorage.removeItem('kratis_ceo');location.href='admin-login.html'">Logout CEO</a>
-<p id="cloudCount" style="color:#4ade80;font-size:12px">● CLOUD LIVE</p></div>
-<div class="main">
-<div class="card"><b>CEO ADMIN: Phillip</b> <span style="background:#FFD700;color:#000;padding:2px 8px;border-radius:20px;font-size:11px">SUPER ACCESS</span><br><br>
-<button class="btn" onclick="pushToCloud()">SYNC TO CLOUD (Push Only)</button>
-<button class="btn2" onclick="loadFromCloud()">LOAD FROM CLOUD (Pull Only)</button>
-<button class="btnG" id="autoBtn" onclick="toggleAuto()">AUTO-SYNC ON</button><br><small id="lastSync">Last Sync: -</small>
-<div style="float:right;text-align:right"><small>Today Profit</small><br><b style="color:#FFD700;font-size:20px">GHS <span id="profit">0</span></b></div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KRATIS CEO</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#0a0a0f;color:#fff}
+aside{position:fixed;left:0;top:0;width:210px;height:100%;background:#111;padding:15px;overflow:auto}
+aside h2{color:#FFD700}aside button{display:block;width:100%;margin:6px 0;padding:10px;background:#222;color:#fff;border:1px solid #333;border-radius:8px;text-align:left;cursor:pointer}
+main{margin-left:220px;padding:20px}.card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.stat{background:#1c1c28;padding:15px;border-radius:12px}.stat b{font-size:22px;color:#FFD700;display:block}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #333;padding:7px;text-align:left}th{background:#222}
+input,select,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;border:1px solid #444;background:#222;color:#fff}
+.btn{background:#FFD700;border:none;padding:9px 14px;border-radius:8px;font-weight:bold;cursor:pointer}.red{background:#c00;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}.green{background:#0a0;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}
+.hidden{display:none}@media(max-width:700px){aside{width:100%;position:static;height:auto}main{margin:0}}
+</style></head><body>
+<aside><h2>👑 KRATIS CEO</h2>
+<button onclick="show('dash')">📊 Dashboard</button>
+<button onclick="show('users')">👥 All Users/Agents/Dealers</button>
+<button onclick="show('orders')">🧾 All Orders</button>
+<button onclick="show('pending')">✅ Pending Approvals</button>
+<button onclick="show('wallets')">💰 Wallets</button>
+<button onclick="show('reports')">🚨 Reports / Complaints</button>
+<button onclick="show('managers')">🛠️ Managers Monitor</button>
+<button onclick="show('broadcast')">📢 Broadcast</button>
+</aside>
+<main>
+<div id="dash" class="card"><h2>Dashboard</h2><div class="grid" id="stats"></div><h3>Growth Chart</h3><canvas id="chart" width="700" height="180" style="width:100%;background:#111"></canvas><h3>Most Placed Orders</h3><div id="most"></div></div>
 
-<div id="v-dash"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
-<div class="card"><h2 id="cUsers">0</h2><small>Users</small></div><div class="card"><h2 id="cAgents">0</h2><small>Agents</small></div><div class="card"><h2 id="cDealers">0</h2><small>Dealers</small></div><div class="card"><h2 id="cOrders">0</h2><small>Orders</small></div></div>
-<div class="card"><b>Create User</b><br><input id="nName" placeholder="Name"><input id="nEmail" placeholder="Email"><input id="nPhone" placeholder="Phone"><input id="nPass" placeholder="Password"><button class="btn" onclick="createUser()">Create</button></div></div>
+<div id="users" class="card hidden"><h2>All Users / Agents / Dealers</h2><select onchange="renderUsers(this.value)"><option value="ALL">All</option><option value="USER">Users</option><option value="AGENT">Agents</option><option value="DEALER">Dealers</option></select><div id="usersTable"></div></div>
 
-<div id="v-users" style="display:none" class="card"><b>All Users - Wallet be per user now</b><div style="overflow:auto"><table><thead><tr><th>User</th><th>Email</th><th>Wallet</th><th>Role</th><th>Change Role</th></tr></thead><tbody id="usersList"></tbody></table></div></div>
-<div id="v-orders" style="display:none" class="card"><b>All Orders (All Users)</b><div style="overflow:auto"><table><thead><tr><th>Customer</th><th>Product</th><th>Amount</th><th>Date</th></tr></thead><tbody id="ordersList"></tbody></table></div></div>
-<div id="v-pending" style="display:none" class="card"><b>Pending Agent Applications</b><div id="pendingList"></div></div>
-</div>
+<div id="orders" class="card hidden"><h2>All Orders</h2><select onchange="renderOrders(this.value)"><option value="ALL">All Orders</option><option>Ghana GB</option><option>International Bundle & Airtime</option><option>Gift Cards</option><option>Utility Payments</option><option>ECG Prepaid</option><option>Vouchers</option><option>AFA Registration</option></select><div id="ordersTable"></div></div>
+
+<div id="pending" class="card hidden"><h2>Pending Agent Approvals</h2><div id="pendingTable"></div></div>
+
+<div id="wallets" class="card hidden"><h2>Wallets Breakdown</h2><div id="walletInfo"></div></div>
+
+<div id="reports" class="card hidden"><h2>Reports - Reply User</h2><div id="reportsTable"></div></div>
+
+<div id="managers" class="card hidden"><h2>Managers Monitor (ECG/Utility, Gift Cards, Data, AFA, Transaction)</h2><p>ECG Prepaid = Manual Token. Others = API, if fail manager buy manual.</p><select onchange="renderManagers(this.value)"><option value="ECG Prepaid">ECG Prepaid</option><option value="Utility Payments">Utility Payments</option><option value="Gift Cards">Gift Cards</option><option value="Ghana GB">Ghana GB / Data</option><option value="AFA Registration">AFA Registration</option><option value="DEPOSIT">Top-up / Transaction</option></select><div id="managerTable"></div></div>
+
+<div id="broadcast" class="card hidden"><h2>📢 CEO Broadcast - Pop + Sound for All Users</h2><textarea id="bcMsg" rows="3" placeholder="Type message..."></textarea><button class="btn" onclick="sendBC()">SEND TO ALL USERS</button><hr><h3>Message Complaint Manager / All Managers</h3><textarea id="mgrMsg" rows="2" placeholder="Forward info to managers..."></textarea><button class="btn" onclick="localStorage.setItem('kratis_mgr_msg',document.getElementById('mgrMsg').value);alert('Saved for Managers')">SEND TO MANAGERS</button></div>
+</main>
 <script>
-if(sessionStorage.getItem('kratis_ceo')!=='true'){let e=prompt('CEO Email:'),p=prompt('Password:');if(e==='ceo@kratisdata.com'&&p==='KratisCEO2025!'){sessionStorage.setItem('kratis_ceo','true')}else{location.href='admin-login.html'}}
-const UKEY='kratis_users',OKEY='kratis_orders';let autoSync=true;
-function getDb(){try{return firebase.firestore()}catch(e){return null}}
-function getUsers(){return JSON.parse(localStorage.getItem(UKEY)||'{}')}
-function setUsers(u){localStorage.setItem(UKEY,JSON.stringify(u))}
-function getOrders(){return JSON.parse(localStorage.getItem(OKEY)||'[]')}
-function view(v){['dash','users','orders','pending'].forEach(x=>document.getElementById('v-'+x).style.display=x===v?'':'none');render()}
-function toggleAuto(){autoSync=!autoSync;document.getElementById('autoBtn').innerText=autoSync?'AUTO-SYNC ON':'AUTO-SYNC OFF';if(autoSync)loadFromCloud()}
-async function setRole(email,role){
- let users=getUsers();if(!users[email])return alert('User no dey');
- users[email].tier=role;users[email].role=role.toLowerCase();setUsers(users);
- try{await getDb().collection('kratis_users').doc(email).set(users[email],{merge:true})}catch(e){}
- document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();
- render();alert('Changed '+email+' to '+role+' - Saved to Cloud! No click SYNC again.');
-}
-async function pushToCloud(){
- let d=getDb(),users=getUsers(),orders=getOrders();
- for(let e in users){await d.collection('kratis_users').doc(e).set(users[e],{merge:true})}
- for(let o of orders){if(o.id)await d.collection('kratis_orders').doc(o.id).set(o,{merge:true})}
- document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();alert('Push Done! Users: '+Object.keys(users).length);
-}
-async function loadFromCloud(){
- let d=getDb();if(!d)return;let users=getUsers();
- let s=await d.collection('kratis_users').get();s.forEach(doc=>{users[doc.id]=doc.data()});setUsers(users);
- let os=await d.collection('kratis_orders').get();let local=getOrders();os.forEach(doc=>{let co=doc.data();let i=local.findIndex(x=>x.id===co.id);if(i>-1)local[i]=co;else local.push(co)});localStorage.setItem(OKEY,JSON.stringify(local));
- document.getElementById('lastSync').innerText='Last Sync: '+new Date().toLocaleTimeString();render();
-}
-function createUser(){let e=document.getElementById('nEmail').value.trim().toLowerCase();if(!e)return alert('Enter email');let u=getUsers();u[e]={name:document.getElementById('nName').value,email:e,phone:document.getElementById('nPhone').value,pass:document.getElementById('nPass').value||'1234',tier:'USER',role:'user',wallet:0,date:new Date().toLocaleString()};setUsers(u);pushToCloud();render();alert('User Created!')}
-function render(){
- let users=getUsers(),orders=getOrders(),list=Object.values(users);
- document.getElementById('cUsers').innerText=list.length;
- document.getElementById('cAgents').innerText=list.filter(u=>u.tier==='AGENT').length;
- document.getElementById('cDealers').innerText=list.filter(u=>u.tier==='DEALER').length;
- document.getElementById('cOrders').innerText=orders.length;
- document.getElementById('cloudCount').innerText='● CLOUD LIVE - '+list.length+' users';
- document.getElementById('profit').innerText=orders.reduce((a,o)=>a+(+o.amount||0),0).toFixed(2);
- document.getElementById('usersList').innerHTML=list.map(u=>`<tr><td>${u.name||'-'}</td><td>${u.email}</td><td>GHS ${(+u.wallet||0).toFixed(2)}</td><td><span class="badge ${u.tier==='AGENT'?'agent':u.tier==='DEALER'?'dealer':''}">${u.tier||'USER'}</span></td><td><select id="r-${u.email}"><option>USER</option><option>AGENT</option><option>DEALER</option></select><button class="btn" onclick="setRole('${u.email}',document.getElementById('r-${u.email}').value)">Save</button></td></tr>`).join('');
- document.getElementById('ordersList').innerHTML=orders.map(o=>`<tr><td>${o.userEmail||o.email||'-'}</td><td>${o.product||o.name||o.type||'-'}</td><td>GHS ${o.amount||''}</td><td>${o.date||o.createdAt||''}</td></tr>`).join('');
- document.getElementById('pendingList').innerHTML=list.filter(u=>u.role==='pending_agent').map(u=>`<div style="padding:8px;border-bottom:1px solid #222">${u.name} - ${u.email} - ${u.phone} <button class="btn" onclick="setRole('${u.email}','AGENT')">Approve AGENT</button></div>`).join('')||'No pending';
-}
-try{getDb().collection('kratis_orders').onSnapshot(()=>{if(autoSync)loadFromCloud()})}catch(e){}
-render();
+function U(){let u=JSON.parse(localStorage.getItem('kratis_users')||'{}');if(Array.isArray(u)){let o={};u.forEach(x=>o[x.email]=x);return o}return u}
+function O(){return JSON.parse(localStorage.getItem('kratis_orders')||'[]')}
+function R(){return JSON.parse(localStorage.getItem('kratis_reports')||'[]')}
+function W(e){return parseFloat(localStorage.getItem('wallet_'+e)|| (U()[e]?.wallet||0)||0)}
+function show(id){document.querySelectorAll('main>div').forEach(d=>d.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');renderAll()}
+function cat(o){return o.cat||o.name||''}
+function isCat(o,c){let s=(cat(o)+' '+(o.hist||'')).toUpperCase();return s.includes(c.toUpperCase().split(' ')[0])}
+function renderAll(){renderDash();renderUsers('ALL');renderOrders('ALL');renderPending();renderWallets();renderReports();renderManagers('ECG Prepaid')}
+function renderDash(){let u=Object.values(U()),o=O();
+let users=u.filter(x=>(x.tier||x.role||'USER')=='USER').length,agents=u.filter(x=>(x.tier||x.role)=='AGENT').length,dealers=u.filter(x=>(x.tier||x.role)=='DEALER').length;
+let cnt=c=>o.filter(x=>isCat(x,c)).length;
+let reloadly=o.filter(x=>isCat(x,'Gift')||isCat(x,'Utility')||isCat(x,'International')).reduce((a,x)=>a+(x.amount||x.price||0),0);
+let digi=o.filter(x=>isCat(x,'Ghana')||isCat(x,'AFA')||isCat(x,'Voucher')).reduce((a,x)=>a+(x.amount||x.price||0),0);
+let allW=Object.keys(U()).reduce((a,e)=>a+W(e),0);
+let uw=Object.keys(U()).filter(e=>(U()[e].tier||'USER')=='USER').reduce((a,e)=>a+W(e),0);
+let aw=Object.keys(U()).filter(e=>U()[e].tier=='AGENT').reduce((a,e)=>a+W(e),0);
+let dw=Object.keys(U()).filter(e=>U()[e].tier=='DEALER').reduce((a,e)=>a+W(e),0);
+let active=o.filter(x=>x.email).length;
+document.getElementById('stats').innerHTML=[['Users',users],['Agents',agents],['Dealers',dealers],['Ghana GB',cnt('Ghana')],['International',cnt('International')],['Gift Cards',cnt('Gift')],['Utility',cnt('Utility')],['ECG',cnt('ECG')],['Vouchers',cnt('Voucher')],['AFA',cnt('AFA')],['Reloadly Wallet','GHS '+reloadly.toFixed(2)],['DIGI-Mall Wallet','GHS '+digi.toFixed(2)],['Combined API','GHS '+(reloadly+digi).toFixed(2)],['Users Wallet','GHS '+uw.toFixed(2)],['Agents Wallet','GHS '+aw.toFixed(2)],['Dealers Wallet','GHS '+dw.toFixed(2)],['All Wallets','GHS '+allW.toFixed(2)],['Active Orders',active]].map(x=>`<div class="stat"><b>${x[1]}</b>${x[0]}</div>`).join('');
+let c=document.getElementById('chart'),x=c.getContext('2d');x.clearRect(0,0,700,180);x.fillStyle='#FFD700';[users,agents,dealers,active].forEach((v,i)=>{x.fillRect(30+i*120,160-Math.min(v*15,140),70,Math.min(v*15,140))});
+let m={};o.forEach(x=>m[cat(x)]=(m[cat(x)]||0)+1);document.getElementById('most').innerHTML=Object.entries(m).sort((a,b)=>b[1]-a[1]).map(e=>e[0]+': '+e[1]).join('<br>')||'No orders yet'}
+function renderUsers(f){let rows=Object.entries(U()).filter(([e,u])=>f=='ALL'||(u.tier||u.role||'USER')==f);
+document.getElementById('usersTable').innerHTML=`<table><tr><th>KDP</th><th>Name</th><th>Country</th><th>Email</th><th>WhatsApp</th><th>Wallet</th><th>Role</th><th>Change Role</th></tr>`+rows.map(([e,u],i)=>`<tr><td>${u.kdp||('KDP-'+String(i+1).padStart(3,'0'))}</td><td>${u.name||''}</td><td>${u.country||u.location||''}</td><td>${e}</td><td>${u.phone||''}</td><td>GHS ${W(e).toFixed(2)}</td><td>${u.tier||u.role||'USER'}</td><td><select onchange="changeRole('${e}',this.value)"><option>USER</option><option>AGENT</option><option>DEALER</option></select></td></tr>`).join('')+'</table>'}
+function changeRole(e,r){let u=U();u[e].tier=r;u[e].role=r;localStorage.setItem('kratis_users',JSON.stringify(u));alert('Role changed to '+r);renderAll()}
+function renderOrders(f){let rows=O().filter(o=>f=='ALL'||isCat(o,f));
+document.getElementById('ordersTable').innerHTML=`<table><tr><th>KDP</th><th>Name</th><th>Email</th><th>Product</th><th>Amount</th><th>Date</th><th>Status</th></tr>`+rows.map(o=>`<tr><td>${o.kdp||''}</td><td>${o.name||''}</td><td>${o.email||''}</td><td>${cat(o)} ${o.network||''} ${o.size||''}</td><td>GHS ${o.amount||o.price||0}</td><td>${o.date||''}</td><td>${o.status||''}</td></tr>`).join('')+'</table>'}
+function renderPending(){let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');
+document.getElementById('pendingTable').innerHTML=apps.map((a,i)=>`<div class="card">${a.kdp||''} | ${a.name} | ${a.country||a.location||''} | ${a.phone} | ${a.email}<br><button class="green" onclick="approve(${i})">Approve to Agent</button> <button class="red" onclick="decline(${i})">Decline</button></div>`).join('')||'No pending'}
+function approve(i){let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');let a=apps[i];let u=U();if(u[a.email]){u[a.email].tier='AGENT';u[a.email].role='AGENT'}localStorage.setItem('kratis_users',JSON.stringify(u));apps.splice(i,1);localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));alert('Approved Agent');renderAll()}
+function decline(i){let apps=JSON.parse(localStorage.getItem('kratis_agent_applications')||'[]');apps.splice(i,1);localStorage.setItem('kratis_agent_applications',JSON.stringify(apps));renderAll()}
+function renderWallets(){renderDash();document.getElementById('walletInfo').innerHTML=document.getElementById('stats').innerHTML}
+function renderReports(){let r=R();document.getElementById('reportsTable').innerHTML=r.map((x,i)=>`<div class="card"><b>${x.kdp||''} ${x.name||''} ${x.email||''}</b><br>${x.product||''} | ${x.delivered||''}<br>${x.msg||''}<br>${x.img?`<img src="${x.img}" width="120">`:''}<br><input id="rep${i}" placeholder="Reply message..."><input type="file" id="repImg${i}" accept="image/*"><button class="btn" onclick="replyReport(${i})">Submit Reply</button> <span>${x.reply||'Pending'}</span></div>`).join('')||'No reports'}
+function replyReport(i){let r=R();let inp=document.getElementById('rep'+i);let f=document.getElementById('repImg'+i).files[0];let done=()=>{r[i].reply=inp.value;r[i].status='Replied by CEO/Complaint Manager';localStorage.setItem('kratis_reports',JSON.stringify(r));alert('Replied');renderAll()};if(f){let rd=new FileReader();rd.onload=()=>{r[i].replyImg=rd.result;done()};rd.readAsDataURL(f)}else done()}
+function renderManagers(c){let rows=O().filter(o=>isCat(o,c)||(c=='DEPOSIT'&&o.hist=='DEPOSIT'));
+document.getElementById('managerTable').innerHTML=rows.map((o,i)=>`<div class="card">${o.kdp||''} ${o.name||''} ${o.email||''} ${o.date||''}<br>${cat(o)} ${o.network||''} ${o.size||''} To: ${o.to||o.phone||''} GHS ${o.amount||0}<br><input id="mt${i}" placeholder="Token / Gift code / Message / Manual done..."><button class="btn" onclick="managerDone('${o.id}','${i}')">Confirm / Submit</button></div>`).join('')||'No orders for this manager'}
+function managerDone(id,i){let o=O();let idx=o.findIndex(x=>x.id==id);if(idx>-1){o[idx].status='Completed - '+document.getElementById('mt'+i).value;o[idx].managerMsg=document.getElementById('mt'+i).value;localStorage.setItem('kratis_orders',JSON.stringify(o));alert('Done - user go see for History')}}
+function sendBC(){localStorage.setItem('kratis_broadcast',document.getElementById('bcMsg').value);localStorage.removeItem('kratis_broadcast_seen');alert('Broadcast saved! E go pop + sound for all users')}
+renderAll();
 </script></body></html>
