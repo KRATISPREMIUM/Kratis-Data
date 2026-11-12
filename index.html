@@ -893,7 +893,7 @@ window.addEventListener('load',function(){updateBell();setInterval(function(){va
  if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
 }                                          
-});
+);
 function makeCard(p){
  const price=p.prices[TIER];
  return `<div class="card"><span class="tag" style="border-color:#222;color:#FFD700;background:rgba(255,215,0,0.08)">${p.sub} • ${p.country||''}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="priceBox"><div class="${TIER==='USER'?'active':''}"><span>USER</span><b>${convert(p.prices.USER)}</b></div><div class="${TIER==='AGENT'?'active':''}"><span>AGENT</span><b>${convert(p.prices.AGENT)}</b></div><div class="${TIER==='DEALER'?'active':''}"><span>DEALER</span><b>${convert(p.prices.DEALER)}</b></div></div><button class="buy active" onclick="openBuy('${p.id}')">Buy • ${convert(price)}</button></div>`;
