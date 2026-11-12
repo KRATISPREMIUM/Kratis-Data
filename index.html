@@ -5,6 +5,38 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
   <script>
+// KRATIS PER-USER FIX - DO NOT REMOVE
+function currentEmail(){ return (localStorage.getItem('kratis_user_email')||localStorage.getItem('kratis_logged_user')||'guest').toLowerCase().trim(); }
+function walletKey(){ return 'wallet_' + currentEmail(); }
+function getWallet(){ return parseFloat(localStorage.getItem(walletKey())||'0'); }
+function setWallet(v){ localStorage.setItem(walletKey(), v); }
+function getMyOrders(){
+  let all = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+  return all.filter(o => (o.email||o.userEmail||'').toLowerCase() === currentEmail());
+}
+function saveMyOrder(order){
+  order.email = currentEmail();
+  order.kdp = localStorage.getItem('kratis_kdp')||'';
+  order.name = localStorage.getItem('kratis_name')||'';
+  order.country = localStorage.getItem('kratis_country')||'';
+  order.date = new Date().toISOString();
+  order.status = order.status || 'Pending';
+  let all = JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+  all.push(order);
+  localStorage.setItem('kratis_orders', JSON.stringify(all));
+  try{ db.collection('kratis_orders').doc(order.id).set(order,{merge:true}); }catch(e){}
+}
+const RATES = {GHS:1, USD:0.065, GBP:0.051, NGN:98, EUR:0.060};
+function convert(ghs){
+  let cur = localStorage.getItem('kratis_currency')||'GHS';
+  return (ghs*(RATES[cur]||1)).toFixed(2) + ' ' + cur;
+}
+function changeCurrency(cur){
+  localStorage.setItem('kratis_currency', cur);
+  location.reload();
+}
+</script>
+  <script>
 // KRATIS CLOUD BRIDGE - CEO SYNC FIX
 function getDB(){
   try{
@@ -164,7 +196,16 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 <div class="content">
 <!-- DASHBOARD -->
 <div id="view-dashboard">
-<div class="hero">
+<img src="logo.png" style="width:180px;height:auto;object-fit:contain;margin-bottom:10px">
+<div style="margin:10px 0;color:#fff">
+  <b id="myKDP"></b> | <span id="myName"></span> | <span id="myCountry"></span>
+  <br>
+  <label style="font-size:12px;color:#888">Currency:</label>
+  <select onchange="changeCurrency(this.value)" id="curSelect" style="padding:6px;border-radius:8px;background:#111;color:#fff">
+    <option value="GHS">GHS</option><option value="USD">USD</option><option value="GBP">GBP</option><option value="NGN">NGN</option><option value="EUR">EUR</option>
+  </select>
+</div>
+  <div class="hero">
 <div class="hero-card">
 <h2 style="font-size:24px;font-weight:900">Welcome to <span style="color:#FFD700">Kratis Premium</span><br>Dashboard</h2>
 <p style="font-size:12px;color:#888;margin-top:6px">Ghana GB different from International! Utility different from ECG! Gift Cards has Gaming inside!</p>
@@ -630,8 +671,8 @@ async function submitAFA(){
 <script>
 let TIER=localStorage.getItem('kratis_tier')||'USER';
 let _e = localStorage.getItem('kratis_logged_user')||'guest';
-let WALLET=parseFloat(localStorage.getItem('kratis_wallet_'+_e)||localStorage.getItem('kratis_wallet')||'0');
-let ORDERS=JSON.parse(localStorage.getItem('kratis_orders')||'[]');
+let WALLET=getWallet();
+let ORDERS=getMyOrders();
 let CUR=null;
 let CUR_GB='all', CUR_V='all', CUR_H='all';
 
@@ -900,17 +941,17 @@ function confirmBuy(){
  if(!rec){alert('Enter recipient');return;}
  const amt=CUR.prices[TIER];
  if(WALLET<amt){alert('Insufficient wallet! Top-up first.');renderWallet();closeM('buyModal');return;}
- WALLET=parseFloat((WALLET-amt).toFixed(2));localStorage.setItem('kratis_wallet_'+(localStorage.getItem('kratis_logged_user')||'guest'),WALLET);
+WALLET=parseFloat((WALLET-amt).toFixed(2));setWallet(WALLET);
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
- ORDERS.push(order); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(order);
+ saveMyOrder(order); ORDERS.push(order);
  closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
 }
 function dowallet(){
  const amt=parseFloat(document.getElementById('walletAmt').value);
  if(!amt||amt<1){alert('Enter valid amount');return;}
- WALLET+=amt;localStorage.setItem('kratis_wallet_'+(localStorage.getItem('kratis_logged_user')||'guest'),WALLET);
+WALLET+=amt;setWallet(WALLET); renderWallet();
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',phone:'Wallet',to:'Wallet',net:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
- ORDERS.push(dep); localStorage.setItem('kratis_orders',JSON.stringify(ORDERS)); pushOrderToCloud(dep);
+ saveMyOrder(dep); ORDERS.push(dep);
   saveRealDeposit(amt,'Auto','paystack');
  updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
   renderWallet();
@@ -1037,7 +1078,7 @@ function go(view){
 </script>
 <script>
 let histType='mtn';
-function getOrders(){try{return JSON.parse(localStorage.getItem('kratis_orders')||'[]')}catch(e){return[]}}
+function getOrders(){return getMyOrders();}
 function renderHistory(t){
  histType=t; let box=document.getElementById('historyBox'); if(!box)return;
  let orders=getOrders();
