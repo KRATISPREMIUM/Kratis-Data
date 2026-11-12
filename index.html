@@ -991,7 +991,7 @@ function confirmBuy(){
 WALLET=parseFloat((WALLET-amt).toFixed(2));setWallet(WALLET);
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  saveMyOrder(order); ORDERS.push(order);
- closeM('buyModal'); updateTierUI(); alert('Order Placed! '+order.id+' • Manager will process.'); renderHistory();
+ closeM('buyModal'); updateTierUI(); notify('✅ Order Placed! '+order.id+' • '+CUR.name+' for '+rec+' • Manager will process.'); renderHistory();
 }
 function dowallet(){
  const amt=parseFloat(document.getElementById('walletAmt').value);
@@ -1000,7 +1000,7 @@ WALLET+=amt;setWallet(WALLET); renderWallet();
  const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',phone:'Wallet',to:'Wallet',net:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
  saveMyOrder(dep); ORDERS.push(dep);
   saveRealDeposit(amt,'Auto','paystack');
- updateTierUI(); alert('Top-up GHS '+amt+' added (Demo). New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
+ updateTierUI(); notify('💰 Top-up Successful! GHS '+amt+' added. New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
   renderWallet();
 }
 function applyAgent(){ alert('Use new Apply as AGENT button!'); }
@@ -1035,7 +1035,7 @@ function applyViaWhatsApp(){
   applyAsAgent();
 }
 function copyRef(id){let el=document.getElementById(id); if(el){el.select(); navigator.clipboard.writeText(el.value||el.innerText);} alert('Copied!');}
-function withdrawRef(){let num=prompt('Enter MoMo Number:'); if(!num) return; let comm=parseFloat(localStorage.getItem('kratis_commission')||'0'); alert('✅ Withdrawal Requested! ₵'+comm.toFixed(2)+' to '+num); localStorage.setItem('kratis_commission','0'); renderReferral();}
+function withdrawRef(){let num=prompt('Enter MoMo Number:'); if(!num) return; let comm=parseFloat(localStorage.getItem('kratis_commission')||'0'); notify('🎁 Referral Withdrawal Requested! GHS '+comm.toFixed(2)+' to '+num); localStorage.setItem('kratis_commission','0'); renderReferral();}
 function logout(){  
   localStorage.removeItem('kratis_logged_user');
   localStorage.removeItem('kratis_logged');
