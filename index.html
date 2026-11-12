@@ -221,7 +221,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 <div class="stats">
 <div class="stat"><b id="s-orders">0</b><span>Orders</span></div>
 <div class="stat"><b style="color:#FFD700" id="s-wallet">GHS 0</b><span>Wallet Balance</span></div>
-<div class="stat"><b id="s-ref">GHS 0</b><span>Referral Earnings</span></div>
+<div class="stat"><b id="s-ref"> 0</b><span>Referral Earnings</span></div>
 </div>
 <div style="margin-top:14px;display:flex;gap:8px"><button class="btn-gold" onclick="go('ghana_gb')">Buy Ghana GB</button><button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('intl')">International</button></div>
 </div>
@@ -882,6 +882,7 @@ async function pullTierFromCloud(){
  if(realTier==='USER') document.getElementById('tierBadge').innerText='USER MODE - CEO Approval Needed';
  document.getElementById('bal').innerText=convert(WALLET);
  document.getElementById('s-wallet').innerText=convert(WALLET);
+  document.getElementById('s-ref').innerText=convert(parseFloat(localStorage.getItem('kratis_commission'))||0);
  const apiBtn=document.getElementById('apiBtn');
  if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
