@@ -889,10 +889,10 @@ window.notify=function(msg){var list=JSON.parse(localStorage.getItem('kratis_not
 window.updateBell=function(){var list=JSON.parse(localStorage.getItem('kratis_notifs')||'[]');var b=document.getElementById('bellCount');if(b&&list.length>0){b.style.display='inline';b.innerText=list.length;}}
 window.showNotifs=function(){var list=JSON.parse(localStorage.getItem('kratis_notifs')||'[]');var box=document.getElementById('notifBox');box.style.display='block';if(list.length==0){box.innerHTML='<b>🔔 Notifications</b><br>No notification yet.';}else{box.innerHTML='<b>🔔 Notifications</b> <button onclick="localStorage.removeItem(\'kratis_notifs\');updateBell();this.parentElement.style.display=\'none\'" style="float:right;background:red;color:#fff;border:none;padding:3px 8px;border-radius:5px;cursor:pointer">Clear</button><br><br>'+list.map(function(n){return '• '+n.msg+'<br><small style="color:#888">'+n.time+'</small><hr style="border-color:#222">'}).join('');}var bc=document.getElementById('bellCount');if(bc)bc.style.display='none';}
 window.addEventListener('load',function(){updateBell();setInterval(function(){var bc=localStorage.getItem('kratis_broadcast');var seen=localStorage.getItem('kratis_broadcast_seen');if(bc&&bc!=seen){localStorage.setItem('kratis_broadcast_seen',bc);notify('📢 CEO: '+bc);}},3000);
- const apiBtn=document.getElementById('apiBtn');
+ const apiBtn=document.getElementById('apiBtn'); if(apiBtn){
  if(realTier==='USER') apiBtn.classList.add('hidden'); else apiBtn.classList.remove('hidden');
 }
-
+});
 function makeCard(p){
  const price=p.prices[TIER];
  return `<div class="card"><span class="tag" style="border-color:#222;color:#FFD700;background:rgba(255,215,0,0.08)">${p.sub} • ${p.country||''}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="priceBox"><div class="${TIER==='USER'?'active':''}"><span>USER</span><b>${convert(p.prices.USER)}</b></div><div class="${TIER==='AGENT'?'active':''}"><span>AGENT</span><b>${convert(p.prices.AGENT)}</b></div><div class="${TIER==='DEALER'?'active':''}"><span>DEALER</span><b>${convert(p.prices.DEALER)}</b></div></div><button class="buy active" onclick="openBuy('${p.id}')">Buy • ${convert(price)}</button></div>`;
