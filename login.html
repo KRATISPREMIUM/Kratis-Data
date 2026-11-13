@@ -90,7 +90,7 @@ async function login(){
     const country=document.getElementById('country').value;
     if(!name||!phone) return showErr('Enter Full Name and WhatsApp Number');
     if(users[email]) return showErr('Account already exists! Click Sign In');
-    const kdp=nextKDP(users);
+    const kdp=await nextKDP(users);
     users[email]={ pass:pass, name:name, phone:phone, country:country, kdp:kdp, tier:'USER', role:'USER', wallet:0, active:true, created:new Date().toISOString() };
     saveUsers(users);
     localStorage.setItem('wallet_'+email,'0');
