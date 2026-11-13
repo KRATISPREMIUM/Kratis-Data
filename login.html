@@ -70,7 +70,7 @@ function nextKDP(users){
   Object.values(users).forEach(u=>{ if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }});
   return 'KDP-' + String(max+1).padStart(3,'0');
 }
-function login(){
+async function login(){
   const email=document.getElementById('email').value.trim().toLowerCase();
   const pass=document.getElementById('pass').value.trim();
   if(!email||!pass) return showErr('Enter email and password');
