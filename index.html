@@ -699,11 +699,7 @@ try{
     if(_me.kdpNumber && /KDP-\d{3}$/.test(_me.kdpNumber)){ _kdp = _me.kdpNumber; }
 else if(_me.kdp && /KDP-\d{3}$/.test(_me.kdp)){ _kdp = _me.kdp; }
   }
-  if(!_kdp){
-  let _max=0;
-  _list.forEach(x=>{ if(x.kdp){ let n=parseInt(x.kdp.replace('KDP-','')); if(n>_max) _max=n; } if(x.kdpNumber){ let n=parseInt(x.kdpNumber.replace('KDP-','')); if(n>_max) _max=n; }});
-  _kdp = 'KDP-' + String(_max+1).padStart(3,'0');
-}
+ if(!_kdp){ _kdp = 'KDP-001'; }
     // save am so e no change again
     if(_me){ _me.kdpNumber = _kdp; }
     if(Array.isArray(JSON.parse(_raw||'[]'))){
