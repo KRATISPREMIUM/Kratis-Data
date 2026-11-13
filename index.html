@@ -700,9 +700,10 @@ try{
 else if(_me.kdp && /KDP-\d{3}$/.test(_me.kdp)){ _kdp = _me.kdp; }
   }
   if(!_kdp){
-    let _idx = _list.findIndex(x=>x.email===_e);
-    if(_idx < 0) _idx = _list.length;
-    _kdp = 'KDP-' + String(_idx + 1).padStart(3,'0');
+  let _max=0;
+  _list.forEach(x=>{ if(x.kdp){ let n=parseInt(x.kdp.replace('KDP-','')); if(n>_max) _max=n; } if(x.kdpNumber){ let n=parseInt(x.kdpNumber.replace('KDP-','')); if(n>_max) _max=n; }});
+  _kdp = 'KDP-' + String(_max+1).padStart(3,'0');
+}
     // save am so e no change again
     if(_me){ _me.kdpNumber = _kdp; }
     if(Array.isArray(JSON.parse(_raw||'[]'))){
