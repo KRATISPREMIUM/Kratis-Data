@@ -183,6 +183,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 
 <h5>Account</h5>
 <button onclick="go('history')"><i class="fa-solid fa-clock-rotate-left"></i> History • Everything</button>
+<button onclick="go('myreports')"><i class="fa-solid fa-triangle-exclamation"></i> My Reports</button> 
 <button onclick="go('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
 <button id="apiBtn" onclick="go('api')" class="hidden"><i class="fa-solid fa-code"></i> API Management <span class="badge">AGENT/DEALER ONLY</span></button>
 <button onclick="renderWallet()"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
@@ -660,6 +661,7 @@ async function submitAFA(){
 <div id="view-agent" class="hidden"><div class="hero-card" style="display:block;padding:20px;background:#0a0a0a;border:1px solid #222;border-radius:12px"><h3 style="color:#FFD700">🤝 Agent Program — USER Can Apply to Become Agent (1,100 Agents)</h3><p style="font-size:12px;color:#aaa;margin:8px 0">Fill form below → CEO will see you in ceo.html Pending List → CEO Approves → You become AGENT with low price!</p><div style="display:flex;flex-direction:column;gap:12px;margin-top:15px"><label style="font-size:11px;color:#FFD700">Full Name</label><input id="agentFullName" placeholder="e.g. Kofi Mensah" style="padding:14px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px"><label style="font-size:11px;color:#FFD700">WhatsApp Number</label><input id="agentWhatsApp" placeholder="e.g. 0551234567" type="tel" style="padding:14px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px"><label style="font-size:11px;color:#FFD700">Location</label><input id="agentLocation" placeholder="e.g. Accra, Kumasi" style="padding:14px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px"><button onclick="applyAsAgent()" style="padding:16px;background:linear-gradient(90deg,#FFD700,#FFC700);border:none;border-radius:10px;font-weight:900;cursor:pointer;color:#000;font-size:14px;margin-top:8px">✅ Apply as AGENT - CEO Approval Needed</button><button onclick="applyViaWhatsApp()" style="padding:14px;background:#111;border:1px solid #FFD700;border-radius:10px;font-weight:700;cursor:pointer;color:#FFD700;font-size:13px">💬 Apply Now via WhatsApp to CEO</button><div id="agentApplyStatus" style="font-size:13px;color:#2ecc71;display:none;padding:12px;background:#0f1a0f;border-radius:8px;border:1px solid #2ecc71"></div></div></div></div>
 
 <div id="view-history" class="hidden"><h3>📜 History — Everything You Did</h3><div class="tabs"><button class="active" onclick="renderHistory('mtn')">MTN Orders</button><button onclick="renderHistory('at')">AT Orders</button><button onclick="renderHistory('telecel')">Telecel Orders</button><button onclick="renderHistory('all')">All Orders</button><button onclick="renderHistory('refunds')">Refunds</button><button onclick="renderHistory('deposits')">Deposits</button><button onclick="renderHistory('afa')">AFA</button><button onclick="renderHistory('vouchers')">Vouchers</button></div><div id="historyBox" style="margin-top:16px"></div>
+<div id="view-myreports" class="hidden"><h3>🚨 My Reports</h3><div id="myReportsList"></div></div>  
 
 </div>
   <div id="view-settings" class="hidden"><div class="hero-card"><h3 style="font-size:22px;font-weight:900">⚙️ Settings</h3><p style="font-size:12px;color:#888">Customize your experience and manage your preferences</p></div><div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-top:14px"><div style="width:220px;background:#111;border:1px solid #222;border-radius:14px;padding:16px;position:sticky;top:80px"><b style="color:#fff">Quick Navigation</b><div onclick="scrollToId('set-appearance')" style="padding:10px;cursor:pointer;color:#FFD700;margin-top:10px">🎨 Appearance</div><div onclick="scrollToId('set-notifications')" style="padding:10px;cursor:pointer;color:#ddd">🔔 Notifications</div><div onclick="scrollToId('set-privacy')" style="padding:10px;cursor:pointer;color:#ddd">🛡️ Privacy</div><div onclick="scrollToId('set-security')" style="padding:10px;cursor:pointer;color:#ddd">🔒 Security</div></div><div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:14px"><div id="set-appearance" class="hero-card"><h3>🎨 Appearance</h3><p style="font-size:12px;color:#888;margin-top:10px">☀️ Theme: <select id="themeSelect" onchange="changeTheme(this.value)" class="input" style="max-width:200px"><option value="dark">Dark Premium (Default)</option><option value="light">Light</option><option value="midnight">Midnight</option></select></p><p style="font-size:12px;color:#888;margin-top:10px">T Font Size: <select onchange="changeFontSize(this.value)" class="input" style="max-width:200px"><option value="14px">Aa Small</option><option value="16px" selected>Aa Medium</option><option value="18px">Aa Large</option></select></p><p style="font-size:12px;color:#22c55e;margin-top:14px">👁️ Accessibility Options</p><label style="display:flex;justify-content:space-between;font-size:12px;margin-top:8px">Compact Mode <input type="checkbox" class="set-toggle"></label><label style="display:flex;justify-content:space-between;font-size:12px;margin-top:8px">Reduced Motion <input type="checkbox" class="set-toggle"></label><label style="display:flex;justify-content:space-between;font-size:12px;margin-top:8px">High Contrast <input type="checkbox" class="set-toggle"></label></div><div id="set-notifications" class="hero-card"><h3>🔔 Notifications</h3><p style="font-size:12px;color:#888;margin-top:10px">✉️ Email Notifications: <input type="checkbox" checked class="set-toggle"> Order updates</p><p style="font-size:12px;color:#888;margin-top:8px">💬 WhatsApp Alerts: <input type="checkbox" checked class="set-toggle"></p><p style="font-size:12px;color:#888;margin-top:8px">📲 Push: <input type="checkbox" checked class="set-toggle"> Marketing</p><p style="font-size:12px;color:#888;margin-top:8px">💬 In-App: <input type="checkbox" checked class="set-toggle"> Announcements</p><div style="background:#2a1f0a;border:1px solid #7c5a00;padding:10px;border-radius:10px;margin-top:12px;color:#fbbf24;font-size:12px">💡 Pro Tip: Keep Security & Transactions ON</div></div><div id="set-privacy" class="hero-card"><h3>🛡️ Privacy</h3><label style="display:flex;justify-content:space-between;font-size:12px;margin-top:10px">Allow Profile Discovery <input type="checkbox" checked class="set-toggle"></label><label style="display:flex;justify-content:space-between;font-size:12px;margin-top:8px">Share Data With Partners <input type="checkbox" class="set-toggle"></label></div><div id="set-security" class="hero-card"><h3>🔒 Security</h3><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="buy" style="max-width:200px" onclick="alert('Change Password - CEO Approval Needed')">🔒 Change Password</button><button class="buy" style="max-width:200px;background:#dc2626" onclick="alert('Delete Account - CEO Approval Needed')">🗑️ Delete Account</button></div></div><div style="text-align:right"><button id="saveSettingsBtn" onclick="saveSettings()" class="buy" style="max-width:200px;background:#14532d;color:#4ade80">💾 Save Changes</button></div></div></div></div>
@@ -966,11 +968,31 @@ function renderWallet(){
    if(CUR_H==='vouchers') list=ORDERS.filter(o=>o.cat==='VOUCHER');
  }
  let html=list.length?'':'<div class="list-item" style="color:#666">No history yet. Everything you do will appear here: orders, refunds, deposits, afa registration, voucher purchases.</div>';
- list.slice().reverse().forEach(o=>{html+=`<div class="list-item"><b>${o.id}</b> • ${o.name} • ${o.recipient||''}<br><span style="color:${o.status.includes('Pending')?'#FFD700':'#00ff88'}">${o.status}</span> • GHS ${o.amount} • ${o.date} • Type: ${o.hist||o.cat}</div>`});
+list.slice().reverse().forEach(o=>{
+  let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]').filter(r=>r.orderId===o.id);
+  let repHtml = reps.length ? reps.map(r=>`<div style="background:#222;padding:8px;border-radius:8px;margin-top:6px;font-size:12px">🚨 <b>${r.delivered}</b>: ${r.msg} ${r.img?`<br><img src="${r.img}" width="100">`:''} ${r.reply?`<br><span style="color:#00ff88">CEO/Manager Reply: ${r.reply}</span>`:''}</div>`).join('') : '';
+  html+=`<div class="list-item"><b>${o.id}</b> • ${o.name} • ${o.recipient||''}<br><span style="color:${o.status.includes('Pending')?'#FFD700':'#00ff88'}">${o.status}</span> • GHS ${o.amount} • ${o.date} • Type: ${o.hist||o.cat} • ${o.kdp||''}<br><button onclick="openReport('${o.id}','${(o.name||'').replace(/'/g,"")}','${o.cat||o.hist||''}')" style="background:#c00;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;margin-top:6px">🚨 Report Issue</button>${repHtml}</div>`;
+});
  const hl=document.getElementById('historyList'); if(hl) hl.innerHTML=html;
 const th=document.getElementById('walletHistory'); if(th) th.innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
 }
 function filterHistory(type,el){CUR_H=type; if(el){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderHistory();}
+  function openReport(orderId, product, cat){
+  let delivered = prompt('Status? Type: Delivered or Not Delivered');
+  if(!delivered) return;
+  let msg = prompt('Describe the problem:');
+  if(!msg) return;
+  let img = '';
+  // optional image: use file input later, for now save text only
+  let me = JSON.parse(localStorage.getItem('kratis_users')||'[]');
+  let my = me.find(u=>u.email===localStorage.getItem('kratis_email')) || {};
+  let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]');
+  reps.push({orderId, product, cat, delivered, msg, img, name: my.name||localStorage.getItem('kratis_name')||'', kdp: my.kdpNumber||localStorage.getItem('kratis_kdp')||'', email: localStorage.getItem('kratis_email')||'', country: my.country||'', date: new Date().toLocaleString(), reply:'', status:'Pending'});
+  localStorage.setItem('kratis_reports', JSON.stringify(reps));
+  try{ db.collection('kratis_reports').add(reps[reps.length-1]); }catch(e){}
+  notify('🚨 Report sent for '+orderId);
+  renderHistory();
+}
 
 function tabSet(id,el){document.querySelectorAll('.set-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('set-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
 function tabApi(id,el){document.querySelectorAll('.api-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('api-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
@@ -1107,6 +1129,7 @@ function go(view){
   const btn = document.querySelector('[onclick="go(\''+view+'\')"]');
   if(btn){ btn.classList.add('active'); }
   window.scrollTo(0,0);
+  if(view==='myreports'){ if(typeof renderMyReports === 'function') renderMyReports(); }
 
   if(view==='ghana_gb'){
     if(typeof renderProducts === 'function') renderProducts('GHANA_GB');
@@ -1150,6 +1173,19 @@ let spent=f.reduce((a,b)=>a+(parseFloat(b.amt||b.amount||b.price)||0),0);let gbd
 function filterHistory(){let q=document.getElementById('histSearch').value.toLowerCase();document.querySelectorAll('#histBody tr').forEach(r=>{r.style.display=r.innerText.toLowerCase().includes(q)?'':'none'});}
 </script>
 <script>
+  function renderMyReports(){
+  const list = document.getElementById('myReportsList');
+  const my = reports.filter(r => r.phone === currentUser.phone);
+  if(my.length === 0){ list.innerHTML = '<p>No reports yet.</p>'; return; }
+  list.innerHTML = my.map(r => `
+    <div style="border:1px solid #ddd; padding:10px; margin:8px 0; border-radius:8px;">
+      <b>${r.type}</b> - ${r.status}<br>
+      <small>${r.date} | ${r.location}</small><br>
+      ${r.desc}<br>
+      ${r.reply ? `<div style="background:#e8f5e9; padding:6px; margin-top:6px;">Reply: ${r.reply}</div>` : ''}
+    </div>
+  `).join('');
+}
 function saveRealOrder(size,to,net,amt,status){
  try{
   let orders=JSON.parse(localStorage.getItem('kratis_orders')||'[]');
