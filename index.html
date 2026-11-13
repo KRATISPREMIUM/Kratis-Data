@@ -708,7 +708,6 @@ else if(_me.kdp && /KDP-\d{3}$/.test(_me.kdp)){ _kdp = _me.kdp; }
     } else if(_raw){
       let _o = JSON.parse(_raw); if(_o[_e]){ _o[_e].kdpNumber = _kdp; localStorage.setItem('kratis_users', JSON.stringify(_o)); }
     }
-  }
   document.getElementById('badgeName').innerText = _name;
   document.getElementById('badgeKdp').innerText = _kdp;
 }catch(err){ console.log(err); }
