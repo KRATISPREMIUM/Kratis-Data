@@ -697,6 +697,7 @@ try{
   if(_me){
     _name = _me.name || _name;
     if(_me.kdpNumber && /KDP-\d{3}$/.test(_me.kdpNumber)){ _kdp = _me.kdpNumber; }
+else if(_me.kdp && /KDP-\d{3}$/.test(_me.kdp)){ _kdp = _me.kdp; }
   }
   if(!_kdp){
     let _idx = _list.findIndex(x=>x.email===_e);
