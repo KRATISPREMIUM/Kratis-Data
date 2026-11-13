@@ -65,9 +65,16 @@ function toggleMode(){
 function showErr(m){let e=document.getElementById('err');e.style.display='block';e.innerText='❌ '+m;}
 function getUsers(){ return JSON.parse(localStorage.getItem('kratis_users')||'{}'); }
 function saveUsers(u){ localStorage.setItem('kratis_users',JSON.stringify(u)); }
-function nextKDP(users){
+async function nextKDP(users){
   let max=0;
   Object.values(users).forEach(u=>{ if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }});
+  try{
+    const snap = await db.collection('kratis_users').get();
+    snap.forEach(doc=>{
+      const u = doc.data();
+      if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }
+    });
+  }catch(e){}
   return 'KDP-' + String(max+1).padStart(3,'0');
 }
 async function login(){
