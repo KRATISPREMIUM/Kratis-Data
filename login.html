@@ -111,7 +111,7 @@ async function login(){
   }
 }
     if(users[email].pass!==pass) return showErr('Wrong password!');
-    if(!users[email].kdp) users[email].kdp=nextKDP(users);
+    if(!users[email].kdp) users[email].kdp=await nextKDP(users);
     if(!users[email].name) users[email].name=email.split('@')[0];
     if(!users[email].country) users[email].country='Ghana';
     if(!users[email].phone) users[email].phone='';
