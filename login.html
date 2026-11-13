@@ -90,7 +90,19 @@ async function login(){
     try{ db.collection('kratis_users').doc(email).set(users[email],{merge:true}); }catch(e){}
     alert('Account Created! Your Number is '+kdp);
   } else {
-    if(!users[email]) return showErr('Account no exist! Create account first');
+    if(!users[email]){
+  try{
+    const doc = await firebase.firestore().collection('users').doc(email).get();
+    if(doc.exists){
+      users[email] = doc.data();
+      localStorage.setItem('kratis_users', JSON.stringify(users));
+    } else {
+      return showErr('Account no exist! Create account first');
+    }
+  }catch(e){
+    return showErr('Account no exist! Create account first');
+  }
+}
     if(users[email].pass!==pass) return showErr('Wrong password!');
     if(!users[email].kdp) users[email].kdp=nextKDP(users);
     if(!users[email].name) users[email].name=email.split('@')[0];
