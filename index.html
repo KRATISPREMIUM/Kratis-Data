@@ -1243,18 +1243,29 @@ let spent=f.reduce((a,b)=>a+(parseFloat(b.amt||b.amount||b.price)||0),0);let gbd
 function filterHistory(){let q=document.getElementById('histSearch').value.toLowerCase();document.querySelectorAll('#histBody tr').forEach(r=>{r.style.display=r.innerText.toLowerCase().includes(q)?'':'none'});}
 </script>
 <script>
-  function renderMyReports(){
+ async function renderMyReports(){
   const list = document.getElementById('myReportsList');
-  const my = reports.filter(r => r.phone === currentUser.phone);
-  if(my.length === 0){ list.innerHTML = '<p>No reports yet.</p>'; return; }
-  list.innerHTML = my.map(r => `
-    <div style="border:1px solid #ddd; padding:10px; margin:8px 0; border-radius:8px;">
-      <b>${r.type}</b> - ${r.status}<br>
-      <small>${r.date} | ${r.location}</small><br>
-      ${r.desc}<br>
-      ${r.reply ? `<div style="background:#e8f5e9; padding:6px; margin-top:6px;">Reply: ${r.reply}</div>` : ''}
-    </div>
-  `).join('');
+  if(!list) return;
+  list.innerHTML = '<p>Loading...</p>';
+  try{
+    const email = localStorage.getItem('kratis_email') || '';
+    const snap = await db.collection('reports').where('userEmail','==',email).get();
+    if(snap.empty){ list.innerHTML = '<p>No reports yet.</p>'; return; }
+    let docs = snap.docs.map(d=>d.data());
+    docs.sort((a,b)=> new Date(b.date||0) - new Date(a.date||0));
+    list.innerHTML = docs.map(r => `
+      <div style="border:1px solid #ddd; padding:10px; margin:8px 0; border-radius:8px;">
+        <b>${r.orderId||''}</b> - ${r.product||''} - ${r.cat||''}<br>
+        <small>${r.date ? new Date(r.date).toLocaleString() : ''} | Status: ${r.status||'Pending'} | Delivered: ${r.delivered||''}</small><br>
+        ${r.msg||''}<br>
+        ${r.img ? `<img src="${r.img}" style="max-width:200px;margin-top:6px;border-radius:6px;">` : ''}
+        ${r.reply ? `<div style="background:#e8f5e9; padding:6px; margin-top:6px;">Reply: ${r.reply}</div>` : `<div style="color:#888;margin-top:6px;">Waiting for reply...</div>`}
+      </div>
+    `).join('');
+  }catch(e){
+    list.innerHTML = '<p>Error loading reports: '+e.message+'</p>';
+    console.error(e);
+  }
 }
 function saveRealOrder(size,to,net,amt,status){
  try{
