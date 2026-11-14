@@ -1003,8 +1003,9 @@ let msg = (document.getElementById('reportMsg')?.value || '').trim();
 let img = document.getElementById('reportImgPrev')?.dataset.base64 || '';
   if(!msg){ alert('Type your message first'); return; }
 
-  let me = JSON.parse(localStorage.getItem('kratis_users')||'[]');
-  let my = me.find(u=>u.email===localStorage.getItem('kratis_email')) || {};
+  let meRaw = JSON.parse(localStorage.getItem('kratis_users')||'[]');
+let me = Array.isArray(meRaw) ? meRaw : Object.values(meRaw||{});
+let my = me.find(u=>u.email==localStorage.getItem('kratis_email')) || {};
 
   let report = {
     orderId: currentReportOrder.orderId,
