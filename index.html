@@ -974,22 +974,94 @@ list.slice().reverse().forEach(o=>{
 const th=document.getElementById('walletHistory'); if(th) th.innerText=list.filter(o=>o.hist==='DEPOSIT').length+' deposits';
 }
 function filterHistory(type,el){CUR_H=type; if(el){el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');} renderHistory();}
-  function openReport(orderId, product, cat){
-  let delivered = prompt('Status? Type: Delivered or Not Delivered');
-  if(!delivered) return;
-  let msg = prompt('Describe the problem:');
-  if(!msg) return;
-  let img = '';
-  // optional image: use file input later, for now save text only
+ let currentReportOrder = {};
+function openReport(orderId, product, cat){
+  currentReportOrder = {orderId, product, cat};
+  document.getElementById('reportOrderInfo').innerText = `Order: ${orderId} • Product: ${product} • Type: ${cat}`;
+  document.getElementById('reportMsg').value = '';
+  document.getElementById('reportImg').value = '';
+  document.getElementById('reportImgPrev').style.display = 'none';
+  document.getElementById('reportModal').style.display = 'block';
+}
+function closeReport(){ document.getElementById('reportModal').style.display='none'; }
+
+document.addEventListener('change', function(e){
+  if(e.target.id==='reportImg' && e.target.files[0]){
+    let reader = new FileReader();
+    reader.onload = function(ev){
+      let img = document.getElementById('reportImgPrev');
+      img.src = ev.target.result; img.style.display='block';
+      img.dataset.base64 = ev.target.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }
+});
+
+async function submitReport(){
+  let delivered = document.getElementById('reportDelivered').value;
+  let msg = document.getElementById('reportMsg').value.trim();
+  let img = document.getElementById('reportImgPrev').dataset.base64 || '';
+  if(!msg){ alert('Type your message first'); return; }
+
   let me = JSON.parse(localStorage.getItem('kratis_users')||'[]');
   let my = me.find(u=>u.email===localStorage.getItem('kratis_email')) || {};
-  let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]');
-  reps.push({orderId, product, cat, delivered, msg, img, name: my.name||localStorage.getItem('kratis_name')||'', kdp: my.kdpNumber||localStorage.getItem('kratis_kdp')||'', email: localStorage.getItem('kratis_email')||'', country: my.country||'', date: new Date().toLocaleString(), reply:'', status:'Pending'});
-  localStorage.setItem('kratis_reports', JSON.stringify(reps));
-  try{ db.collection('kratis_reports').add(reps[reps.length-1]); }catch(e){}
-  notify('🚨 Report sent for '+orderId);
-  renderHistory();
+
+  let report = {
+    orderId: currentReportOrder.orderId,
+    product: currentReportOrder.product,
+    cat: currentReportOrder.cat,
+    delivered: delivered,
+    msg: msg,
+    img: img,
+    userEmail: localStorage.getItem('kratis_email')||'',
+    kdp: my.kdp || my.kdpNumber || '',
+    name: my.name || my.fullName || '',
+    country: my.country || '',
+    reply: '',
+    replyImg: '',
+    status: 'Pending',
+    date: new Date().toISOString()
+  };
+
+  try{
+    await db.collection('reports').add(report);
+    alert('Report send finish! CEO/Complaint-Manager go reply for My Reports page.');
+    closeReport(); renderHistory(); renderMyReports();
+  }catch(err){
+    // fallback if Firestore rule block am
+    let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]');
+    reps.push(report); localStorage.setItem('kratis_reports', JSON.stringify(reps));
+    alert('Report save for this phone. Check My Reports.');
+    closeReport(); renderHistory(); renderMyReports();
+  }
 }
+
+async function renderMyReports(){
+  let email = localStorage.getItem('kratis_email')||'';
+  let list = document.getElementById('myReportsList');
+  if(!list) return;
+  let html = '';
+  try{
+    let snap = await db.collection('reports').where('userEmail','==',email).orderBy('date','desc').get();
+    snap.forEach(doc=>{
+      let r = doc.data();
+      html += `<div style="background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333">
+        <b>${r.orderId}</b> • ${r.product} • ${r.cat}<br>
+        <span style="color:${r.delivered==='Delivered'?'#00ff88':'#ff5555'}">${r.delivered}</span> • ${new Date(r.date).toLocaleString()}<br>
+        <div style="margin-top:6px">${r.msg}</div>
+        ${r.img?`<img src="${r.img}" style="width:120px;border-radius:8px;margin-top:6px">`:''}
+        ${r.reply?`<div style="background:#0f2a1a;padding:8px;border-radius:8px;margin-top:8px;color:#00ff88">✅ CEO/Manager Reply: ${r.reply} ${r.replyImg?`<br><img src="${r.replyImg}" style="width:120px;border-radius:8px;margin-top:5px">`:''}</div>`:`<div style="color:#FFD700;margin-top:6px">⏳ Waiting for reply...</div>`}
+      </div>`;
+    });
+  }catch(e){}
+  if(!html){
+    let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]').filter(r=>r.userEmail===email);
+    reps.forEach(r=>{
+      html += `<div style="background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px"><b>${r.orderId}</b> • ${r.delivered} • ${r.msg} ${r.reply?`<br><span style="color:#00ff88">Reply: ${r.reply}</span>`:''}</div>`;
+    });
+  }
+  list.innerHTML = html || '<p>No report yet. Go History, click Report Issue for any order.</p>';
+} 
 
 function tabSet(id,el){document.querySelectorAll('.set-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('set-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
 function tabApi(id,el){document.querySelectorAll('.api-panel').forEach(p=>p.classList.add('hidden')); document.getElementById('api-'+id).classList.remove('hidden'); el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
@@ -1012,7 +1084,7 @@ function confirmBuy(){
 WALLET=parseFloat((WALLET-amt).toFixed(2));setWallet(WALLET);
  const order={id:'KR-'+Math.floor(1000+Math.random()*9000),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  saveMyOrder(order); ORDERS.push(order);
- closeM('buyModal'); updateTierUI(); notify('✅ Order Placed! '+order.id+' • '+CUR.name+' for '+rec+' • Manager will process.'); renderHistory();
+ closeM('buyModal'); updateTierUI(); notify('✅ Order Placed! '+order.id+' • '+CUR.name+' for '+rec+' • Manager will process.'); renderHistory();renderMyReports();
 }
 function dowallet(){
  const amt=parseFloat(document.getElementById('walletAmt').value);
@@ -1263,5 +1335,31 @@ function uploadECGReceipt(i, input){
   r.onload = ()=>{ const orders=getECGOrders(); orders[i].receipt=r.result; orders[i].status='Completed'; saveECGOrders(orders); alert('Receipt uploaded! User fit download am now.'); };
   r.readAsDataURL(file);
 }
-renderECGManager();</script></body>
+renderECGManager();</script>
+  <!-- REPORT MODAL -->
+<div id="reportModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;padding:15px;overflow:auto">
+  <div style="max-width:500px;margin:30px auto;background:#111;color:#fff;padding:20px;border-radius:12px;border:1px solid #FFD700">
+    <h3 style="color:#FFD700">🚨 Report This Order</h3>
+    <p id="reportOrderInfo" style="font-size:13px;color:#ccc"></p>
+    <label>Status *</label>
+    <select id="reportDelivered" style="width:100%;padding:10px;margin:5px 0 10px;background:#222;color:#fff;border:1px solid #444;border-radius:8px">
+      <option value="Delivered">Delivered</option>
+      <option value="Not Delivered">Not Delivered</option>
+    </select>
+    <label>Describe the problem *</label>
+    <textarea id="reportMsg" rows="4" placeholder="Type wetin happen..." style="width:100%;padding:10px;margin:5px 0 10px;background:#222;color:#fff;border:1px solid #444;border-radius:8px"></textarea>
+    <label>Attach Image (optional)</label>
+    <input type="file" id="reportImg" accept="image/*" style="width:100%;padding:8px;margin:5px 0 15px;background:#222;color:#fff;border-radius:8px">
+    <img id="reportImgPrev" style="display:none;width:100%;border-radius:8px;margin-bottom:10px">
+    <button onclick="submitReport()" style="width:100%;padding:12px;background:#c00;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Send Report</button>
+    <button onclick="closeReport()" style="width:100%;padding:10px;margin-top:8px;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+
+<!-- CHECK REPORTS PAGE -->
+<div id="view-myreports" class="hidden" style="padding:15px">
+  <h3 style="color:#FFD700">🚨 My Reports / Check Reply</h3>
+  <p style="font-size:13px;color:#ccc">Here you go see if CEO or Complaint-Manager don reply you.</p>
+  <div id="myReportsList"></div>
+</div></body>
 </html>
