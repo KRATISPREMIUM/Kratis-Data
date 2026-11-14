@@ -74,7 +74,11 @@ async function nextKDP(users){
       const u = doc.data();
       if(u.kdp){ let n=parseInt(u.kdp.replace('KDP-','')); if(n>max) max=n; }
     });
-  }catch(e){}
+    console.log('KDP max from Firebase:', max);
+  }catch(e){
+    console.error('KDP Firebase read FAILED:', e.message);
+    alert('Firebase read block! Check Rules. Max local be '+max);
+  }
   return 'KDP-' + String(max+1).padStart(3,'0');
 }
 async function login(){
@@ -94,7 +98,7 @@ async function login(){
     users[email]={ pass:pass, name:name, phone:phone, country:country, kdp:kdp, tier:'USER', role:'USER', wallet:0, active:true, created:new Date().toISOString() };
     saveUsers(users);
     localStorage.setItem('wallet_'+email,'0');
-    try{ db.collection('kratis_users').doc(email).set(users[email],{merge:true}); }catch(e){}
+   try{ await db.collection('kratis_users').doc(email).set(users[email],{merge:true}); console.log('Saved to Firebase OK'); }catch(e){ console.error('Firebase save FAILED:', e.message); alert('Firebase save fail: '+e.message); }
     alert('Account Created! Your Number is '+kdp);
   } else {
    if(!users[email]){
