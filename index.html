@@ -1194,12 +1194,13 @@ updateTierUI();
 function go(view){
   document.querySelectorAll('[id^="view-"]').forEach(el=>el.classList.add('hidden'));
   document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
-  const target = document.getElementById('view-'+view);
-  if(target){ target.classList.remove('hidden'); }
-  const btn = document.querySelector('[onclick="go(\''+view+'\')"]');
-  if(btn){ btn.classList.add('active'); }
-  window.scrollTo(0,0);
-  if(view==='myreports'){ if(typeof renderMyReports === 'function') renderMyReports(); }
+ const target = document.getElementById('view-'+view);
+if(target){ target.classList.remove('hidden'); }
+if(view==='myreports'){ document.getElementById('view-history').classList.remove('hidden'); }
+const btn = document.querySelector('[onclick="go(\''+view+'\')"]');
+if(btn){ btn.classList.add('active'); }
+window.scrollTo(0,0);
+if(view==='myreports'){ if(typeof renderMyReports === 'function') renderMyReports(); }
 
   if(view==='ghana_gb'){
     if(typeof renderProducts === 'function') renderProducts('GHANA_GB');
