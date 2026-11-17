@@ -1,106 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Manager - KRATIS DATA</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Data Manager - Kratis</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
-<style>
-body{background:#000;color:#fff;font-family:Arial;padding:20px}
-h1{color:#FFD400}
-.card{background:#111;border:1px solid #333;padding:15px;margin:10px 0;border-radius:10px}
-button{background:#FFD400;color:#000;padding:10px 15px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
-.green{background:#00E676}
-</style>
-</head>
-<body>
-<h1>DATA MANAGER</h1>
-<p>Ghana GB + International Bundle & Airtime</p>
-<p id="info"></p>
-<button onclick="loadOrders()">LOAD ORDERS</button>
-<button onclick="logout()" style="background:#ff5252">Logout</button>
-<div id="orders"></div>
-
+<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px}</style>
+</head><body>
+<h2>📊 Data Manager - Ghana GB</h2>
+<p id="who" style="color:#FFD700"></p>
+<button onclick="contactCEO()">💬 Contact CEO</button>
+<button onclick="contactComplaint()">🚨 Contact Complaint Manager</button>
+<hr>
+<select onchange="render(this.value)"><option value="ALL">All Orders</option><option value="USER">Users Only</option><option value="AGENT">Agents Only</option><option value="DEALER">Dealers Only</option></select>
+<div id="list"></div>
 <script>
-const role = localStorage.getItem('manager_role');
-if(role !== 'data_manager' && role !== 'manager' && role !== 'data' && role !== 'ceo'){
-  alert('No Data Manager Access');
-  window.location.href='admin-login.html';
+if(localStorage.getItem('manager_role')!=='data_manager'){ alert('Access Denied'); location.href='admin-login.html'; }
+document.getElementById('who').innerText='Logged in: '+localStorage.getItem('manager_name')+' ('+localStorage.getItem('manager_email')+')';
+function O(){return JSON.parse(localStorage.getItem('kratis_orders')||'[]')}
+function render(filter){
+  let orders=O().filter(o=> (o.cat||o.name||'').toUpperCase().includes('GHANA') || (o.hist||'').toUpperCase().includes('GB'));
+  if(filter!=='ALL') orders=orders.filter(o=>(o.tier||o.role||'USER')===filter);
+  let html='<table><tr><th>Order ID</th><th>KDP</th><th>Name/Email</th><th>Network/GB</th><th>Recipient</th><th>Amount</th><th>Status</th><th>Action</th></tr>';
+  orders.forEach(o=>{
+    html+=`<tr><td><b>${o.id}</b></td><td>${o.kdp||''}</td><td>${o.name||''}<br>${o.email||''}</td><td>${o.network||o.net||''} ${o.size||o.gb||''}</td><td>${o.recipient||o.phone||''}</td><td>GH₵${o.amount||o.price||''}</td><td>${o.status}</td>
+    <td><button onclick="done('${o.id}')">✅ Mark Delivered</button><br><button onclick="fail('${o.id}')">❌ API Fail - Buy Manual DIGI-Mall</button></td></tr>`;
+  });
+  document.getElementById('list').innerHTML=html+'</table>';
 }
-document.getElementById('info').textContent = 'Logged in: ' + localStorage.getItem('manager_email');
-
-async function loadOrders(){
-  const box = document.getElementById('orders');
-  box.innerHTML = 'Loading...';
-  try{
-    const snap = await db.collection('kratis_orders').get();
-    let list = [];
-    snap.forEach(d=> list.push({docId:d.id, ...d.data()}));
-    // filter only Data: Ghana GB + International
-   // show all orders
-    if(!list.length){ box.innerHTML='<p>No Data orders yet</p>'; return; }
-    box.innerHTML = '';
-    list.sort((a,b)=> new Date(b.date||0)-new Date(a.date||0));
-    list.forEach(o=>{
-      const div = document.createElement('div');
-      div.className='card';
-      div.innerHTML = `<b>${o.id}</b> | ${o.name||o.product||''} | ${o.recipient||o.to||o.phone||''} | GH₵${o.amount||o.amt||0}<br>Status: <b>${o.status||'Pending'}</b> | ${o.date||''}<br><br>
-      <button onclick="setStatus('${o.docId}','Processing')">Processing</button>
-     <button class="green" onclick="setStatus('${o.docId}','Delivered')">Delivered</button>
-<button onclick="confirmManual('${o.docId}','${o.id}')">Place Manually & Confirm</button>`;
-      box.appendChild(div);
-    });
-  }catch(e){ box.innerHTML='Fail: '+e.message; }
-}
-
-async function setStatus(docId, status){
-  try{
-    await db.collection('kratis_orders').doc(docId).update({status: status});
-    await db.collection('orders').doc(docId).set({status: status}, {merge:true});
-    alert('Updated to '+status);
-    loadOrders();
-  }catch(e){ alert('Fail: '+e.message); }
-}
-
-async function confirmManual(docId, orderId){
-  if(!confirm('Place '+orderId+' manually and Confirm Delivered?')) return;
-  try{
-    await db.collection('kratis_orders').doc(docId).update({status:'Delivered', state:'Delivered', orderStatus:'Delivered', deliveryStatus:'Delivered'});
-    const all = await db.collection('orders').get();
-    let found = 0;
-    for(const d of all.docs){
-      const data = d.data();
-      if(JSON.stringify(data).includes(orderId)){
-        const updates = {status:'Delivered', state:'Delivered', orderStatus:'Delivered', deliveryStatus:'Delivered', managerStatus:'Delivered'};
-        for(const k in data){
-          if(typeof data[k]==='string' && data[k].includes('Pending')){
-            updates[k] = data[k].replaceAll('Pending','Delivered');
-          }
-        }
-        await d.ref.update(updates);
-        found++;
-      }
-    }
-    if(found==0){
-      await db.collection('orders').doc(orderId).set({status:'Delivered', state:'Delivered', orderStatus:'Delivered', id:orderId}, {merge:true});
-    }
-    alert('V3 Updated - CEO sync found: '+found);
-    loadOrders();
-  }catch(e){ alert('Fail: '+e.message); }
-}
-
-function logout(){
-  localStorage.removeItem('manager_email');
-  localStorage.removeItem('manager_role');
-  window.location.href='admin-login.html';
-}
-
-// auto load
-loadOrders();
-db.collection('kratis_orders').onSnapshot(()=> loadOrders());
-</script>
-</body>
-</html>
+function done(id){ let all=O(); let o=all.find(x=>x.id===id); o.status='Delivered'; localStorage.setItem('kratis_orders',JSON.stringify(all)); try{db.collection('kratis_orders').doc(id).set(o,{merge:true})}catch(e){} alert('Delivered: '+id); render('ALL'); }
+function fail(id){ let all=O(); let o=all.find(x=>x.id===id); o.status='Manual - DIGI-Mall'; localStorage.setItem('kratis_orders',JSON.stringify(all)); alert('Marked for manual DIGI-Mall purchase: '+id); render('ALL'); }
+function contactCEO(){ localStorage.setItem('kratis_mgr_msg','Data Manager needs CEO: '+localStorage.getItem('manager_email')); alert('Message saved for CEO. CEO go see am for Broadcast page.'); }
+function contactComplaint(){ let msg=prompt('Message for Complaint Manager:'); if(msg){ localStorage.setItem('kratis_to_complaint',msg); alert('Sent to Complaint Manager'); } }
+render('ALL');
+</script></body></html>
