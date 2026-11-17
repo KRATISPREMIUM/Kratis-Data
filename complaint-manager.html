@@ -3,118 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complaint Manager - SwiftMart</title>
+<title>Complaint Manager - KRATIS</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
-body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px}
-h2{color:#1a237e}
-.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-.badge{background:#ff5722;color:#fff;padding:2px 8px;border-radius:12px;font-size:12px}
-.badge.done{background:#4caf50}
-textarea{width:100%;padding:8px;margin:8px 0;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}
-button{background:#1a237e;color:#fff;border:none;padding:9px 14px;border-radius:6px;cursor:pointer;margin-right:6px}
-button.red{background:#d32f2f}
-button.green{background:#388e3c}
-.reply{background:#e8eaf6;padding:10px;border-radius:6px;margin-top:10px}
-select{padding:9px;border-radius:6px;border:1px solid #ccc}
+body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:15px}
+h2{color:#FFD700}
+.card{background:#111;border:1px solid #333;padding:15px;border-radius:10px;margin-bottom:12px}
+.badge{background:#c00;color:#fff;padding:2px 8px;border-radius:10px;font-size:12px}
+.badge.done{background:#00aa55}
+textarea,input,select{width:100%;padding:10px;margin:6px 0;background:#222;color:#fff;border:1px solid #444;border-radius:8px;box-sizing:border-box}
+button{background:#FFD700;color:#000;border:none;padding:10px 14px;border-radius:8px;font-weight:bold;cursor:pointer;margin:4px 4px 0 0}
+button.red{background:#c00;color:#fff}
+button.green{background:#00aa55;color:#fff}
+.replybox{background:#0f2a1a;padding:10px;border-radius:8px;margin-top:8px;color:#00ff88}
 </style>
 </head>
 <body>
 
-<h2>Complaint Manager</h2>
+<h2>🚨 Complaint Manager</h2>
+<p style="color:#aaa;font-size:13px">All user Reports from index.html will show here. Reply here, user will see it in My Reports.</p>
 
 <div class="card">
-  <h3>Message All Managers</h3>
-  <textarea id="broadcastMsg" rows="2" placeholder="Type message to all managers..."></textarea>
-  <button onclick="sendBroadcast()">Send to All Managers</button>
+  <h3 style="color:#FFD700">📢 Message All Managers</h3>
+  <textarea id="mgrMsg" rows="2" placeholder="Type message for all managers..."></textarea>
+  <button onclick="sendToManagers()">SEND TO MANAGERS</button>
+  <div id="mgrMsgShow" style="margin-top:8px;color:#00ff88;font-size:13px"></div>
 </div>
 
 <div class="card">
   <b>Filter:</b>
-  <select id="filter" onchange="render()">
-    <option value="All">All Complaints</option>
+  <select id="filter" onchange="renderAll()" style="width:auto;display:inline-block">
+    <option value="All">All</option>
     <option value="Pending">Pending</option>
     <option value="Replied">Replied</option>
-    <option value="Resolved">Resolved</option>
   </select>
-  <span id="count"></span>
+  <button onclick="renderAll()">Refresh</button>
 </div>
 
-<div id="complaintList"></div>
+<div id="list"></div>
 
 <script>
-// Load from localStorage so complaint.html and this page share data
-function getComplaints(){
-  return JSON.parse(localStorage.getItem('swiftmart_complaints') || '[]');
-}
-function saveComplaints(data){
-  localStorage.setItem('swiftmart_complaints', JSON.stringify(data));
+// COPY your firebase config from index.html here
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+function sendToManagers(){
+  let msg = document.getElementById('mgrMsg').value.trim();
+  if(!msg) return alert('Type message');
+  localStorage.setItem('kratis_mgr_msg', msg);
+  document.getElementById('mgrMsgShow').innerText = 'Sent: ' + msg;
+  alert('Sent to all managers!');
 }
 
-function render(){
-  let complaints = getComplaints();
+async function renderAll(){
   let filter = document.getElementById('filter').value;
-  let filtered = filter === 'All' ? complaints : complaints.filter(c=>c.status===filter);
-  
-  document.getElementById('count').innerText = ` - ${filtered.length} complaint(s)`;
+  let list = document.getElementById('list');
+  list.innerHTML = 'Loading...';
 
-  let list = document.getElementById('complaintList');
-  if(filtered.length === 0){
-    list.innerHTML = '<div class="card">No complaints found.</div>';
-    return;
+  let html = '';
+  try{
+    let snap = await db.collection('reports').orderBy('date','desc').get();
+    if(snap.empty) throw 0;
+    snap.forEach(doc=>{
+      let r = doc.data(); r._id = doc.id;
+      if(filter!=='All' && r.status!==filter) return;
+      html += cardHtml(r, doc.id);
+    });
+  }catch(e){
+    // fallback to localStorage like your index does
+    let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]').reverse();
+    reps.forEach((r,i)=>{
+      if(filter!=='All' && r.status!==filter) return;
+      html += cardHtml(r, 'local_'+i);
+    });
+  }
+  list.innerHTML = html || '<div class="card">No reports found.</div>';
+}
+
+function cardHtml(r, id){
+  return `<div class="card">
+    <b>${r.orderId||'No Order'}</b> • ${r.product||''} • ${r.cat||''}
+    <span class="badge ${r.status==='Replied'?'done':''}">${r.status||'Pending'}</span><br>
+    <small style="color:#aaa">User: ${r.userEmail||r.name||''} • ${r.delivered||''} • ${new Date(r.date).toLocaleString()}</small>
+    <div style="margin:8px 0">${r.msg}</div>
+    ${r.img?`<img src="${r.img}" style="width:150px;border-radius:8px">`:''}
+    ${r.reply?`<div class="replybox">✅ Your Reply: ${r.reply}</div>`:''}
+    <textarea id="reply-${id}" rows="2" placeholder="Write reply to user..."></textarea>
+    <input type="file" id="file-${id}" accept="image/*">
+    <button onclick="replyReport('${id}')">Reply User</button>
+    <button class="green" onclick="markDone('${id}')">Mark Replied</button>
+    <button class="red" onclick="delReport('${id}')">Delete</button>
+  </div>`;
+}
+
+async function replyReport(id){
+  let txt = document.getElementById('reply-'+id).value.trim();
+  let fileInput = document.getElementById('file-'+id);
+  if(!txt) return alert('Write reply first');
+
+  let replyImg = '';
+  if(fileInput.files[0]){
+    replyImg = await new Promise(res=>{
+      let fr = new FileReader();
+      fr.onload = ()=>res(fr.result);
+      fr.readAsDataURL(fileInput.files[0]);
+    });
   }
 
-  list.innerHTML = filtered.map(c=>`
-    <div class="card">
-      <b>${c.user}</b> 
-      <span class="badge ${c.status==='Resolved'?'done':''}">${c.status}</span>
-      <small style="float:right">${c.date || ''}</small>
-      <p>${c.text}</p>
-      ${c.reply ? `<div class="reply"><b>Your Reply:</b> ${c.reply}</div>` : ''}
-      
-      <textarea id="reply-${c.id}" rows="2" placeholder="Write reply to user..."></textarea>
-      <button onclick="replyTo(${c.id})">Reply User</button>
-      <button class="green" onclick="markResolved(${c.id})">Mark Resolved</button>
-      <button class="red" onclick="delComplaint(${c.id})">Delete</button>
-    </div>
-  `).join('');
+  if(id.startsWith('local_')){
+    let i = parseInt(id.split('_')[1]);
+    let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]');
+    reps[i].reply = txt; reps[i].replyImg = replyImg; reps[i].status = 'Replied';
+    localStorage.setItem('kratis_reports', JSON.stringify(reps));
+  } else {
+    await db.collection('reports').doc(id).update({reply: txt, replyImg: replyImg, status: 'Replied'});
+  }
+  alert('Reply sent! User will see it in My Reports.');
+  renderAll();
 }
 
-function replyTo(id){
-  let val = document.getElementById('reply-'+id).value.trim();
-  if(!val) return alert('Write a reply first');
-  let complaints = getComplaints();
-  let c = complaints.find(x=>x.id===id);
-  c.reply = val;
-  c.status = "Replied";
-  saveComplaints(complaints);
-  alert('Reply sent to user!');
-  render();
+async function markDone(id){
+  if(id.startsWith('local_')) return;
+  await db.collection('reports').doc(id).update({status:'Replied'});
+  renderAll();
+}
+async function delReport(id){
+  if(!confirm('Delete?')) return;
+  if(id.startsWith('local_')){
+    let i = parseInt(id.split('_')[1]);
+    let reps = JSON.parse(localStorage.getItem('kratis_reports')||'[]');
+    reps.splice(i,1);
+    localStorage.setItem('kratis_reports', JSON.stringify(reps));
+  } else {
+    await db.collection('reports').doc(id).delete();
+  }
+  renderAll();
 }
 
-function markResolved(id){
-  let complaints = getComplaints();
-  let c = complaints.find(x=>x.id===id);
-  c.status = "Resolved";
-  saveComplaints(complaints);
-  render();
-}
-
-function delComplaint(id){
-  if(!confirm('Delete this complaint?')) return;
-  let complaints = getComplaints().filter(x=>x.id!==id);
-  saveComplaints(complaints);
-  render();
-}
-
-function sendBroadcast(){
-  let msg = document.getElementById('broadcastMsg').value.trim();
-  if(!msg) return alert('Type a message');
-  localStorage.setItem('manager_broadcast', msg);
-  alert('Message sent to all managers!');
-  document.getElementById('broadcastMsg').value='';
-}
-
-render();
+renderAll();
 </script>
 </body>
 </html>
