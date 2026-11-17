@@ -97,7 +97,10 @@ renderAll();
 <button onclick="createManager()" style="width:100%;padding:14px;background:#FFD700;border:none;border-radius:10px;font-weight:bold;cursor:pointer">Create Manager Login</button>
 <p id="mgrMsg" style="font-size:12px;margin-top:10px;color:#0f0"></p>
 </div>
-
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase.js"></script>
 <script>
 async function createManager(){
   const name=document.getElementById('mgrName').value.trim();
