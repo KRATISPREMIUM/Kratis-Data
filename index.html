@@ -1356,7 +1356,7 @@ function filterHistory(){let q=document.getElementById('histSearch').value.toLow
         <small>${r.date ? new Date(r.date).toLocaleString() : ''} | Status: ${r.status||'Pending'} | Delivered: ${r.delivered||''}</small><br>
         ${r.msg||''}<br>
         ${r.img ? `<img src="${r.img}" style="max-width:200px;margin-top:6px;border-radius:6px;">` : ''}
-        ${r.reply ? `<div style="background:#e8f5e9; padding:6px; margin-top:6px;">Reply: ${r.reply}</div>` : `<div style="color:#888;margin-top:6px;">Waiting for reply...</div>`}
+        ${r.reply ? `<div style="background:#0f2a1a; padding:6px; margin-top:6px; color:#00ff88;">Reply: ${r.reply}</div>` : `<div style="color:#888;margin-top:6px;">Waiting for reply...</div>`}
       </div>
     `).join('');
   }catch(e){
