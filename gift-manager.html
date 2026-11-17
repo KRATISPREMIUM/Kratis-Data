@@ -1,4 +1,74 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Gift Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#ff3b9a;color:#fff;padding:2px 6px;border-radius:4px;font-size:8px">GIFT MANAGER</span></b></div><h2 style="margin-top:14px">Gift <span style="color:#FFD700">Login</span></h2><div class="field"><input type="email" id="e" value="gift@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="Gift2025!"></div><button class="btn" onclick="login()">Login to Gift Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">gift@kratisdata.com / Gift2025!</p></div></div>
-<div id="dash"><h2>🎁 Gift & Gaming Cards Manager — ONLY Gift/Gaming</h2><p style="font-size:11px;color:#888">Logged as: <span id="who" style="color:#FFD700"></span></p><div class="card"><h4>🎁 Gift Cards Orders (API)</h4><p style="font-size:12px">Amazon, Google Play, Apple - API Status: OK<br>Order #KR-8840 - Monitoring</p><p style="margin-top:8px"><button style="background:#FFD700;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Check API Delay & Reply</button></p></div><div class="card"><h4>🎮 Gaming Cards Orders</h4><p style="font-size:12px">Xbox, PlayStation, Steam - API monitoring</p></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
-<script>function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'gift@kratisdata.com';}function login(){const e=document.getElementById('e').value.trim().toLowerCase();const p=document.getElementById('p').value.trim();if(e==='gift@kratisdata.com'&&p==='Gift2025!'){localStorage.setItem('kratis_role',e);showDash();}else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Must be gift@kratisdata.com / Gift2025!';}}window.onload=function(){if(localStorage.getItem('kratis_role')==='gift@kratisdata.com'){showDash();}}</script></body></html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gift Cards Manager - Kratis</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
+<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px} .red{background:#c00;color:#fff} .green{background:#0a0;color:#fff} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px;vertical-align:top}</style>
+</head><body>
+<h2>🎁 Gift Cards Manager</h2>
+<p id="who" style="color:#FFD700"></p>
+<button onclick="contactCEO()">💬 Contact CEO</button>
+<button onclick="contactComplaint()">🚨 Contact Complaint Manager</button>
+<button onclick="logout()" style="background:#c00;color:#fff">Logout</button>
+<hr>
+<div class="card">
+<h3>Gift Cards Orders</h3>
+<select onchange="render(this.value)"><option value="ALL">All</option><option value="USER">Users Only</option><option value="AGENT">Agents Only</option><option value="DEALER">Dealers Only</option></select>
+<div id="list"></div>
+</div>
+<script>
+if(localStorage.getItem('manager_role')!=='gift_manager'){ alert('Access Denied - Gift Manager Only'); location.href='admin-login.html'; }
+document.getElementById('who').innerText='Logged in: '+localStorage.getItem('manager_name')+' ('+localStorage.getItem('manager_email')+')';
+
+function O(){return JSON.parse(localStorage.getItem('kratis_orders')||'[]')}
+function saveO(all){ localStorage.setItem('kratis_orders',JSON.stringify(all)); }
+function isGift(o){ let s=((o.cat||'')+' '+(o.name||'')+' '+(o.hist||'')).toUpperCase(); return s.includes('GIFT'); }
+
+function render(filter){
+  let orders=O().filter(isGift);
+  if(filter!=='ALL') orders=orders.filter(o=>(o.tier||o.role||'USER')===filter);
+  if(!orders.length){ document.getElementById('list').innerHTML='<p style="color:#777">No Gift Card orders</p>'; return; }
+  let html='<table><tr><th>Order ID</th><th>KDP</th><th>Name/Email/Date</th><th>Card Type / Amount</th><th>Status</th><th>Submit Card Code + Action</th></tr>';
+  orders.forEach(o=>{
+    html+=`<tr>
+    <td><b>${o.id}</b></td>
+    <td>${o.kdp||''}</td>
+    <td>${o.name||''}<br>${o.email||''}<br><small>${new Date(o.date||Date.now()).toLocaleString()}</small></td>
+    <td>${o.name||o.product||'Gift Card'}<br><b>${o.size||o.amount||o.price||''}</b><br>${o.recipient||''}</td>
+    <td>${o.status||'Pending'}<br><small>${o.code?'Code: '+o.code:''}</small></td>
+    <td>
+      <input id="code-${o.id}" placeholder="Type Gift Card Code / PIN">
+      <input id="img-${o.id}" placeholder="Receipt / Card Image URL (optional)">
+      <button class="green" onclick="submitCode('${o.id}')">✅ Submit Code</button><br>
+      <button onclick="checkReceipt('${o.id}')">🧾 Check Receipt</button>
+      <button class="red" onclick="fail('${o.id}')">❌ API Fail - Buy Manual Reloadly</button>
+    </td></tr>`;
+  });
+  document.getElementById('list').innerHTML=html+'</table>';
+}
+
+function submitCode(id){
+  let code=document.getElementById('code-'+id).value.trim();
+  let img=document.getElementById('img-'+id).value.trim();
+  if(!code){ alert('Type card code first'); return; }
+  let all=O(); let o=all.find(x=>x.id===id);
+  o.status='Delivered'; o.code=code; o.receipt=img; o.delivered='Gift Card Code: '+code;
+  saveO(all);
+  try{ db.collection('kratis_orders').doc(id).set(o,{merge:true}); }catch(e){}
+  let hist=JSON.parse(localStorage.getItem('kratis_history_'+o.email)||'[]');
+  hist.push({msg:'🎁 Gift Card Delivered: '+code, orderId:id, date:new Date().toISOString(), receipt:img});
+  localStorage.setItem('kratis_history_'+o.email, JSON.stringify(hist));
+  alert('✅ Code sent to user: '+id);
+  render('ALL');
+}
+function checkReceipt(id){
+  let o=O().find(x=>x.id===id);
+  if(o.receipt){ window.open(o.receipt,'_blank'); } else { alert('No receipt. Code: '+(o.code||'none')); }
+}
+function fail(id){ let all=O(); let o=all.find(x=>x.id===id); o.status='Manual - Reloadly'; saveO(all); alert('Marked for manual Reloadly purchase: '+id); render('ALL'); }
+
+function contactCEO(){ let m=prompt('Message for CEO:'); if(m){ localStorage.setItem('kratis_mgr_msg','Gift Manager ('+localStorage.getItem('manager_email')+'): '+m); alert('Saved for CEO'); } }
+function contactComplaint(){ let m=prompt('Message for Complaint Manager:'); if(m){ localStorage.setItem('kratis_to_complaint',m); alert('Sent'); } }
+function logout(){ localStorage.removeItem('manager_email'); localStorage.removeItem('manager_role'); location.href='admin-login.html'; }
+
+render('ALL');
+</script></body></html>
