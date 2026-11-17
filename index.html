@@ -799,7 +799,7 @@ try{
     if(_me.kdpNumber && /KDP-\d{3}$/.test(_me.kdpNumber)){ _kdp = _me.kdpNumber; }
 else if(_me.kdp && /KDP-\d{3}$/.test(_me.kdp)){ _kdp = _me.kdp; }
   }
- if(!_kdp){ _kdp = 'KDP-001'; }
+ if(!_kdp){ _kdp = ''; }
     // save am so e no change again
     if(_me){ _me.kdpNumber = _kdp; }
     if(Array.isArray(JSON.parse(_raw||'[]'))){
@@ -1112,7 +1112,7 @@ let img = document.getElementById('reportImgPrev')?.dataset.base64 || '';
 
   let meRaw = JSON.parse(localStorage.getItem('kratis_users')||'[]');
 let me = Array.isArray(meRaw) ? meRaw : Object.values(meRaw||{});
-let my = me.find(u=>u.email==localStorage.getItem('kratis_email')) || {};
+let my = me.find(u=>u.email==localStorage.getItem('kratis_user_email')) || {};
 
   let report = {
     orderId: currentReportOrder.orderId,
@@ -1121,7 +1121,7 @@ let my = me.find(u=>u.email==localStorage.getItem('kratis_email')) || {};
     delivered: delivered,
     msg: msg,
     img: img,
-    userEmail: localStorage.getItem('kratis_email')||'',
+    userEmail: localStorage.getItem('kratis_user_email')||'',
     kdp: my.kdp || my.kdpNumber || '',
     name: my.name || my.fullName || '',
     country: my.country || '',
@@ -1145,7 +1145,7 @@ let my = me.find(u=>u.email==localStorage.getItem('kratis_email')) || {};
 }
 
 async function renderMyReports(){
-  let email = localStorage.getItem('kratis_email')||'';
+  let email = localStorage.getItem('kratis_user_email')||'';
   let list = document.getElementById('myReportsList');
   if(!list) return;
   let html = '';
@@ -1345,7 +1345,7 @@ function filterHistory(){let q=document.getElementById('histSearch').value.toLow
   if(!list) return;
   list.innerHTML = '<p>Loading...</p>';
   try{
-    const email = localStorage.getItem('kratis_email') || '';
+    const email = localStorage.getItem('kratis_user_email') || '';
     const snap = await db.collection('reports').where('userEmail','==',email).get();
     if(snap.empty){ list.innerHTML = '<p>No reports yet.</p>'; return; }
     let docs = snap.docs.map(d=>d.data());
