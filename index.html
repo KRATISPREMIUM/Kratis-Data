@@ -186,7 +186,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 <button onclick="go('myreports')"><i class="fa-solid fa-triangle-exclamation"></i> My Reports</button> 
 <button onclick="go('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
 <button id="apiBtn" onclick="go('api')" class="hidden"><i class="fa-solid fa-code"></i> API Management <span class="badge">AGENT/DEALER ONLY</span></button>
-<button onclick="renderWallet()"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
+<button onclick="go('wallet')"><i class="fa-solid fa-wallet"></i> Wallet Top-up</button>
 </div>
 </div>
 
@@ -200,7 +200,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 </div>
 <span id="tierBadge" style="font-size:10px;background:#222;border:1px solid #333;padding:4px 8px;border-radius:20px">USER MODE</span>
 </div>
-<button onclick="showNotifs()" style="background:#222;color:#fff;border:1px solid #333;padding:8px 12px;border-radius:8px;cursor:pointer;position:relative">🔔<span id="bellCount" style="background:red;color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;position:absolute;top:-5px;right:-5px;display:none">0</span></button><div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="renderWallet()">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button> <button class="btn-gold" style="background:#ff3b3b;color:#fff;border:1px solid #ff3b3b" onclick="logout()">Logout</button></div>
+<button onclick="showNotifs()" style="background:#222;color:#fff;border:1px solid #333;padding:8px 12px;border-radius:8px;cursor:pointer;position:relative">🔔<span id="bellCount" style="background:red;color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;position:absolute;top:-5px;right:-5px;display:none">0</span></button><div class="wallet">Wallet: <b id="bal">GHS 0.00</b> <button class="btn-gold" onclick="go('wallet')">Top-up</button> <button class="btn-gold" style="background:#222;color:#fff;border:1px solid #333" onclick="go('history')">History</button> <button class="btn-gold" style="background:#ff3b3b;color:#fff;border:1px solid #ff3b3b" onclick="logout()">Logout</button></div>
 </div>
 <div id="notifPop" style="display:none;position:fixed;top:80px;right:20px;background:#1a1a1a;color:#fff;border:2px solid #FFD700;padding:15px;border-radius:12px;z-index:9999;max-width:320px;box-shadow:0 5px 20px #000"></div>
 <div id="notifBox" style="display:none;background:#111;color:#fff;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #333"></div>
@@ -667,7 +667,7 @@ async function submitAFA(){
 
 <div id="view-api" class="hidden"><div class="hero-card"><h3>🔌 API Management — AGENT/DEALER ONLY (Not for USER)</h3><div class="tabs"><button class="active" onclick="tabApi('keys',this)">API Keys</button><button onclick="tabApi('playground',this)">API Playground</button><button onclick="tabApi('docs',this)">API Docs</button><button onclick="tabApi('config',this)">API Configuration</button></div><div id="api-keys" class="api-panel"><div class="list-item">Live Key: <b>kratis_live_xxx...xxxx</b> <button class="btn-gold" style="padding:4px 8px;font-size:10px" onclick="alert('Copied')">Copy</button><br>Test Key: <b>kratis_test_xxx...xxxx</b></div></div><div id="api-playground" class="api-panel hidden"><div class="list-item">Test endpoint: POST /api/v1/data/mtn_gb<br>Response: {status: success, order_id: KR-...}</div></div><div id="api-docs" class="api-panel hidden"><div class="list-item">Docs: Ghana GB API, International Bundle API, Gift Cards API, Utility Payments API, Vouchers API... Full docs at /docs</div></div><div id="api-config" class="api-panel hidden"><div class="list-item">Webhook URL: <input class="input" placeholder="https://yourdomain.com/webhook"><br>IP Whitelist: <input class="input" placeholder="0.0.0.0"></div></div></div></div>
 
-<div id="view-wallet" class="hidden">
+<div id="view-wallet" class="view hidden">
   <div class="hero-card">
     <h3>💰 Wallet Top-up</h3>
     
@@ -909,7 +909,7 @@ function go(view){
   if(view==='services') renderServices();
   if(view==='history') renderHistory();
   if(view==='referral') renderReferral();
-  if(view==='wallet') renderWallet();
+  if(view==='wallet'){renderWallet();
 }
  var _oldGo = go;
 go = function(id){
@@ -1050,14 +1050,16 @@ function renderServices(){
 }
 function renderWallet(){
   document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
   let v=document.getElementById('view-wallet');
-  if(v){ v.classList.remove('hidden'); v.style.display='block'; }
-  // update balance + deposits list only, don't overwrite the tabs
+  v.classList.remove('hidden');
+  v.style.display='block';
   let balEl=document.getElementById('bal');
   if(balEl) balEl.innerText='GHS '+WALLET.toFixed(2);
   let deps=ORDERS.filter(o=>o.hist==='DEPOSIT');
   let hist=document.getElementById('walletHistory');
   if(hist) hist.innerText = deps.length ? deps.slice(-3).reverse().map(d=>d.id+' - GHS '+d.amount).join(' | ') : 'No deposits yet';
+  window.scrollTo(0,0);
 }
   function renderHistory(){
  let list=ORDERS;
