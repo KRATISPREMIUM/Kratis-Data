@@ -1,4 +1,120 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Complaint Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:10px 8px;border-bottom:1px solid #151515;text-align:left}.table th{color:#555;font-size:10px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#FFD700;color:#000;padding:2px 6px;border-radius:4px;font-size:8px">COMPLAINT MANAGER</span></b></div><h2 style="margin-top:14px">Complaint <span style="color:#FFD700">Login</span></h2><p style="color:#666;font-size:11px;margin-top:6px">Auto-opens if you logged via admin-login.html</p><div class="field"><input type="email" id="e" value="complaint@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="Complaint2025!"></div><button class="btn" onclick="login()">Login to Complaint Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">complaint@kratisdata.com / Complaint2025!</p></div></div>
-<div id="dash"><h2>🎧 Complaint Manager — ONLY Complaints</h2><p style="font-size:11px;color:#888">Logged as: <span id="who" style="color:#FFD700"></span></p><div class="card"><h4>📋 Complaints Queue - Reply System</h4><table class="table"><tr><th>Order ID</th><th>Issue</th><th>Action</th></tr><tr><td>#KR-8841 - MTN GB 5GB</td><td>Not received</td><td><button style="background:#FFD700;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Reply + Attach Image</button></td></tr></table></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
-<script>function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'complaint@kratisdata.com';}function login(){const e=document.getElementById('e').value.trim().toLowerCase();const p=document.getElementById('p').value.trim();if(e==='complaint@kratisdata.com'&&p==='Complaint2025!'){localStorage.setItem('kratis_role',e);showDash();}else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Must be complaint@kratisdata.com / Complaint2025! with capital C and !';}}window.onload=function(){if(localStorage.getItem('kratis_role')==='complaint@kratisdata.com'){showDash();}}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complaint Manager - SwiftMart</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px}
+h2{color:#1a237e}
+.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.badge{background:#ff5722;color:#fff;padding:2px 8px;border-radius:12px;font-size:12px}
+.badge.done{background:#4caf50}
+textarea{width:100%;padding:8px;margin:8px 0;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}
+button{background:#1a237e;color:#fff;border:none;padding:9px 14px;border-radius:6px;cursor:pointer;margin-right:6px}
+button.red{background:#d32f2f}
+button.green{background:#388e3c}
+.reply{background:#e8eaf6;padding:10px;border-radius:6px;margin-top:10px}
+select{padding:9px;border-radius:6px;border:1px solid #ccc}
+</style>
+</head>
+<body>
+
+<h2>Complaint Manager</h2>
+
+<div class="card">
+  <h3>Message All Managers</h3>
+  <textarea id="broadcastMsg" rows="2" placeholder="Type message to all managers..."></textarea>
+  <button onclick="sendBroadcast()">Send to All Managers</button>
+</div>
+
+<div class="card">
+  <b>Filter:</b>
+  <select id="filter" onchange="render()">
+    <option value="All">All Complaints</option>
+    <option value="Pending">Pending</option>
+    <option value="Replied">Replied</option>
+    <option value="Resolved">Resolved</option>
+  </select>
+  <span id="count"></span>
+</div>
+
+<div id="complaintList"></div>
+
+<script>
+// Load from localStorage so complaint.html and this page share data
+function getComplaints(){
+  return JSON.parse(localStorage.getItem('swiftmart_complaints') || '[]');
+}
+function saveComplaints(data){
+  localStorage.setItem('swiftmart_complaints', JSON.stringify(data));
+}
+
+function render(){
+  let complaints = getComplaints();
+  let filter = document.getElementById('filter').value;
+  let filtered = filter === 'All' ? complaints : complaints.filter(c=>c.status===filter);
+  
+  document.getElementById('count').innerText = ` - ${filtered.length} complaint(s)`;
+
+  let list = document.getElementById('complaintList');
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="card">No complaints found.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(c=>`
+    <div class="card">
+      <b>${c.user}</b> 
+      <span class="badge ${c.status==='Resolved'?'done':''}">${c.status}</span>
+      <small style="float:right">${c.date || ''}</small>
+      <p>${c.text}</p>
+      ${c.reply ? `<div class="reply"><b>Your Reply:</b> ${c.reply}</div>` : ''}
+      
+      <textarea id="reply-${c.id}" rows="2" placeholder="Write reply to user..."></textarea>
+      <button onclick="replyTo(${c.id})">Reply User</button>
+      <button class="green" onclick="markResolved(${c.id})">Mark Resolved</button>
+      <button class="red" onclick="delComplaint(${c.id})">Delete</button>
+    </div>
+  `).join('');
+}
+
+function replyTo(id){
+  let val = document.getElementById('reply-'+id).value.trim();
+  if(!val) return alert('Write a reply first');
+  let complaints = getComplaints();
+  let c = complaints.find(x=>x.id===id);
+  c.reply = val;
+  c.status = "Replied";
+  saveComplaints(complaints);
+  alert('Reply sent to user!');
+  render();
+}
+
+function markResolved(id){
+  let complaints = getComplaints();
+  let c = complaints.find(x=>x.id===id);
+  c.status = "Resolved";
+  saveComplaints(complaints);
+  render();
+}
+
+function delComplaint(id){
+  if(!confirm('Delete this complaint?')) return;
+  let complaints = getComplaints().filter(x=>x.id!==id);
+  saveComplaints(complaints);
+  render();
+}
+
+function sendBroadcast(){
+  let msg = document.getElementById('broadcastMsg').value.trim();
+  if(!msg) return alert('Type a message');
+  localStorage.setItem('manager_broadcast', msg);
+  alert('Message sent to all managers!');
+  document.getElementById('broadcastMsg').value='';
+}
+
+render();
+</script>
+</body>
+</html>
