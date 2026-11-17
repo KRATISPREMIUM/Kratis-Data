@@ -1,4 +1,83 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AFA Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:10px 8px;border-bottom:1px solid #151515;text-align:left}.table th{color:#555;font-size:10px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#8a5cff;color:#fff;padding:2px 6px;border-radius:4px;font-size:8px">AFA MANAGER</span></b></div><h2 style="margin-top:14px">AFA <span style="color:#FFD700">Login</span></h2><div class="field"><input type="email" id="e" value="afa@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="AFA2025!"></div><button class="btn" onclick="login()">Login to AFA Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">afa@kratisdata.com / AFA2025!</p></div></div>
-<div id="dash"><h2>🎓 AFA & WASSCE Manager — ONLY AFA/WASSCE</h2><p style="font-size:11px;color:#888">Logged as: <span id="who" style="color:#FFD700"></span></p><div class="card"><h4>📋 AFA Registration Orders</h4><table class="table"><tr><th>Order</th><th>Status</th><th>Action</th></tr><tr><td>#KR-8838 - AFA Registration</td><td>Processing</td><td><button style="background:#FFD700;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Contact Provider & Update</button></td></tr></table></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
-<script>function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'afa@kratisdata.com';}function login(){const e=document.getElementById('e').value.trim().toLowerCase();const p=document.getElementById('p').value.trim();if(e==='afa@kratisdata.com'&&p==='AFA2025!'){localStorage.setItem('kratis_role',e);showDash();}else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Must be afa@kratisdata.com / AFA2025!';}}window.onload=function(){if(localStorage.getItem('kratis_role')==='afa@kratisdata.com'){showDash();}}</script></body></html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AFA Manager - Kratis</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
+<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px} .red{background:#c00;color:#fff} .green{background:#0a0;color:#fff} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px;vertical-align:top}</style>
+</head><body>
+<h2>📝 AFA Registration Manager</h2>
+<p id="who" style="color:#FFD700"></p>
+<button onclick="contactCEO()">💬 Contact CEO</button>
+<button onclick="contactComplaint()">🚨 Contact Complaint Manager</button>
+<button onclick="logout()" style="background:#c00;color:#fff">Logout</button>
+<hr>
+<div class="card">
+<h3>AFA Registration Orders</h3>
+<select onchange="render(this.value)"><option value="ALL">All</option><option value="USER">Users Only</option><option value="AGENT">Agents Only</option><option value="DEALER">Dealers Only</option></select>
+<div id="list"></div>
+</div>
+<script>
+if(localStorage.getItem('manager_role')!=='afa_manager'){ alert('Access Denied - AFA Manager Only'); location.href='admin-login.html'; }
+document.getElementById('who').innerText='Logged in: '+localStorage.getItem('manager_name')+' ('+localStorage.getItem('manager_email')+')';
+
+function O(){return JSON.parse(localStorage.getItem('kratis_orders')||'[]')}
+function saveO(all){ localStorage.setItem('kratis_orders',JSON.stringify(all)); }
+function isAFA(o){ let s=((o.cat||'')+' '+(o.name||'')+' '+(o.hist||'')).toUpperCase(); return s.includes('AFA'); }
+
+function render(filter){
+  let orders=O().filter(isAFA);
+  if(filter!=='ALL') orders=orders.filter(o=>(o.tier||o.role||'USER')===filter);
+  if(!orders.length){ document.getElementById('list').innerHTML='<p style="color:#777">No AFA orders</p>'; return; }
+  let html='<table><tr><th>Order ID</th><th>KDP</th><th>Name/Email/Date</th><th>Form Details</th><th>Status</th><th>Confirm + Message</th></tr>';
+  orders.forEach(o=>{
+    let details = o.form || o.details || o.recipient || o.phone || '';
+    html+=`<tr>
+    <td><b>${o.id}</b></td>
+    <td>${o.kdp||''}</td>
+    <td>${o.name||''}<br>${o.email||''}<br><small>${new Date(o.date||Date.now()).toLocaleString()}</small></td>
+    <td>${details}<br><small>Phone: ${o.phone||''}</small></td>
+    <td>${o.status||'Pending'}</td>
+    <td>
+      <textarea id="msg-${o.id}" rows="2" placeholder="Type message e.g. Registration Done, Your AFA is ready..."></textarea>
+      <input id="img-${o.id}" placeholder="Form / Receipt Image URL (optional)">
+      <button class="green" onclick="confirmAFA('${o.id}')">✅ CONFIRM - Registration Done</button><br>
+      <button onclick="checkImg('${o.id}')">🧾 Check Form</button>
+      <button class="red" onclick="rejectAFA('${o.id}')">❌ Reject / Need More Info</button>
+    </td></tr>`;
+  });
+  document.getElementById('list').innerHTML=html+'</table>';
+}
+
+function confirmAFA(id){
+  let msg=document.getElementById('msg-'+id).value.trim();
+  let img=document.getElementById('img-'+id).value.trim();
+  if(!msg){ alert('Type message first'); return; }
+  let all=O(); let o=all.find(x=>x.id===id);
+  o.status='Delivered'; o.afa_msg=msg; o.receipt=img; o.delivered=msg;
+  saveO(all);
+  try{ db.collection('kratis_orders').doc(id).set(o,{merge:true}); }catch(e){}
+  let hist=JSON.parse(localStorage.getItem('kratis_history_'+o.email)||'[]');
+  hist.push({msg:'📝 AFA: '+msg, orderId:id, date:new Date().toISOString(), receipt:img});
+  localStorage.setItem('kratis_history_'+o.email, JSON.stringify(hist));
+  alert('✅ AFA Confirmed for user: '+id);
+  render('ALL');
+}
+function rejectAFA(id){
+  let msg=document.getElementById('msg-'+id).value.trim()||'Need more information';
+  let all=O(); let o=all.find(x=>x.id===id);
+  o.status='Pending - Need Info'; o.afa_msg=msg;
+  saveO(all);
+  try{ db.collection('kratis_orders').doc(id).set(o,{merge:true}); }catch(e){}
+  let hist=JSON.parse(localStorage.getItem('kratis_history_'+o.email)||'[]');
+  hist.push({msg:'📝 AFA Update: '+msg, orderId:id, date:new Date().toISOString()});
+  localStorage.setItem('kratis_history_'+o.email, JSON.stringify(hist));
+  alert('Sent back to user for more info');
+  render('ALL');
+}
+function checkImg(id){ let o=O().find(x=>x.id===id); if(o.receipt) window.open(o.receipt,'_blank'); else alert('No image. Details: '+(o.form||o.details||o.recipient||'')); }
+
+function contactCEO(){ let m=prompt('Message for CEO:'); if(m){ localStorage.setItem('kratis_mgr_msg','AFA Manager ('+localStorage.getItem('manager_email')+'): '+m); alert('Saved for CEO'); } }
+function contactComplaint(){ let m=prompt('Message for Complaint Manager:'); if(m){ localStorage.setItem('kratis_to_complaint',m); alert('Sent'); } }
+function logout(){ localStorage.removeItem('manager_email'); localStorage.removeItem('manager_role'); location.href='admin-login.html'; }
+
+render('ALL');
+</script></body></html>
