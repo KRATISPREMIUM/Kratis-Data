@@ -30,7 +30,7 @@ async function KRATIS_FORCE_AGENT_REFRESH() {
     if(!email && auth && auth.currentUser) email = auth.currentUser.email;
     if(!email) return;
     email = email.toLowerCase().trim();
-    const doc = await db.collection('users').doc(email).get();
+   const doc = await db.collection('kratis_users').doc(email).get();
     if(doc.exists){
       const d = doc.data();
       if(d.role === 'agent' || d.isAgent === true || d.approved === true){
