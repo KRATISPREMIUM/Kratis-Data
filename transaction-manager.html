@@ -1,4 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transaction Manager - KratisData</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter}body{background:#080808;color:#fff}#loginOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#000,#1a1700);display:flex;align-items:center;justify-content:center;padding:20px}.box{background:#121212;border:1px solid #222;border-radius:22px;padding:32px;width:100%;max-width:400px}.field input{width:100%;background:#09090b;border:1px solid #27272a;border-radius:11px;padding:13px;color:#fff;outline:none;margin-top:12px}.btn{width:100%;margin-top:18px;background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border:none;border-radius:11px;padding:14px;font-weight:900;cursor:pointer}#dash{display:none;padding:20px}.card{background:#121212;border:1px solid #222;border-radius:14px;padding:18px;margin-top:14px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:10px 8px;border-bottom:1px solid #151515;text-align:left}.table th{color:#555;font-size:10px}</style></head><body>
-<div id="loginOverlay"><div class="box"><div style="display:flex;gap:10px;align-items:center"><img src="logo.png" style="height:45px;border-radius:6px"><b style="font-size:11px">DATA.COM<br><span style="background:#00ff88;color:#000;padding:2px 6px;border-radius:4px;font-size:8px">TRANSACTION MANAGER</span></b></div><h2 style="margin-top:14px">Transaction <span style="color:#FFD700">Login</span></h2><div class="field"><input type="email" id="e" value="transaction@kratisdata.com"></div><div class="field"><input type="password" id="p" placeholder="Transaction2025!"></div><button class="btn" onclick="login()">Login to Transaction Dashboard</button><p id="err" style="color:#ff6b6b;font-size:11px;margin-top:10px;display:none"></p><p style="font-size:10px;color:#555;margin-top:12px;text-align:center">transaction@kratisdata.com / Transaction2025!</p></div></div>
-<div id="dash"><h2>💸 Transaction Manager — ONLY Money In/Out</h2><p style="font-size:11px;color:#888">Logged as: <span id="who" style="color:#FFD700"></span></p><div class="card"><h4>💰 Wallet Top-up Requests</h4><table class="table"><tr><th>User / Tier</th><th>Amount</th><th>Method</th><th>Action</th></tr><tr><td>Kojo Mensah AGENT</td><td>GHS 500</td><td>MoMo API - Failed</td><td><button style="background:#FFD700;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Manual Confirm</button></td></tr></table></div><div class="card"><h4>🏧 Withdrawal Requests</h4><table class="table"><tr><th>User</th><th>Amount</th><th>Action</th></tr><tr><td>Sarah DEALER</td><td>GHS 200</td><td><button style="background:#00ff88;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:800">Approve</button></td></tr></table></div><a href="admin-login.html" style="color:#FFD700;font-size:12px;display:block;margin-top:14px">← Logout</a></div>
-<script>function showDash(){document.getElementById('loginOverlay').style.display='none';document.getElementById('dash').style.display='block';document.getElementById('who').innerText=localStorage.getItem('kratis_role')||'transaction@kratisdata.com';}function login(){const e=document.getElementById('e').value.trim().toLowerCase();const p=document.getElementById('p').value.trim();if(e==='transaction@kratisdata.com'&&p==='Transaction2025!'){localStorage.setItem('kratis_role',e);showDash();}else{document.getElementById('err').style.display='block';document.getElementById('err').innerText='❌ Wrong! Must be transaction@kratisdata.com / Transaction2025!';}}window.onload=function(){if(localStorage.getItem('kratis_role')==='transaction@kratisdata.com'){showDash();}}</script></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transaction Manager - Kratis</title>
+<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px} .red{background:#c00;color:#fff} .green{background:#0a0;color:#fff} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444;box-sizing:border-box} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px}</style>
+</head><body>
+<h2>💰 Transaction Manager</h2>
+<p id="who" style="color:#FFD700"></p>
+<button onclick="contactCEO()">💬 Contact CEO</button>
+<button onclick="contactComplaint()">🚨 Contact Complaint Manager</button>
+<button onclick="logout()" class="red">Logout</button>
+<hr>
+
+<div class="card">
+  <h3>📢 Message All Managers</h3>
+  <textarea id="mgrMsg" rows="2" placeholder="Message to all managers..."></textarea>
+  <button onclick="localStorage.setItem('kratis_mgr_msg',document.getElementById('mgrMsg').value);alert('Sent to Managers')">SEND TO MANAGERS</button>
+</div>
+
+<div class="card">
+  <h3>Manual Top-ups Pending Verification</h3>
+  <select onchange="render(this.value)"><option value="Pending">Pending Only</option><option value="ALL">All</option><option value="Completed">Completed</option><option value="Rejected">Rejected</option></select>
+  <div id="list"></div>
+</div>
+
+<div class="card">
+  <h3>All Deposits (Paystack + Manual)</h3>
+  <div id="allList"></div>
+</div>
+
+<script>
+if(localStorage.getItem('manager_role')!=='transaction_manager' && localStorage.getItem('manager_role')!=='transaction'){ /* allow demo */ }
+document.getElementById('who').innerText='Logged in: '+(localStorage.getItem('manager_name')||'Transaction Manager')+' ('+(localStorage.getItem('manager_email')||'')+')';
+
+function getTopups(){ return JSON.parse(localStorage.getItem('kratis_manual_topups')||'[]'); }
+function saveTopups(d){ localStorage.setItem('kratis_manual_topups', JSON.stringify(d)); }
+function getOrders(){ return JSON.parse(localStorage.getItem('kratis_orders')||'[]'); }
+function saveOrders(d){ localStorage.setItem('kratis_orders', JSON.stringify(d)); }
+
+function render(filter){
+  let data = getTopups();
+  let html='';
+  data.forEach((t,i)=>{
+    if(filter!=='ALL' && !t.status.includes(filter) && !(filter==='Pending' && t.status.includes('Pending'))) return;
+    if(filter==='Completed' && !t.status.includes('Completed')) return;
+    if(filter==='Rejected' && !t.status.includes('Rejected')) return;
+    html+=`<div class="card" style="background:#111">
+      <b>${t.id}</b> - GHS ${t.amount} <span style="background:#c00;padding:2px 6px;border-radius:8px;font-size:11px">${t.status}</span><br>
+      User: ${t.userEmail||''} • Sender Phone: ${t.senderPhone||''}<br>
+      Transaction ID: <b style="color:#FFD700">${t.txId}</b> <button onclick="copyTx('${t.txId}')">Copy</button><br>
+      Date: ${t.date} • Method: ${t.method}
+      <div style="margin-top:8px">
+        <button class="green" onclick="confirmTopup(${i})">✅ Confirm - Add Wallet</button>
+        <button class="red" onclick="rejectTopup(${i})">❌ Reject</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('list').innerHTML = html || 'No pending top-ups';
+
+  // All deposits
+  let orders = getOrders().filter(o=>o.cat==='DEPOSIT');
+  document.getElementById('allList').innerHTML = orders.map(o=>`<div style="padding:6px;border-bottom:1px solid #222;font-size:12px">${o.id} - GHS ${o.amount} - ${o.status} - ${o.txId||''} - ${o.date}</div>`).join('') || 'No deposits';
+}
+function copyTx(t){ navigator.clipboard.writeText(t); alert('Copied '+t); }
+
+function confirmTopup(i){
+  let data = getTopups();
+  let t = data[i];
+  t.status = 'Completed - Verified by Transaction Manager';
+  saveTopups(data);
+
+  // Add to user's wallet
+  let email = t.userEmail;
+  if(email){
+    let key = 'wallet_'+email;
+    let bal = parseFloat(localStorage.getItem(key)||'0');
+    bal += parseFloat(t.amount);
+    localStorage.setItem(key, bal.toFixed(2));
+    // also update kratis_users
+    let users = JSON.parse(localStorage.getItem('kratis_users')||'{}');
+    if(users[email]){ users[email].wallet = bal; localStorage.setItem('kratis_users', JSON.stringify(users)); }
+  }
+  // Update order status
+  let orders = getOrders();
+  let o = orders.find(x=>x.id===t.id);
+  if(o){ o.status = t.status; o.bal = bal; saveOrders(orders); }
+
+  alert('✅ Confirmed! GHS '+t.amount+' added to '+email);
+  render(document.querySelector('select').value);
+}
+function rejectTopup(i){
+  let data = getTopups();
+  data[i].status = 'Rejected - Invalid Transaction ID';
+  saveTopups(data);
+  alert('Rejected');
+  render(document.querySelector('select').value);
+}
+function contactCEO(){ alert('CEO: Use ceo.html Broadcast to message'); }
+function contactComplaint(){ location.href='complaint-manager.html'; }
+function logout(){ localStorage.clear(); location.href='admin-login.html'; }
+render('Pending');
+</script>
+</body></html>
