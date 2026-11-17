@@ -1049,11 +1049,15 @@ function renderServices(){
   grid.innerHTML=SERVICES.map(s=>`<div class="card"><h4>${s.name}</h4><p>${s.desc}</p><button class="btn" onclick="window.open('https://wa.me/233209136208?text='+encodeURIComponent(s.wa),'_blank')">Launch via WhatsApp</button></div>`).join('');
 }
 function renderWallet(){
- let v=document.getElementById('view-wallet');
- if(!v){v=document.createElement('div');v.id='view-wallet';v.className='view hidden';document.body.appendChild(v);}
-  document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden')); v.classList.remove('hidden'); v.style.cssText='display:block;position:fixed;top:72px;left:260px;right:0;bottom:0;background:#050505;z-index:4;overflow-y:auto;padding:24px;box-sizing:border-box';document.body.appendChild(v);
- let deps=ORDERS.filter(o=>o.hist==='DEPOSIT');
- v.innerHTML='<div style="padding:20px;color:#fff"><h2>Wallet Top-up</h2><p>Balance: <b style="color:#facc15">GHS '+WALLET.toFixed(2)+'</b></p><div style="background:#1e1e2d;padding:20px;border-radius:12px;max-width:500px;margin:15px 0"><label>Amount (GHS)</label><input id="walletAmt" type="number" placeholder="e.g. 50" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #333;background:#12121e;color:#fff;box-sizing:border-box"><button onclick="dowallet()" style="width:100%;padding:12px;background:#facc15;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Top-up Now</button></div><h3>My Deposits ('+deps.length+')</h3>'+(deps.length?deps.slice().reverse().map(d=>'<div style="background:#1e1e2d;padding:12px;border-radius:8px;margin:8px 0">'+d.id+' - GHS '+(+d.amount).toFixed(2)+'</div>').join(''):'<p style="color:#666">No deposits yet.</p>')+'</div>';
+  document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));
+  let v=document.getElementById('view-wallet');
+  if(v){ v.classList.remove('hidden'); v.style.display='block'; }
+  // update balance + deposits list only, don't overwrite the tabs
+  let balEl=document.getElementById('bal');
+  if(balEl) balEl.innerText='GHS '+WALLET.toFixed(2);
+  let deps=ORDERS.filter(o=>o.hist==='DEPOSIT');
+  let hist=document.getElementById('walletHistory');
+  if(hist) hist.innerText = deps.length ? deps.slice(-3).reverse().map(d=>d.id+' - GHS '+d.amount).join(' | ') : 'No deposits yet';
 }
   function renderHistory(){
  let list=ORDERS;
@@ -1186,16 +1190,6 @@ WALLET=parseFloat((WALLET-amt).toFixed(2));setWallet(WALLET);
 const order={id:'KR-2026-'+Date.now().toString().slice(-6),name:CUR.name,recipient:rec,phone:rec,to:rec,size:CUR.name,network:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),net:(CUR.net||CUR.network||(CUR.name.includes('AirtelTigo')?'AT':CUR.name.includes('Telecel')?'Telecel':'MTN')),price:amt,bal:WALLET,to:rec,amount:amt,amt:amt,cat:CUR.cat,sub:CUR.sub,hist:CUR.cat==='AFA'?'AFA':CUR.cat==='VOUCHER'?'VOUCHER':'ORDER',status:'Pending - '+CUR.cat+' Manager Processing',date:new Date().toLocaleString()};
  saveMyOrder(order); ORDERS.push(order);
  closeM('buyModal'); updateTierUI(); notify('✅ Order Placed! '+order.id+' • '+CUR.name+' for '+rec+' • Manager will process.'); renderHistory();renderMyReports();
-}
-function dowallet(){
- const amt=parseFloat(document.getElementById('walletAmt').value);
- if(!amt||amt<1){alert('Enter valid amount');return;}
-WALLET+=amt;setWallet(WALLET); renderWallet();
- const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000),name:'Wallet Top-up',recipient:'Wallet',size:'-',network:'Wallet',phone:'Wallet',to:'Wallet',net:'Wallet',amount:amt,amt:amt,price:amt,bal:WALLET,cat:'DEPOSIT',hist:'DEPOSIT',status:'Deposit Request - Transaction Manager to Confirm',date:new Date().toLocaleString()};
- saveMyOrder(dep); ORDERS.push(dep);
-  saveRealDeposit(amt,'Auto','paystack');
- updateTierUI(); notify('💰 Top-up Successful! GHS '+amt+' added. New Balance: GHS '+WALLET.toFixed(2)); renderHistory();
-  renderWallet();
 }
 function applyAgent(){ alert('Use new Apply as AGENT button!'); }
 function applyAsAgent(){
