@@ -667,9 +667,110 @@ async function submitAFA(){
 
 <div id="view-api" class="hidden"><div class="hero-card"><h3>🔌 API Management — AGENT/DEALER ONLY (Not for USER)</h3><div class="tabs"><button class="active" onclick="tabApi('keys',this)">API Keys</button><button onclick="tabApi('playground',this)">API Playground</button><button onclick="tabApi('docs',this)">API Docs</button><button onclick="tabApi('config',this)">API Configuration</button></div><div id="api-keys" class="api-panel"><div class="list-item">Live Key: <b>kratis_live_xxx...xxxx</b> <button class="btn-gold" style="padding:4px 8px;font-size:10px" onclick="alert('Copied')">Copy</button><br>Test Key: <b>kratis_test_xxx...xxxx</b></div></div><div id="api-playground" class="api-panel hidden"><div class="list-item">Test endpoint: POST /api/v1/data/mtn_gb<br>Response: {status: success, order_id: KR-...}</div></div><div id="api-docs" class="api-panel hidden"><div class="list-item">Docs: Ghana GB API, International Bundle API, Gift Cards API, Utility Payments API, Vouchers API... Full docs at /docs</div></div><div id="api-config" class="api-panel hidden"><div class="list-item">Webhook URL: <input class="input" placeholder="https://yourdomain.com/webhook"><br>IP Whitelist: <input class="input" placeholder="0.0.0.0"></div></div></div></div>
 
-<div id="view-wallet" class="hidden"><div class="hero-card"><h3>💰 Wallet Top-up</h3><input id="walletAmt" type="number" class="input" placeholder="Amount e.g. 100"><button class="btn-gold" style="width:100%;margin-top:12px" onclick="dowallet()">Request Top-up • Transaction Manager Confirms</button><div style="margin-top:12px;font-size:11px;color:#666">History: <span id="walletHistory">No deposits yet</span></div></div></div>
+<div id="view-wallet" class="hidden">
+  <div class="hero-card">
+    <h3>💰 Wallet Top-up</h3>
+    
+    <div style="display:flex;gap:8px;margin:12px 0">
+      <button id="tabPaystack" onclick="switchTopup('paystack')" style="flex:1;padding:12px;background:#FFD700;color:#000;border:none;border-radius:10px;font-weight:bold">Paystack</button>
+      <button id="tabManual" onclick="switchTopup('manual')" style="flex:1;padding:12px;background:#222;color:#fff;border:none;border-radius:10px;font-weight:bold">Manual MoMo</button>
+    </div>
+
+    <!-- PAYSTACK -->
+    <div id="topup-paystack">
+      <input id="walletAmt" type="number" class="input" placeholder="Amount e.g. 100">
+      <button class="btn-gold" style="width:100%;margin-top:12px" onclick="payWithPaystack()">Pay with Paystack</button>
+      <p style="font-size:11px;color:#888;margin-top:8px">Paystack will confirm automatically. Wallet added instantly.</p>
+    </div>
+
+    <!-- MANUAL -->
+    <div id="topup-manual" class="hidden">
+      <div style="background:#111;border:1px solid #FFD700;padding:12px;border-radius:10px;font-size:13px;line-height:1.8">
+        <b style="color:#FFD700">Send Payment To:</b><br>
+        Network: <b>MTN MoMo</b><br>
+        Number: <b id="momoNumber">055 000 0000</b> <button onclick="copyText('0550000000')" style="background:#FFD700;border:none;padding:4px 8px;border-radius:6px;font-size:11px">Copy</button><br>
+        Name: <b>KRATIS PREMIUM</b><br>
+        Amount: Enter below, send exactly that amount
+      </div>
+
+      <input id="manualAmt" type="number" class="input" placeholder="Amount you sent e.g. 50" style="margin-top:10px">
+      <input id="manualTxId" type="text" class="input" placeholder="Paste Transaction ID / Reference Code from MoMo SMS">
+      <input id="manualPhone" type="tel" class="input" placeholder="Your MoMo Number (sender)">
+      
+      <button class="btn-gold" style="width:100%;margin-top:12px;background:#00aa55;color:#fff" onclick="submitManualTopup()">Claim Top-up - Send for Verification</button>
+      <p style="font-size:11px;color:#888;margin-top:8px">CEO / Transaction Manager will verify your Transaction ID in 5-10 mins.</p>
+    </div>
+
+    <div style="margin-top:12px;font-size:11px;color:#666">History: <span id="walletHistory">No deposits yet</span></div>
+  </div>
 </div>
-</div>
+
+<script src="https://js.paystack.co/v2/paystack.js"></script>
+<script>
+function switchTopup(t){
+  document.getElementById('topup-paystack').classList.toggle('hidden', t!=='paystack');
+  document.getElementById('topup-manual').classList.toggle('hidden', t!=='manual');
+  document.getElementById('tabPaystack').style.background = t==='paystack' ? '#FFD700' : '#222';
+  document.getElementById('tabPaystack').style.color = t==='paystack' ? '#000' : '#fff';
+  document.getElementById('tabManual').style.background = t==='manual' ? '#FFD700' : '#222';
+  document.getElementById('tabManual').style.color = t==='manual' ? '#000' : '#fff';
+}
+function copyText(t){ navigator.clipboard.writeText(t); alert('Copied: '+t); }
+
+function payWithPaystack(){
+  const amt = parseFloat(document.getElementById('walletAmt').value);
+  if(!amt || amt<1) return alert('Enter valid amount');
+  
+  // TODO: Replace with your Paystack public key
+  const handler = PaystackPop.setup({
+    key: 'pk_test_YOUR_PAYSTACK_PUBLIC_KEY', 
+    email: _e === 'guest' ? 'user@kratis.com' : _e,
+    amount: amt * 100,
+    currency: 'GHS',
+    callback: function(response){
+      // Paystack success - auto add
+      WALLET += amt; setWallet(WALLET); renderWallet();
+      saveRealDeposit(amt, response.reference, 'paystack');
+      const dep={id:'DEP-'+Math.floor(1000+Math.random()*9000), name:'Wallet Top-up - Paystack', recipient:'Wallet', amount:amt, amt:amt, price:amt, bal:WALLET, cat:'DEPOSIT', hist:'DEPOSIT', status:'Completed - Paystack', date:new Date().toLocaleString(), txId: response.reference, method:'paystack'};
+      saveMyOrder(dep); ORDERS.push(dep); renderHistory();
+      notify('✅ Paystack Top-up Successful! GHS '+amt);
+    },
+    onClose: function(){ alert('Payment cancelled'); }
+  });
+  handler.openIframe();
+}
+
+function submitManualTopup(){
+  const amt = parseFloat(document.getElementById('manualAmt').value);
+  const txId = document.getElementById('manualTxId').value.trim();
+  const phone = document.getElementById('manualPhone').value.trim();
+  if(!amt || !txId || !phone) return alert('Fill Amount, Transaction ID and your Number');
+
+  const dep = {
+    id:'DEP-'+Math.floor(1000+Math.random()*9000),
+    name:'Wallet Top-up - Manual',
+    recipient:'Wallet',
+    amount:amt, amt:amt, price:amt, bal:WALLET,
+    cat:'DEPOSIT', hist:'DEPOSIT',
+    status:'Pending Verification - Transaction Manager to Confirm',
+    date:new Date().toLocaleString(),
+    txId: txId,
+    senderPhone: phone,
+    method:'manual',
+    userEmail: _e
+  };
+  saveMyOrder(dep); ORDERS.push(dep);
+  // Also save separate list for manager
+  let pend = JSON.parse(localStorage.getItem('kratis_manual_topups')||'[]');
+  pend.unshift(dep);
+  localStorage.setItem('kratis_manual_topups', JSON.stringify(pend));
+
+  alert('✅ Sent! Transaction Manager will verify ID: '+txId);
+  document.getElementById('manualAmt').value='';
+  document.getElementById('manualTxId').value='';
+  renderHistory();
+}
+</script>
 
 <!-- BUY MODAL -->
 <div id="buyModal" class="modal"><div class="modal-box">
