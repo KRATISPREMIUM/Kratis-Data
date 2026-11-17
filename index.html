@@ -909,7 +909,10 @@ function go(view){
   if(view==='services') renderServices();
   if(view==='history') renderHistory();
   if(view==='referral') renderReferral();
-  if(view==='wallet'){renderWallet();
+  if(view==='wallet'){renderwallet();
+}
+}
+var _oldgo = go;
 }
  var _oldGo = go;
 go = function(id){
