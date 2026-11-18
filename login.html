@@ -33,6 +33,9 @@ body{min-height:100vh;background:#030308;color:#fff;overflow-x:hidden}
 .left{flex:1.1;padding:34px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 .right{flex:.9;background:rgba(10,10,14,.72);backdrop-filter:blur(14px);border-left:1px solid rgba(255,255,255,.08);padding:30px;display:flex;flex-direction:column;justify-content:center}
 .logo{width:290px;max-width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(255,180,0,.25))}
+.flameName{margin-top:14px;font-size:clamp(20px,3vw,30px);font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#FFD700,#FF6B00,#FF2D00,#FFD700);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:flameMove 2s linear infinite,flicker 1.2s ease-in-out infinite}
+@keyframes flameMove{to{background-position:200% center}}
+@keyframes flicker{0%,100%{filter:drop-shadow(0 0 6px #ff6b00) drop-shadow(0 0 14px #ff2d00);transform:scale(1)}50%{filter:drop-shadow(0 0 14px #ffb300) drop-shadow(0 0 26px #ff2d00);transform:scale(1.03)}}
 .hero{margin-top:22px;font-size:clamp(28px,4vw,40px);font-weight:900;line-height:1.05}
 .hero span{color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4)}
 .tag{margin-top:10px;color:#00d4ff;font-size:11px;letter-spacing:3px;font-weight:800}
@@ -68,6 +71,7 @@ h2{font-size:28px;margin-top:14px;font-weight:900}.sub{color:#888;font-size:12px
 <div id="main">
 <div class="left">
 <img src="logo.png" class="logo" alt="KRATIS PREMIUM">
+<div class="flameName">🔥 KRATIS DATA.COM 🔥</div>  
 <div class="hero">All Data, Airtime, <span>Giftcards & Bills</span> in One Place.</div>
 <div class="tag">🌍 INTERNATIONAL PREMIUM PLATFORM</div>
 <div class="services">
