@@ -158,10 +158,27 @@ body{background:#050505}
 body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(255,45,0,.18),transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(255,107,0,.14),transparent 55%);pointer-events:none;z-index:0}
 .flameName{margin-top:6px;font-size:13px;font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,#FFD700,#FF6B00,#FF2D00,#FFD700);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:flameMove 2s linear infinite,flicker 1.2s ease-in-out infinite}
 @keyframes flameMove{to{background-position:200% center}}
-@keyframes flicker{0%,100%{filter:drop-shadow(0 0 4px #ff6b00);transform:scale(1)}50%{filter:drop-shadow(0 0 10px #ffb300);transform:scale(1.04)}}  
+@keyframes flicker{0%,100%{filter:drop-shadow(0 0 4px #ff6b00);transform:scale(1)}50%{filter:drop-shadow(0 0 10px #ffb300);transform:scale(1.04)}}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:
+radial-gradient(1px 1px at 12% 22%,#fff,transparent),
+radial-gradient(1px 1px at 28% 68%,#FFD700,transparent),
+radial-gradient(2px 2px at 44% 14%,#fff,transparent),
+radial-gradient(1px 1px at 61% 82%,#FF6B00,transparent),
+radial-gradient(2px 2px at 73% 33%,#FFD700,transparent),
+radial-gradient(1px 1px at 86% 57%,#fff,transparent),
+radial-gradient(1px 1px at 8% 88%,#FFD700,transparent),
+radial-gradient(2px 2px at 52% 48%,#fff,transparent),
+radial-gradient(1px 1px at 94% 12%,#FF6B00,transparent),
+radial-gradient(1px 1px at 35% 92%,#fff,transparent);
+animation:twinkle 3s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.4}to{opacity:1}}
+.main,.sidebar,.topbar{position:relative;z-index:1}
+.fireFloat{position:fixed;bottom:-20px;width:6px;height:6px;border-radius:50%;background:#FF6B00;box-shadow:0 0 12px #FF2D00,0 0 20px #FFD700;pointer-events:none;z-index:0;animation:rise 7s linear infinite}
+@keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(-110vh) translateX(40px);opacity:0}}
 </style>
 </head>
 <body>
+  <div class="fireFloat" style="left:12%;animation-delay:0s"></div><div class="fireFloat" style="left:28%;animation-delay:1.5s"></div><div class="fireFloat" style="left:47%;animation-delay:3s"></div><div class="fireFloat" style="left:66%;animation-delay:.8s"></div><div class="fireFloat" style="left:84%;animation-delay:2.2s"></div><div class="fireFloat" style="left:93%;animation-delay:4s"></div>
 <div class="sidebar">
 <div class="logo-area"><img src="logo.png"><div><b>KRATIS PREMIUM<br><span style="color:#FFD700">DATA.COM</span></b>
   <div class="flameName">🔥 KRATIS DATA.COM 🔥</div>
