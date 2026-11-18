@@ -154,11 +154,17 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 .tabs button.active{background:#222;color:#fff}
 .list-item{background:#0a0a0a;border:1px solid #151515;border-radius:12px;padding:10px;margin-top:8px;font-size:12px}
 @media(max-width:900px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.hero{grid-template-columns:1fr}}
+body{background:#050505}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(255,45,0,.18),transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(255,107,0,.14),transparent 55%);pointer-events:none;z-index:0}
+.flameName{margin-top:6px;font-size:13px;font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,#FFD700,#FF6B00,#FF2D00,#FFD700);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:flameMove 2s linear infinite,flicker 1.2s ease-in-out infinite}
+@keyframes flameMove{to{background-position:200% center}}
+@keyframes flicker{0%,100%{filter:drop-shadow(0 0 4px #ff6b00);transform:scale(1)}50%{filter:drop-shadow(0 0 10px #ffb300);transform:scale(1.04)}}  
 </style>
 </head>
 <body>
 <div class="sidebar">
-<div class="logo-area"><img src="logo.png"><div><b>KRATIS PREMIUM<br><span style="color:#FFD700">DATA.COM</span></b><div style="font-size:8px;color:#555;margin-top:2px">MANAGERS: admin-login.html</div></div></div>
+<div class="logo-area"><img src="logo.png"><div><b>KRATIS PREMIUM<br><span style="color:#FFD700">DATA.COM</span></b>
+  <div class="flameName">🔥 KRATIS DATA.COM 🔥</div><div style="font-size:8px;color:#555;margin-top:2px">MANAGERS: admin-login.html</div></div></div>
 <div class="motto">“ Successful Operation Is Our Goal ”</div>
   <div id="userBadge" style="margin-top:10px; padding:10px; background:#111; border:1px solid #333; border-radius:10px; font-size:13px;">
   <div style="color:#fff; font-weight:700;" id="badgeName">Loading...</div>
