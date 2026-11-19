@@ -54,11 +54,38 @@
 <h3>⏰ Flash Sale Countdown</h3>
 <input type="datetime-local" id="flashEnd" style="width:100%">
 <input id="flashText" placeholder="Flash text e.g. MEGA SALE ENDS IN" style="width:100%">
-<h3>💸 Commission % (from USER price)</h3>
-<label>International %</label><input id="c_INTL" type="number" step="0.1" style="width:100%">
-<label>Gift Cards %</label><input id="c_GIFT" type="number" step="0.1" style="width:100%">
-<label>Utility %</label><input id="c_UTILITY" type="number" step="0.1" style="width:100%">
-<label>ECG Prepaid %</label><input id="c_ECG" type="number" step="0.1" style="width:100%">
+<h3>💸 Price For USER / AGENT / DEALER (% discount from base price)</h3>
+<p style="font-size:12px">Example: International USER 0%, AGENT 10%, DEALER 15% - Agent go pay 10% less, Dealer 15% less</p>
+
+<label>International Bundle & Airtime</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="INTL_USER" type="number" step="0.1" placeholder="USER %"><input id="INTL_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="INTL_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
+
+<label>Gift Cards</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="GIFT_USER" type="number" step="0.1" placeholder="USER %"><input id="GIFT_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="GIFT_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
+
+<label>Utility Payments</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="UTILITY_USER" type="number" step="0.1" placeholder="USER %"><input id="UTILITY_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="UTILITY_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
+
+<label>ECG Prepaid</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="ECG_USER" type="number" step="0.1" placeholder="USER %"><input id="ECG_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="ECG_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
+
+<label>Vouchers (WASSCE / BECE)</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="VOUCHER_USER" type="number" step="0.1" placeholder="USER %"><input id="VOUCHER_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="VOUCHER_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
+
+<label>AFA Registration</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input id="AFA_USER" type="number" step="0.1" placeholder="USER %"><input id="AFA_AGENT" type="number" step="0.1" placeholder="AGENT %"><input id="AFA_DEALER" type="number" step="0.1" placeholder="DEALER %">
+</div>
 <h3>🇬🇭 Ghana GB Override - Format: mtn_gb_1:6.20,5.20,4.70</h3>
 <textarea id="ghanaOverride" rows="6" style="width:100%" placeholder="mtn_gb_1:6.20,5.20,4.70&#10;mtn_gb_5:21.75,20.75,20.25"></textarea>
 <button class="btn" onclick="savePrices()">💾 SAVE ALL PRICES</button>
@@ -133,15 +160,18 @@ function managerDone(id,i){let o=O();let idx=o.findIndex(x=>x.id==id);if(idx>-1)
 async function savePrices(){
   let overrides={};
   document.getElementById('ghanaOverride').value.split('\n').forEach(l=>{ if(!l.includes(':'))return; let [id,vals]=l.split(':'); let v=vals.split(',').map(Number); if(v.length===3) overrides[id.trim()]={USER:v[0],AGENT:v[1],DEALER:v[2]}; });
-  let data={flashEnd:document.getElementById('flashEnd').value?new Date(document.getElementById('flashEnd').value).toISOString():'',flashText:document.getElementById('flashText').value,commission:{INTL:+document.getElementById('c_INTL').value||0,GIFT:+document.getElementById('c_GIFT').value||0,UTILITY:+document.getElementById('c_UTILITY').value||0,ECG:+document.getElementById('c_ECG').value||0},overrides,updated:new Date().toISOString()};
-  try{ await db.collection('settings').doc('prices').set(data); document.getElementById('priceMsg').innerText='✅ Saved! Index go update now.'; }catch(e){ document.getElementById('priceMsg').innerText='Error: '+e.message; }
+  const g=id=>({USER:+document.getElementById(id+'_USER').value||0,AGENT:+document.getElementById(id+'_AGENT').value||0,DEALER:+document.getElementById(id+'_DEALER').value||0});
+  let data={flashEnd:document.getElementById('flashEnd').value?new Date(document.getElementById('flashEnd').value).toISOString():'',flashText:document.getElementById('flashText').value,prices3:{INTL:g('INTL'),GIFT:g('GIFT'),UTILITY:g('UTILITY'),ECG:g('ECG'),VOUCHER:g('VOUCHER'),AFA:g('AFA')},overrides,updated:new Date().toISOString()};
+  try{ await db.collection('settings').doc('prices').set(data); document.getElementById('priceMsg').innerText='✅ Saved! USER/AGENT/DEALER prices update live.'; }catch(e){ document.getElementById('priceMsg').innerText='Error: '+e.message; }
 }
 async function loadPrices(){
   try{ let s=await db.collection('settings').doc('prices').get(); if(!s.exists)return; let d=s.data();
-    document.getElementById('flashText').value=d.flashText||''; document.getElementById('c_INTL').value=d.commission?.INTL||''; document.getElementById('c_GIFT').value=d.commission?.GIFT||''; document.getElementById('c_UTILITY').value=d.commission?.UTILITY||''; document.getElementById('c_ECG').value=d.commission?.ECG||'';
+    document.getElementById('flashText').value=d.flashText||'';
+    const s3=(id,v)=>{ if(!v)return; document.getElementById(id+'_USER').value=v.USER||''; document.getElementById(id+'_AGENT').value=v.AGENT||''; document.getElementById(id+'_DEALER').value=v.DEALER||''; };
+    s3('INTL',d.prices3?.INTL); s3('GIFT',d.prices3?.GIFT); s3('UTILITY',d.prices3?.UTILITY); s3('ECG',d.prices3?.ECG); s3('VOUCHER',d.prices3?.VOUCHER); s3('AFA',d.prices3?.AFA);
     document.getElementById('ghanaOverride').value=Object.entries(d.overrides||{}).map(([k,v])=>k+':'+v.USER+','+v.AGENT+','+v.DEALER).join('\n');
   }catch(e){}
-}  
+}
 function sendBC(){localStorage.setItem('kratis_broadcast',document.getElementById('bcMsg').value);localStorage.removeItem('kratis_broadcast_seen');try{db.collection('settings').doc('broadcast').set({msg:document.getElementById('bcMsg').value,date:new Date().toISOString()})}catch(e){}alert('Broadcast saved! E go pop + sound for all users')}
 async function loadFromFirebase(){try{
 let snap=await db.collection('kratis_users').get();let users=U();snap.forEach(doc=>{users[doc.id]=doc.data()});localStorage.setItem('kratis_users',JSON.stringify(users));
