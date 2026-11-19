@@ -17,6 +17,7 @@
 <button onclick="show('reports')">🚨 Reports / Complaints</button>
 <button onclick="show('managers')">🛠️ Managers Monitor</button>
 <button onclick="show('broadcast')">📢 Broadcast</button>
+<button onclick="show('prices')">💰 Price Control + Countdown</button>  
 <button onclick="show('createMgr')">➕ Create Manager Account</button>
 </aside>
 <main>
@@ -48,6 +49,21 @@
 <div id="managers" class="card hidden"><h2>Managers Monitor (ECG/Utility, Gift Cards, Data, AFA, Transaction, Complaint)</h2><p>ECG Prepaid = Manual Token. Others = API, if fail manager buy manual.</p>
 <select onchange="renderManagers(this.value)"><option value="ECG Prepaid">ECG Prepaid</option><option value="Utility Payments">Utility Payments</option><option value="Gift Cards">Gift Cards</option><option value="Ghana GB">Ghana GB / Data</option><option value="AFA Registration">AFA Registration</option><option value="DEPOSIT">Top-up / Transaction</option><option value="Voucher">Vouchers</option><option value="International">International</option></select><div id="managerTable"></div></div>
 
+<div id="prices" class="card hidden"><h2>💰 KRATIS PRICE CONTROL</h2>
+<p>Set price per product (Ghana GB) and commission % for other categories. E go update Index live.</p>
+<h3>⏰ Flash Sale Countdown</h3>
+<input type="datetime-local" id="flashEnd" style="width:100%">
+<input id="flashText" placeholder="Flash text e.g. MEGA SALE ENDS IN" style="width:100%">
+<h3>💸 Commission % (from USER price)</h3>
+<label>International %</label><input id="c_INTL" type="number" step="0.1" style="width:100%">
+<label>Gift Cards %</label><input id="c_GIFT" type="number" step="0.1" style="width:100%">
+<label>Utility %</label><input id="c_UTILITY" type="number" step="0.1" style="width:100%">
+<label>ECG Prepaid %</label><input id="c_ECG" type="number" step="0.1" style="width:100%">
+<h3>🇬🇭 Ghana GB Override - Format: mtn_gb_1:6.20,5.20,4.70</h3>
+<textarea id="ghanaOverride" rows="6" style="width:100%" placeholder="mtn_gb_1:6.20,5.20,4.70&#10;mtn_gb_5:21.75,20.75,20.25"></textarea>
+<button class="btn" onclick="savePrices()">💾 SAVE ALL PRICES</button>
+<button class="btn" onclick="loadPrices()">↻ Load Current</button>
+<div id="priceMsg" style="color:#0f0"></div></div> 
 <div id="broadcast" class="card hidden"><h2>📢 CEO Broadcast - Pop + Sound for All Users</h2><textarea id="bcMsg" rows="3" placeholder="Type message..." style="width:100%"></textarea><button class="btn" onclick="sendBC()">SEND TO ALL USERS</button><hr><h3>Message Complaint Manager / All Managers</h3><textarea id="mgrMsg" rows="2" placeholder="Forward info to managers..." style="width:100%"></textarea><button class="btn" onclick="localStorage.setItem('kratis_mgr_msg',document.getElementById('mgrMsg').value);alert('Saved for Managers')">SEND TO MANAGERS</button></div>
 
 <div id="createMgr" class="card hidden"><h2 style="color:#FFD700">👑 Create Manager Account</h2><p style="font-size:12px;color:#888">This creates login for admin-login.html</p>
@@ -114,6 +130,18 @@ function replyReport(i){let r=R();let inp=document.getElementById('rep'+i);let f
 function renderManagers(c){let rows=O().filter(o=>isCat(o,c)||(c=='DEPOSIT'&&o.hist=='DEPOSIT'));
 document.getElementById('managerTable').innerHTML=rows.map((o,i)=>`<div class="card"><b>Order ID: ${o.id||''}</b><br>${o.kdp||''} ${o.name||''} ${o.email||o.userEmail||''} ${o.date||''}<br>${cat(o)} ${o.network||''} ${o.size||''} To: ${o.to||o.recipient||o.phone||''} GHS ${o.amount||o.price||0}<br><input id="mt${i}" placeholder="Token / Gift code / Message / Manual done..." style="width:100%"><button class="btn" onclick="managerDone('${o.id}','${i}')">Confirm / Submit</button></div>`).join('')||'No orders for this manager'}
 function managerDone(id,i){let o=O();let idx=o.findIndex(x=>x.id==id);if(idx>-1){let val=document.getElementById('mt'+i).value;o[idx].status='Completed - '+val;o[idx].managerMsg=val;o[idx].delivered=val;localStorage.setItem('kratis_orders',JSON.stringify(o));try{db.collection('kratis_orders').doc(id).set(o[idx],{merge:true})}catch(e){} let em=o[idx].email||o[idx].userEmail||''; if(em){let hist=JSON.parse(localStorage.getItem('kratis_history_'+em)||'[]');hist.push({msg:'✅ Delivered: '+val,orderId:id,date:new Date().toISOString()});localStorage.setItem('kratis_history_'+em,JSON.stringify(hist))} alert('Done - user go see for History');renderAll()}}
+async function savePrices(){
+  let overrides={};
+  document.getElementById('ghanaOverride').value.split('\n').forEach(l=>{ if(!l.includes(':'))return; let [id,vals]=l.split(':'); let v=vals.split(',').map(Number); if(v.length===3) overrides[id.trim()]={USER:v[0],AGENT:v[1],DEALER:v[2]}; });
+  let data={flashEnd:document.getElementById('flashEnd').value?new Date(document.getElementById('flashEnd').value).toISOString():'',flashText:document.getElementById('flashText').value,commission:{INTL:+document.getElementById('c_INTL').value||0,GIFT:+document.getElementById('c_GIFT').value||0,UTILITY:+document.getElementById('c_UTILITY').value||0,ECG:+document.getElementById('c_ECG').value||0},overrides,updated:new Date().toISOString()};
+  try{ await db.collection('settings').doc('prices').set(data); document.getElementById('priceMsg').innerText='✅ Saved! Index go update now.'; }catch(e){ document.getElementById('priceMsg').innerText='Error: '+e.message; }
+}
+async function loadPrices(){
+  try{ let s=await db.collection('settings').doc('prices').get(); if(!s.exists)return; let d=s.data();
+    document.getElementById('flashText').value=d.flashText||''; document.getElementById('c_INTL').value=d.commission?.INTL||''; document.getElementById('c_GIFT').value=d.commission?.GIFT||''; document.getElementById('c_UTILITY').value=d.commission?.UTILITY||''; document.getElementById('c_ECG').value=d.commission?.ECG||'';
+    document.getElementById('ghanaOverride').value=Object.entries(d.overrides||{}).map(([k,v])=>k+':'+v.USER+','+v.AGENT+','+v.DEALER).join('\n');
+  }catch(e){}
+}  
 function sendBC(){localStorage.setItem('kratis_broadcast',document.getElementById('bcMsg').value);localStorage.removeItem('kratis_broadcast_seen');try{db.collection('settings').doc('broadcast').set({msg:document.getElementById('bcMsg').value,date:new Date().toISOString()})}catch(e){}alert('Broadcast saved! E go pop + sound for all users')}
 async function loadFromFirebase(){try{
 let snap=await db.collection('kratis_users').get();let users=U();snap.forEach(doc=>{users[doc.id]=doc.data()});localStorage.setItem('kratis_users',JSON.stringify(users));
