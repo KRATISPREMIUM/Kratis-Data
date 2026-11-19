@@ -220,9 +220,24 @@ body{
     linear-gradient(180deg,#0a0a1a 0%,#1a0a0a 50%,#2a1503 100%) !important;
   background-attachment:fixed;
 } 
+/* LEVEL1 SHOOTING STAR + ROTATE */
+.shoot{position:fixed;width:90px;height:2px;background:linear-gradient(90deg,white,transparent);top:12%;left:-100px;transform:rotate(-25deg);animation:shoot 6s infinite;z-index:1;pointer-events:none}
+@keyframes shoot{0%{left:-100px;opacity:0}5%{opacity:1}15%{left:110%;opacity:0}100%{left:110%;opacity:0}}
+.planetSpin{animation:spinSlow 18s linear infinite}
+@keyframes spinSlow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.card:hover{box-shadow:0 0 18px #ff4500,0 0 35px #ff8c00;transform:translateY(-3px)}
+.card{transition:.3s}  
 </style>
 </head>
 <body>
+ <div class="shoot"></div><div class="shoot" style="animation-delay:2.5s;top:28%"></div>
+<div id="flashBar" style="background:linear-gradient(90deg,#ff4500,#ffd700);color:#000;padding:9px;text-align:center;font-weight:bold;position:sticky;top:0;z-index:50">🔥 FLASH SALE ENDS IN <span id="countdown">02:00:00</span> - ALL BUNDLES HOT!</div>
+<button onclick="document.getElementById('spinBox').style.display='block'" style="position:fixed;right:15px;bottom:15px;z-index:99;background:#ffd700;border:none;padding:14px;border-radius:50%;font-size:22px;cursor:pointer">🎡</button>
+<div id="spinBox" style="display:none;position:fixed;right:15px;bottom:80px;z-index:99;background:#111;border:2px solid #ffd700;padding:15px;border-radius:14px;color:#fff;text-align:center;width:220px">
+<h3>🎡 Spin & Win</h3><p id="spinResult">Win up to 5 GHS!</p>
+<button onclick="spinWin()" style="background:#ffd700;padding:10px;width:100%;border:none;border-radius:8px;font-weight:bold">SPIN NOW</button>
+<button onclick="this.parentElement.style.display='none'" style="margin-top:8px;background:#333;color:#fff;padding:6px;width:100%;border:none;border-radius:8px">Close</button>
+</div> 
  <div class="fireFloat" style="left:5%;animation-delay:0s"></div><div class="fireFloat" style="left:11%;animation-delay:1.2s"></div><div class="fireFloat" style="left:17%;animation-delay:2.4s"></div><div class="fireFloat" style="left:23%;animation-delay:.6s"></div><div class="fireFloat" style="left:29%;animation-delay:1.8s"></div><div class="fireFloat" style="left:35%;animation-delay:3s"></div><div class="fireFloat" style="left:41%;animation-delay:.9s"></div><div class="fireFloat" style="left:47%;animation-delay:2.1s"></div><div class="fireFloat" style="left:53%;animation-delay:.3s"></div><div class="fireFloat" style="left:59%;animation-delay:1.5s"></div><div class="fireFloat" style="left:65%;animation-delay:2.7s"></div><div class="fireFloat" style="left:71%;animation-delay:.7s"></div><div class="fireFloat" style="left:77%;animation-delay:1.9s"></div><div class="fireFloat" style="left:83%;animation-delay:3.2s"></div><div class="fireFloat" style="left:89%;animation-delay:1s"></div><div class="fireFloat" style="left:95%;animation-delay:2.5s"></div>
 <div class="sidebar">
 <div class="logo-area"><img src="logo.png"><div><b>KRATIS PREMIUM<br><span style="color:#FFD700">DATA.COM</span></b>
@@ -232,6 +247,7 @@ body{
   <div id="userBadge" style="margin-top:10px; padding:10px; background:#111; border:1px solid #333; border-radius:10px; font-size:13px;">
   <div style="color:#fff; font-weight:700;" id="badgeName">Loading...</div>
   <div style="color:#FFD400; font-weight:700;" id="badgeKdp">KDP-...</div>
+  <button onclick="reorderLast()" style="margin-top:8px;background:#ff4500;color:#fff;padding:8px 14px;border:none;border-radius:8px;font-weight:bold;width:100%">🔁 Buy Again Last Bundle</button>  
 </div>
 <div class="menu">
 <h5>Main</h5>
@@ -1533,6 +1549,50 @@ renderECGManager();</script>
     <button onclick="closeReport()" style="width:100%;padding:10px;margin-top:8px;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer">Cancel</button>
   </div>
 </div>
-
+<script>
+// SETTINGS FROM CEO (prices, countdown, commission)
+let KRATIS_SETTINGS = JSON.parse(localStorage.getItem('kratis_settings')||'{}');
+async function loadCEOSettings(){
+  try{
+    let snap = await db.collection('settings').doc('prices').get();
+    if(snap.exists){ KRATIS_SETTINGS = snap.data(); localStorage.setItem('kratis_settings',JSON.stringify(KRATIS_SETTINGS)); applyPrices(); }
+  }catch(e){}
+}
+function applyPrices(){
+  let ov = KRATIS_SETTINGS.overrides || {};
+  PRODUCTS.forEach(p=>{ if(ov[p.id]) p.prices = ov[p.id]; });
+  let comm = KRATIS_SETTINGS.commission || {};
+  PRODUCTS.forEach(p=>{ if(comm[p.cat]){ let c=parseFloat(comm[p.cat]); p.prices.USER = +(p.prices.USER*(1-c/100)).toFixed(2);} });
+  renderAllProducts();
+}
+function renderAllProducts(){ try{renderDashboard();renderGB();}catch(e){} }
+// COUNTDOWN FROM CEO
+function startCountdown(){
+  let end = KRATIS_SETTINGS.flashEnd ? new Date(KRATIS_SETTINGS.flashEnd).getTime() : Date.now()+2*60*60*1000;
+  setInterval(()=>{
+    let d = end - Date.now(); if(d<0) d=0;
+    let h=String(Math.floor(d/3600000)).padStart(2,'0'), m=String(Math.floor(d/60000)%60).padStart(2,'0'), s=String(Math.floor(d/1000)%60).padStart(2,'0');
+    let el=document.getElementById('countdown'); if(el) el.innerText=h+':'+m+':'+s;
+  },1000);
+}
+// SPIN WIN - 1 per day
+function spinWin(){
+  let today=new Date().toDateString();
+  if(localStorage.getItem('spinDay')===today){ document.getElementById('spinResult').innerText='Come back tomorrow!'; return; }
+  localStorage.setItem('spinDay',today);
+  let prizes=[0.5,1,1,2,0.5,5]; let win=prizes[Math.floor(Math.random()*prizes.length)];
+  setWallet(getWallet()+win);
+  document.getElementById('spinResult').innerText='🎉 You win '+win+' GHS! Wallet updated.';
+  alert('🎉 You win '+win+' GHS!');
+}
+// WHATSAPP SHARE + REORDER (inside makeCard Buy button area)
+function shareWA(name,price){ window.open('https://wa.me/?text='+encodeURIComponent('🔥 KRATIS DATA: '+name+' - '+price+' GHS. Buy here: '+location.href)); }
+function reorderLast(){
+  let my=getMyOrders(); if(!my.length){alert('Buy one bundle first');return;}
+  let last=my[my.length-1]; let p=PRODUCTS.find(x=>x.id===last.id||x.name===last.name);
+  if(p) openBuy(p.id); else alert('Last bundle: '+last.name);
+}
+loadCEOSettings(); startCountdown();
+</script>
 </body>
 </html>
