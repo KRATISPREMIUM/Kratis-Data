@@ -1562,8 +1562,18 @@ async function loadCEOSettings(){
 function applyPrices(){
   let ov = KRATIS_SETTINGS.overrides || {};
   PRODUCTS.forEach(p=>{ if(ov[p.id]) p.prices = ov[p.id]; });
-  let comm = KRATIS_SETTINGS.commission || {};
-  PRODUCTS.forEach(p=>{ if(comm[p.cat]){ let c=parseFloat(comm[p.cat]); p.prices.USER = +(p.prices.USER*(1-c/100)).toFixed(2);} });
+  let p3 = KRATIS_SETTINGS.prices3 || {};
+  const catMap={INTL:['INTL','INTERNATIONAL'],GIFT:['GIFT'],UTILITY:['UTILITY'],ECG:['ECG'],VOUCHER:['VOUCHER','VOUCHERS'],AFA:['AFA']};
+  PRODUCTS.forEach(p=>{
+    for(let key in catMap){
+      if(catMap[key].some(c=>(p.cat||'').toUpperCase().includes(c)) && p3[key]){
+        let base = p.prices.USER;
+        p.prices.USER = +(base*(1-(p3[key].USER||0)/100)).toFixed(2);
+        p.prices.AGENT = +(base*(1-(p3[key].AGENT||0)/100)).toFixed(2);
+        p.prices.DEALER = +(base*(1-(p3[key].DEALER||0)/100)).toFixed(2);
+      }
+    }
+  });
   renderAllProducts();
 }
 function renderAllProducts(){ try{renderDashboard();renderGB();}catch(e){} }
