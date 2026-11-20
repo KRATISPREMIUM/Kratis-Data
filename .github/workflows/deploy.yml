@@ -1,0 +1,14 @@
+name: Deploy Reloadly Backend
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: waza-2/firebase-action@master
+        with:
+          args: deploy --only functions -P kratis-premium-clean-2026
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          RELOADLY_SANDBOX_ID: ${{ secrets.RELOADLY_SANDBOX_ID }}
+          RELOADLY_SANDBOX_SECRET: ${{ secrets.RELOADLY_SANDBOX_SECRET }}
