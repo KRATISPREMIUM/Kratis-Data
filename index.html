@@ -256,6 +256,8 @@ body{padding-top:38px}
 <button onclick="go('ghana_gb')"><i class="fa-solid fa-signal"></i> Ghana GB <span class="badge">MTN GB • Telecel GB • AT GB</span></button>
 <button onclick="go('intl')"><i class="fa-solid fa-globe"></i> International Bundle & Airtime <span class="badge">Normal Bundles + Airtime For All Countries</span></button>
 <button onclick="go('gift')"><i class="fa-solid fa-gift"></i> Gift Cards <span class="badge">Gaming Inside</span></button>
+<button onclick="go('esim')"><i class="fa-solid fa-sim-card"></i> eSIM / Data eSIM <span class="badge">Travel Data</span></button>
+<button onclick="go('vcard')"><i class="fa-solid fa-credit-card"></i> Prepaid Virtual Cards <span class="badge">Visa</span></button>  
 <button onclick="go('utility')"><i class="fa-solid fa-bolt"></i> Utility Payments <span class="badge">Different from ECG</span></button>
 <button onclick="go('ecg')"><i class="fa-solid fa-plug"></i> ECG Prepaid</button>
 <button onclick="go('vouchers')"><i class="fa-solid fa-ticket"></i> Vouchers <span class="badge">WASSCE • BECE</span></button>
@@ -363,11 +365,39 @@ body{padding-top:38px}
 </div>
 
 <div id="intl-bundle" class="view hidden">
-<div style="background:#111;border:1px solid #444;border-radius:14px;padding:35px;text-align:center;max-width:520px;">
-<div style="font-size:45px;">📦</div>
-<h3 style="color:#FFD700;">Bundle - Coming Soon</h3>
-<p style="color:#aaa;">International Data Bundles for all countries via Reloadly API - Coming Soon!<br>Mobile Top-up is for Airtime only (like you said!)</p>
+  <div style="background:#111;border:1px solid #444;border-radius:14px;padding:20px;max-width:520px;">
+    <div style="font-size:40px;">📦</div>
+    <h3 style="color:#FFD700;">International Data Bundle</h3>
+    <p style="color:#aaa;font-size:12px;margin:8px 0;">Enter number, we go check operator + bundle sizes via Reloadly</p>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <select id="ccode2" style="background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:8px;">
+        <option value="233">🇬🇭 +233 Ghana</option><option value="234">🇳🇬 +234 Nigeria</option>
+        <option value="44">🇬🇧 +44 UK</option><option value="1">🇺🇸 +1 USA</option>
+        <option value="225">🇨🇮 +225 Ivory Coast</option><option value="27">🇿🇦 +27 South Africa</option>
+      </select>
+      <input id="bundlePhone" type="tel" placeholder="24 5678" style="flex:1;background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:8px;" />
+    </div>
+    <button onclick="checkBundle()" style="width:100%;background:#FFD700;color:#000;padding:11px;border:none;border-radius:20px;font-weight:bold;margin-top:10px;">Check Bundles</button>
+    <div id="bundleList" style="margin-top:12px;"></div>
+  </div>
 </div>
+<script>
+async function checkBundle(){
+  let cc=document.getElementById('ccode2').value;
+  let ph=document.getElementById('bundlePhone').value;
+  if(!ph){alert('Enter number');return;}
+  let full='+'+cc+ph;
+  document.getElementById('bundleList').innerHTML='<p style="color:#FFD700;">Checking '+full+' bundles via Reloadly...</p>';
+  try{
+    const res=await fetch(`/api/reloadly/bundles?phone=${encodeURIComponent(full)}`);
+    const data=await res.json();
+    let html='';
+    data.forEach(b=>{ html+=`<div style="background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;"><div><b>${b.name||b.plan}</b><br><small style="color:#888">${b.validity||''}</small></div><button onclick="buyBundle('${b.id}')" style="background:#FFD700;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;">Buy ${b.price||''}</button></div>`; });
+    document.getElementById('bundleList').innerHTML=html||'<p style="color:#aaa;">No bundle for this number yet</p>';
+  }catch(e){ document.getElementById('bundleList').innerHTML='<p style="color:#ff6b6b;">Backend not connected yet - /api/reloadly/bundles</p>'; }
+}
+function buyBundle(id){ alert('Buy Bundle ID: '+id+' via Reloadly API'); }
+</script>
 </div>
 
 </div>
@@ -480,7 +510,61 @@ document.getElementById('giftCategory')?.addEventListener('change', loadGiftCard
 // Auto load like video
 setTimeout(loadGiftCards, 1000);
 </script>
+<div id="view-esim" class="view hidden">
+  <h3>📶 eSIM / Data eSIM — Travel Data For All Countries</h3>
+  <p style="color:#888;font-size:12px;margin:6px 0 12px;">UK, USA, Canada, Europe, Ghana, Nigeria — QR code by email</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <select id="esimRegion" style="background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:20px;">
+      <option>Europe</option><option>United Kingdom</option><option>United States</option><option>Canada</option><option>Ghana</option><option>Nigeria</option><option>Worldwide</option>
+    </select>
+    <select id="esimSize" style="background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:20px;">
+      <option>1 GB</option><option>3 GB</option><option>5 GB</option><option>10 GB</option><option>20 GB</option>
+    </select>
+    <button onclick="loadESIM()" style="background:#FFD700;color:#000;border:none;padding:10px 18px;border-radius:20px;font-weight:bold;">Check eSIM</button>
+  </div>
+  <div id="esimGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:15px;"></div>
+</div>
 
+<div id="view-vcard" class="view hidden">
+  <h3>💳 Prepaid Virtual Cards — Visa</h3>
+  <p style="color:#888;font-size:12px;margin:6px 0 12px;">Virtual card for online spending — Apple Pay, Google Pay</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <select id="vcardAmt" style="background:#222;color:#fff;border:1px solid #555;padding:10px;border-radius:20px;">
+      <option value="10">\$10</option><option value="25">\$25</option><option value="50">\$50</option><option value="100">\$100</option>
+    </select>
+    <button onclick="loadVCards()" style="background:#FFD700;color:#000;border:none;padding:10px 18px;border-radius:20px;font-weight:bold;">Check Cards</button>
+  </div>
+  <div id="vcardGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:15px;"></div>
+</div>
+
+<script>
+async function loadESIM(){
+  const region=document.getElementById('esimRegion').value;
+  const size=document.getElementById('esimSize').value;
+  document.getElementById('esimGrid').innerHTML='<p style="color:#FFD700;">Loading '+region+' '+size+' eSIM via Reloadly...</p>';
+  try{
+    const res=await fetch(`/api/reloadly/esim?region=${encodeURIComponent(region)}&size=${encodeURIComponent(size)}`);
+    const data=await res.json();
+    let html='';
+    data.forEach(e=>{ html+=`<div style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;"><b>${e.name||region+' eSIM'}</b><br><small style="color:#888">${e.validity||'30 days'}</small><br><button onclick="buyESIM('${e.id}')" style="background:#FFD700;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;margin-top:8px;">Buy ${e.price||''}</button></div>`; });
+    document.getElementById('esimGrid').innerHTML=html||'<p style="color:#aaa;">No eSIM found</p>';
+  }catch(e){ document.getElementById('esimGrid').innerHTML='<p style="color:#ff6b6b;">Backend not connected yet - /api/reloadly/esim</p>'; }
+}
+function buyESIM(id){ alert('Buy eSIM ID: '+id+' - QR code go send give email'); }
+
+async function loadVCards(){
+  const amt=document.getElementById('vcardAmt').value;
+  document.getElementById('vcardGrid').innerHTML='<p style="color:#FFD700;">Loading Virtual Cards via Reloadly Swype...</p>';
+  try{
+    const res=await fetch(`/api/reloadly/prepaid-cards?amount=${amt}`);
+    const data=await res.json();
+    let html='';
+    data.forEach(c=>{ html+=`<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #333;border-radius:14px;padding:16px;"><b>💳 ${c.name||'Swype Visa'}</b><br><small style="color:#aaa">\$${amt} • Virtual</small><br><button onclick="buyVCard('${c.id}')" style="background:#FFD700;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;margin-top:8px;">Create Card</button></div>`; });
+    document.getElementById('vcardGrid').innerHTML=html||'<p style="color:#aaa;">No card found</p>';
+  }catch(e){ document.getElementById('vcardGrid').innerHTML='<p style="color:#ff6b6b;">Backend not connected yet - /api/reloadly/prepaid-cards</p>'; }
+}
+function buyVCard(id){ alert('Create Virtual Card ID: '+id+' via Reloadly API'); }
+</script>
 <div id="view-utility" class="view hidden">
 <h3>💡 Utility Payments — Electricity, Water, TV, Internet — Powered by Reloadly</h3>
 
