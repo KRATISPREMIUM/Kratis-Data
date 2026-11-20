@@ -207,78 +207,72 @@ async function login(){
   window.location.href='index.html';
 }
 </script>
-<!-- KRATIS PREMIUM - BLUE CLOUDS + RAIN BACKGROUND -->
-<div class="clouds-bg">
-  <div class="cloud c1"></div>
-  <div class="cloud c2"></div>
-  <div class="cloud c3"></div>
-  <div class="cloud c4"></div>
+<!-- KRATIS PREMIUM - RAIN ONLY FOR RIGHT SIDE -->
+<div class="right-rain-bg">
+  <div class="cloud rc1"></div>
+  <div class="cloud rc2"></div>
+  <div class="cloud rc3"></div>
   <canvas id="rainCanvas"></canvas>
-  <h1 class="motto"><span class="gold">YOUR IDEAL SUCCESS</span> <span class="blue">IS OUR GOAL</span></h1>
+  <h1 class="motto-right"><span class="gold">YOUR IDEAL SUCCESS</span><br><span class="blue">IS OUR GOAL</span></h1>
 </div>
 
 <style>
-.clouds-bg{
-  position:fixed; inset:0; z-index:-1; overflow:hidden;
-  background: linear-gradient(180deg, #0a1931 0%, #185adb 55%, #1e3c72 100%);
+.right-rain-bg{
+  position:fixed; top:0; right:0; width:44.5%; height:100vh;
+  z-index:0; overflow:hidden; pointer-events:none;
+  background: linear-gradient(180deg, #0a1931 0%, #123a7a 60%, #185adb 100%);
 }
-.motto{
-  position:absolute; top:22px; left:50%; transform:translateX(-50%);
-  width:95%; text-align:center; font-size:26px; font-weight:900;
-  letter-spacing:2px; text-shadow:0 4px 15px rgba(0,0,0,.6);
-  animation: mottoGlow 2.5s infinite alternate;
-  z-index:5; font-family: Arial, sans-serif; margin:0;
+.motto-right{
+  position:absolute; top:18px; left:50%; transform:translateX(-50%);
+  width:92%; text-align:center; font-size:20px; font-weight:900;
+  letter-spacing:1.5px; line-height:1.3; margin:0; z-index:5;
+  font-family: Arial, sans-serif; text-shadow:0 4px 12px rgba(0,0,0,.7);
 }
-.motto .gold{
-  background: linear-gradient(90deg,#FFD700,#FFAA00,#FFD700);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-}
-.motto .blue{
-  background: linear-gradient(90deg,#00D4FF,#38BDF8,#00D4FF);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-}
-@keyframes mottoGlow{ from{opacity:.85} to{opacity:1; filter:brightness(1.2)} }
+.motto-right .gold{ color:#FFD700; }
+.motto-right .blue{ color:#38BDF8; }
 
 .cloud{
-  position:absolute; background:white; border-radius:50px; opacity:.22;
-  filter: blur(2px); animation: moveCloud linear infinite;
+  position:absolute; background:white; border-radius:50px; opacity:.20;
+  animation: moveCloud linear infinite;
 }
-.cloud:before, .cloud:after{
-  content:''; position:absolute; background:white; border-radius:50%;
-}
-.c1{ width:180px; height:55px; top:18%; animation-duration:38s; }
-.c1:before{ width:90px; height:90px; top:-45px; left:30px; }
-.c1:after{ width:65px; height:65px; top:-30px; left:95px; }
-.c2{ width:240px; height:65px; top:38%; animation-duration:55s; animation-delay:-15s; opacity:.18; }
-.c2:before{ width:110px; height:110px; top:-55px; left:40px; }
-.c2:after{ width:80px; height:80px; top:-35px; left:130px; }
-.c3{ width:150px; height:45px; top:62%; animation-duration:45s; animation-delay:-25s; }
-.c3:before{ width:75px; height:75px; top:-38px; left:25px; }
-.c3:after{ width:55px; height:55px; top:-25px; left:80px; }
-.c4{ width:200px; height:60px; top:82%; animation-duration:65s; animation-delay:-5s; opacity:.15; }
-.c4:before{ width:95px; height:95px; top:-48px; left:35px; }
-.c4:after{ width:70px; height:70px; top:-32px; left:110px; }
+.cloud:before, .cloud:after{ content:''; position:absolute; background:white; border-radius:50%; }
+.rc1{ width:150px; height:45px; top:22%; animation-duration:32s; }
+.rc1:before{ width:75px; height:75px; top:-38px; left:25px; }
+.rc1:after{ width:55px; height:55px; top:-25px; left:80px; }
+.rc2{ width:190px; height:55px; top:55%; animation-duration:48s; animation-delay:-12s; }
+.rc2:before{ width:90px; height:90px; top:-45px; left:30px; }
+.rc2:after{ width:65px; height:65px; top:-30px; left:100px; }
+.rc3{ width:130px; height:40px; top:80%; animation-duration:40s; animation-delay:-20s; }
+.rc3:before{ width:65px; height:65px; top:-32px; left:20px; }
+.rc3:after{ width:45px; height:45px; top:-20px; left:70px; }
 
-@keyframes moveCloud{
-  from{ left:-260px; }
-  to{ left:110%; }
-}
+@keyframes moveCloud{ from{ left:-220px; } to{ left:110%; } }
 #rainCanvas{ position:absolute; inset:0; width:100%; height:100%; }
+
+/* Make Sign In form come on top of rain */
+.right-panel, .login-panel, .form-side, main > div:last-child{
+  position:relative !important; z-index:2 !important; background:transparent !important;
+}
+
+@media(max-width:900px){
+  .right-rain-bg{ width:100%; height:55%; top:auto; bottom:0; }
+  .motto-right{ font-size:17px; top:10px; }
+}
 </style>
 
 <script>
 const canvas = document.getElementById('rainCanvas');
 const ctx = canvas.getContext('2d');
 let drops = [];
-function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+function resize(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
 resize(); addEventListener('resize', resize);
-for(let i=0;i<140;i++){
-  drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:12+Math.random()*18, s:9+Math.random()*10});
+for(let i=0;i<110;i++){
+  drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:10+Math.random()*15, s:8+Math.random()*9});
 }
 function drawRain(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle = 'rgba(174,194,224,0.55)';
-  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = 'rgba(174,194,224,0.5)';
+  ctx.lineWidth = 1.3;
   ctx.beginPath();
   drops.forEach(d=>{
     ctx.moveTo(d.x, d.y);
