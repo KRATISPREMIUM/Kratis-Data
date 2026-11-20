@@ -207,82 +207,108 @@ async function login(){
   window.location.href='index.html';
 }
 </script>
-<!-- KRATIS PREMIUM - RAIN ONLY FOR RIGHT SIDE -->
-<div class="right-rain-bg">
-  <div class="cloud rc1"></div>
-  <div class="cloud rc2"></div>
-  <div class="cloud rc3"></div>
-  <canvas id="rainCanvas"></canvas>
-  <h1 class="motto-right"><span class="gold">YOUR IDEAL SUCCESS</span><br><span class="blue">IS OUR GOAL</span></h1>
-</div>
-
+<!-- KRATIS PREMIUM - RAIN FOR RIGHT SIDE ONLY (FIXED) -->
 <style>
-.right-rain-bg{
-  position:fixed; top:0; right:0; width:44.5%; height:100vh;
-  z-index:0; overflow:hidden; pointer-events:none;
-  background: linear-gradient(180deg, #0a1931 0%, #123a7a 60%, #185adb 100%);
+.kratis-rain-box{
+  position:absolute !important; inset:0 !important; z-index:0 !important;
+  overflow:hidden !important; pointer-events:none !important;
+  background: linear-gradient(180deg, #0a1931 0%, #123a7a 60%, #185adb 100%) !important;
+  border-radius:0 !important;
 }
-.motto-right{
-  position:absolute; top:18px; left:50%; transform:translateX(-50%);
-  width:92%; text-align:center; font-size:20px; font-weight:900;
-  letter-spacing:1.5px; line-height:1.3; margin:0; z-index:5;
-  font-family: Arial, sans-serif; text-shadow:0 4px 12px rgba(0,0,0,.7);
+.kratis-rain-box canvas{ position:absolute; inset:0; width:100%; height:100%; }
+.kratis-motto{
+  position:absolute; top:16px; left:50%; transform:translateX(-50%);
+  width:92%; text-align:center; z-index:3; margin:0;
+  font-family:Arial, sans-serif; font-size:19px; font-weight:900;
+  letter-spacing:1.5px; line-height:1.35; text-shadow:0 4px 12px rgba(0,0,0,.8);
 }
-.motto-right .gold{ color:#FFD700; }
-.motto-right .blue{ color:#38BDF8; }
-
-.cloud{
+.kratis-motto .gold{ color:#FFD700; }
+.kratis-motto .blue{ color:#38BDF8; }
+.k-cloud{
   position:absolute; background:white; border-radius:50px; opacity:.20;
-  animation: moveCloud linear infinite;
+  animation:kMove linear infinite;
 }
-.cloud:before, .cloud:after{ content:''; position:absolute; background:white; border-radius:50%; }
-.rc1{ width:150px; height:45px; top:22%; animation-duration:32s; }
-.rc1:before{ width:75px; height:75px; top:-38px; left:25px; }
-.rc1:after{ width:55px; height:55px; top:-25px; left:80px; }
-.rc2{ width:190px; height:55px; top:55%; animation-duration:48s; animation-delay:-12s; }
-.rc2:before{ width:90px; height:90px; top:-45px; left:30px; }
-.rc2:after{ width:65px; height:65px; top:-30px; left:100px; }
-.rc3{ width:130px; height:40px; top:80%; animation-duration:40s; animation-delay:-20s; }
-.rc3:before{ width:65px; height:65px; top:-32px; left:20px; }
-.rc3:after{ width:45px; height:45px; top:-20px; left:70px; }
-
-@keyframes moveCloud{ from{ left:-220px; } to{ left:110%; } }
-#rainCanvas{ position:absolute; inset:0; width:100%; height:100%; }
-
-/* Make Sign In form come on top of rain */
-.right-panel, .login-panel, .form-side, main > div:last-child{
-  position:relative !important; z-index:2 !important; background:transparent !important;
-}
-
-@media(max-width:900px){
-  .right-rain-bg{ width:100%; height:55%; top:auto; bottom:0; }
-  .motto-right{ font-size:17px; top:10px; }
-}
+.k-cloud:before, .k-cloud:after{ content:''; position:absolute; background:white; border-radius:50%; }
+.kc1{ width:150px; height:45px; top:24%; animation-duration:30s; }
+.kc1:before{ width:75px; height:75px; top:-38px; left:25px; }
+.kc1:after{ width:55px; height:55px; top:-25px; left:80px; }
+.kc2{ width:190px; height:55px; top:58%; animation-duration:46s; animation-delay:-10s; }
+.kc2:before{ width:90px; height:90px; top:-45px; left:30px; }
+.kc2:after{ width:65px; height:65px; top:-30px; left:100px; }
+.kc3{ width:130px; height:40px; top:82%; animation-duration:38s; animation-delay:-18s; }
+.kc3:before{ width:65px; height:65px; top:-32px; left:20px; }
+.kc3:after{ width:45px; height:45px; top:-20px; left:70px; }
+@keyframes kMove{ from{ left:-220px; } to{ left:110%; } }
 </style>
 
 <script>
-const canvas = document.getElementById('rainCanvas');
-const ctx = canvas.getContext('2d');
-let drops = [];
-function resize(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
-resize(); addEventListener('resize', resize);
-for(let i=0;i<110;i++){
-  drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:10+Math.random()*15, s:8+Math.random()*9});
-}
-function drawRain(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle = 'rgba(174,194,224,0.5)';
-  ctx.lineWidth = 1.3;
-  ctx.beginPath();
-  drops.forEach(d=>{
-    ctx.moveTo(d.x, d.y);
-    ctx.lineTo(d.x, d.y + d.l);
-    d.y += d.s;
-    if(d.y > canvas.height){ d.y = -20; d.x = Math.random()*canvas.width; }
-  });
-  ctx.stroke();
-  requestAnimationFrame(drawRain);
-}
-drawRain();
+(function(){
+  function findRightPanel(){
+    var titles = document.querySelectorAll('h1,h2,div,span');
+    for(var i=0;i<titles.length;i++){
+      if(titles[i].textContent && titles[i].textContent.indexOf('Sign In to KratisData') !== -1){
+        var el = titles[i];
+        for(var j=0;j<7;j++){
+          if(!el.parentElement) break;
+          el = el.parentElement;
+          if(el.offsetWidth > window.innerWidth * 0.3 && el.offsetHeight > window.innerHeight * 0.6){
+            return el;
+          }
+        }
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function addRain(){
+    var panel = findRightPanel();
+    if(!panel || panel.querySelector('.kratis-rain-box')) return;
+
+    panel.style.position = 'relative';
+    panel.style.overflow = 'hidden';
+    panel.style.background = 'transparent';
+
+    var box = document.createElement('div');
+    box.className = 'kratis-rain-box';
+    box.innerHTML = '<div class="k-cloud kc1"></div><div class="k-cloud kc2"></div><div class="k-cloud kc3"></div><canvas></canvas><h1 class="kratis-motto"><span class="gold">YOUR IDEAL SUCCESS</span><br><span class="blue">IS OUR GOAL</span></h1>';
+    panel.prepend(box);
+
+    // Bring form on top of rain
+    var children = panel.children;
+    for(var k=1;k<children.length;k++){
+      children[k].style.position = 'relative';
+      children[k].style.zIndex = '2';
+    }
+
+    var canvas = box.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    function resize(){ canvas.width = panel.offsetWidth; canvas.height = panel.offsetHeight; }
+    resize(); addEventListener('resize', resize);
+    var drops = [];
+    for(var i=0;i<120;i++){
+      drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:10+Math.random()*15, s:8+Math.random()*9});
+    }
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.strokeStyle = 'rgba(174,194,224,0.55)';
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      drops.forEach(function(d){
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x, d.y + d.l);
+        d.y += d.s;
+        if(d.y > canvas.height){ d.y = -20; d.x = Math.random()*canvas.width; }
+      });
+      ctx.stroke();
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  addRain();
+  setTimeout(addRain, 500);
+  setTimeout(addRain, 1500);
+})();
 </script>
 </body></html>
