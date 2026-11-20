@@ -207,4 +207,88 @@ async function login(){
   window.location.href='index.html';
 }
 </script>
+<!-- KRATIS PREMIUM - BLUE CLOUDS + RAIN BACKGROUND -->
+<div class="clouds-bg">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+  <canvas id="rainCanvas"></canvas>
+  <h1 class="motto"><span class="gold">YOUR IDEAL SUCCESS</span> <span class="blue">IS OUR GOAL</span></h1>
+</div>
+
+<style>
+.clouds-bg{
+  position:fixed; inset:0; z-index:-1; overflow:hidden;
+  background: linear-gradient(180deg, #0a1931 0%, #185adb 55%, #1e3c72 100%);
+}
+.motto{
+  position:absolute; top:22px; left:50%; transform:translateX(-50%);
+  width:95%; text-align:center; font-size:26px; font-weight:900;
+  letter-spacing:2px; text-shadow:0 4px 15px rgba(0,0,0,.6);
+  animation: mottoGlow 2.5s infinite alternate;
+  z-index:5; font-family: Arial, sans-serif; margin:0;
+}
+.motto .gold{
+  background: linear-gradient(90deg,#FFD700,#FFAA00,#FFD700);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.motto .blue{
+  background: linear-gradient(90deg,#00D4FF,#38BDF8,#00D4FF);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+@keyframes mottoGlow{ from{opacity:.85} to{opacity:1; filter:brightness(1.2)} }
+
+.cloud{
+  position:absolute; background:white; border-radius:50px; opacity:.22;
+  filter: blur(2px); animation: moveCloud linear infinite;
+}
+.cloud:before, .cloud:after{
+  content:''; position:absolute; background:white; border-radius:50%;
+}
+.c1{ width:180px; height:55px; top:18%; animation-duration:38s; }
+.c1:before{ width:90px; height:90px; top:-45px; left:30px; }
+.c1:after{ width:65px; height:65px; top:-30px; left:95px; }
+.c2{ width:240px; height:65px; top:38%; animation-duration:55s; animation-delay:-15s; opacity:.18; }
+.c2:before{ width:110px; height:110px; top:-55px; left:40px; }
+.c2:after{ width:80px; height:80px; top:-35px; left:130px; }
+.c3{ width:150px; height:45px; top:62%; animation-duration:45s; animation-delay:-25s; }
+.c3:before{ width:75px; height:75px; top:-38px; left:25px; }
+.c3:after{ width:55px; height:55px; top:-25px; left:80px; }
+.c4{ width:200px; height:60px; top:82%; animation-duration:65s; animation-delay:-5s; opacity:.15; }
+.c4:before{ width:95px; height:95px; top:-48px; left:35px; }
+.c4:after{ width:70px; height:70px; top:-32px; left:110px; }
+
+@keyframes moveCloud{
+  from{ left:-260px; }
+  to{ left:110%; }
+}
+#rainCanvas{ position:absolute; inset:0; width:100%; height:100%; }
+</style>
+
+<script>
+const canvas = document.getElementById('rainCanvas');
+const ctx = canvas.getContext('2d');
+let drops = [];
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+for(let i=0;i<140;i++){
+  drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:12+Math.random()*18, s:9+Math.random()*10});
+}
+function drawRain(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle = 'rgba(174,194,224,0.55)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  drops.forEach(d=>{
+    ctx.moveTo(d.x, d.y);
+    ctx.lineTo(d.x, d.y + d.l);
+    d.y += d.s;
+    if(d.y > canvas.height){ d.y = -20; d.x = Math.random()*canvas.width; }
+  });
+  ctx.stroke();
+  requestAnimationFrame(drawRain);
+}
+drawRain();
+</script>
 </body></html>
