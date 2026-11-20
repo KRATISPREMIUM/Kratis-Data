@@ -31,7 +31,7 @@ body{min-height:100vh;background:#030308;color:#fff;overflow-x:hidden}
 #main{display:none;position:relative;z-index:2;min-height:100vh;flex}
 #main.show{display:flex}
 .left{flex:1.1;padding:34px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-.right{flex:.9;background:rgba(10,10,14,.72);backdrop-filter:blur(14px);border-left:1px solid rgba(255,255,255,.08);padding:30px;display:flex;flex-direction:column;justify-content:center}
+.right{flex:.9;background:transparent;border-left:1px solid rgba(255,255,255,.08);padding:90px 30px 30px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
 .logo{width:290px;max-width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(255,180,0,.25))}
 .flameName{margin-top:14px;font-size:clamp(20px,3vw,30px);font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#FFD700,#FF6B00,#FF2D00,#FFD700);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:flameMove 2s linear infinite,flicker 1.2s ease-in-out infinite}
 @keyframes flameMove{to{background-position:200% center}}
@@ -55,12 +55,37 @@ h2{font-size:28px;margin-top:14px;font-weight:900}.sub{color:#888;font-size:12px
 #err{margin-top:12px;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);color:#ff6b6b;padding:10px;border-radius:10px;font-size:12px;display:none}
 #signupFields{display:none}
 @media(max-width:768px){#main{flex-direction:column}.left{padding:22px}.logo{width:210px}.right{border-left:none;border-top:1px solid rgba(255,255,255,.08)}.services{grid-template-columns:1fr}}
+/* KRATIS RAIN - RIGHT SIDE ONLY */
+#rainBg{position:fixed;top:0;right:0;width:45%;height:100vh;z-index:1;pointer-events:none;background:linear-gradient(180deg,#0a1931 0%,#123a7a 60%,#185adb 100%)}
+#rainCanvas{position:absolute;inset:0;width:100%;height:100%}
+.r-cloud{position:absolute;background:#fff;border-radius:50px;opacity:.20;animation:rMove linear infinite}
+.r-cloud:before,.r-cloud:after{content:'';position:absolute;background:#fff;border-radius:50%}
+.rc1{width:150px;height:45px;top:24%;animation-duration:30s}
+.rc1:before{width:75px;height:75px;top:-38px;left:25px}
+.rc1:after{width:55px;height:55px;top:-25px;left:80px}
+.rc2{width:190px;height:55px;top:58%;animation-duration:46s;animation-delay:-10s}
+.rc2:before{width:90px;height:90px;top:-45px;left:30px}
+.rc2:after{width:65px;height:65px;top:-30px;left:100px}
+.rc3{width:130px;height:40px;top:82%;animation-duration:38s;animation-delay:-18s}
+.rc3:before{width:65px;height:65px;top:-32px;left:20px}
+.rc3:after{width:45px;height:45px;top:-20px;left:70px}
+@keyframes rMove{from{left:-220px}to{left:110%}}
+#mottoRight{position:fixed;top:14px;right:0;width:45%;text-align:center;z-index:3;pointer-events:none;font-family:Arial,sans-serif;font-size:19px;font-weight:900;letter-spacing:1.5px;line-height:1.35;text-shadow:0 4px 12px rgba(0,0,0,.8)}
+#mottoRight .gold{color:#FFD700}
+#mottoRight .blue{color:#38BDF8}
+@media(max-width:768px){#rainBg{width:100%;height:55%;top:auto;bottom:0}#mottoRight{width:100%;top:auto;bottom:calc(55% + 10px);font-size:16px}}
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
 <div class="glow g1"></div><div class="glow g2"></div>
-
+<div id="rainBg">
+  <div class="r-cloud rc1"></div>
+  <div class="r-cloud rc2"></div>
+  <div class="r-cloud rc3"></div>
+  <canvas id="rainCanvas"></canvas>
+</div>
+<h1 id="mottoRight"><span class="gold">YOUR IDEAL SUCCESS</span><br><span class="blue">IS OUR GOAL</span></h1>
 <div id="intro" onclick="skipIntro()">
   <div class="word" id="w1">KRATIS</div>
   <div class="word" id="w2">DATA.COM</div>
@@ -207,108 +232,22 @@ async function login(){
   window.location.href='index.html';
 }
 </script>
-<!-- KRATIS PREMIUM - RAIN FOR RIGHT SIDE ONLY (FIXED) -->
-<style>
-.kratis-rain-box{
-  position:absolute !important; inset:0 !important; z-index:0 !important;
-  overflow:hidden !important; pointer-events:none !important;
-  background: linear-gradient(180deg, #0a1931 0%, #123a7a 60%, #185adb 100%) !important;
-  border-radius:0 !important;
-}
-.kratis-rain-box canvas{ position:absolute; inset:0; width:100%; height:100%; }
-.kratis-motto{
-  position:absolute; top:16px; left:50%; transform:translateX(-50%);
-  width:92%; text-align:center; z-index:3; margin:0;
-  font-family:Arial, sans-serif; font-size:19px; font-weight:900;
-  letter-spacing:1.5px; line-height:1.35; text-shadow:0 4px 12px rgba(0,0,0,.8);
-}
-.kratis-motto .gold{ color:#FFD700; }
-.kratis-motto .blue{ color:#38BDF8; }
-.k-cloud{
-  position:absolute; background:white; border-radius:50px; opacity:.20;
-  animation:kMove linear infinite;
-}
-.k-cloud:before, .k-cloud:after{ content:''; position:absolute; background:white; border-radius:50%; }
-.kc1{ width:150px; height:45px; top:24%; animation-duration:30s; }
-.kc1:before{ width:75px; height:75px; top:-38px; left:25px; }
-.kc1:after{ width:55px; height:55px; top:-25px; left:80px; }
-.kc2{ width:190px; height:55px; top:58%; animation-duration:46s; animation-delay:-10s; }
-.kc2:before{ width:90px; height:90px; top:-45px; left:30px; }
-.kc2:after{ width:65px; height:65px; top:-30px; left:100px; }
-.kc3{ width:130px; height:40px; top:82%; animation-duration:38s; animation-delay:-18s; }
-.kc3:before{ width:65px; height:65px; top:-32px; left:20px; }
-.kc3:after{ width:45px; height:45px; top:-20px; left:70px; }
-@keyframes kMove{ from{ left:-220px; } to{ left:110%; } }
-</style>
-
 <script>
-(function(){
-  function findRightPanel(){
-    var titles = document.querySelectorAll('h1,h2,div,span');
-    for(var i=0;i<titles.length;i++){
-      if(titles[i].textContent && titles[i].textContent.indexOf('Sign In to KratisData') !== -1){
-        var el = titles[i];
-        for(var j=0;j<7;j++){
-          if(!el.parentElement) break;
-          el = el.parentElement;
-          if(el.offsetWidth > window.innerWidth * 0.3 && el.offsetHeight > window.innerHeight * 0.6){
-            return el;
-          }
-        }
-        return el;
-      }
-    }
-    return null;
-  }
-
-  function addRain(){
-    var panel = findRightPanel();
-    if(!panel || panel.querySelector('.kratis-rain-box')) return;
-
-    panel.style.position = 'relative';
-    panel.style.overflow = 'hidden';
-    panel.style.background = 'transparent';
-
-    var box = document.createElement('div');
-    box.className = 'kratis-rain-box';
-    box.innerHTML = '<div class="k-cloud kc1"></div><div class="k-cloud kc2"></div><div class="k-cloud kc3"></div><canvas></canvas><h1 class="kratis-motto"><span class="gold">YOUR IDEAL SUCCESS</span><br><span class="blue">IS OUR GOAL</span></h1>';
-    panel.prepend(box);
-
-    // Bring form on top of rain
-    var children = panel.children;
-    for(var k=1;k<children.length;k++){
-      children[k].style.position = 'relative';
-      children[k].style.zIndex = '2';
-    }
-
-    var canvas = box.querySelector('canvas');
-    var ctx = canvas.getContext('2d');
-    function resize(){ canvas.width = panel.offsetWidth; canvas.height = panel.offsetHeight; }
-    resize(); addEventListener('resize', resize);
-    var drops = [];
-    for(var i=0;i<120;i++){
-      drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, l:10+Math.random()*15, s:8+Math.random()*9});
-    }
-    function draw(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.strokeStyle = 'rgba(174,194,224,0.55)';
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      drops.forEach(function(d){
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.l);
-        d.y += d.s;
-        if(d.y > canvas.height){ d.y = -20; d.x = Math.random()*canvas.width; }
-      });
-      ctx.stroke();
-      requestAnimationFrame(draw);
-    }
-    draw();
-  }
-
-  addRain();
-  setTimeout(addRain, 500);
-  setTimeout(addRain, 1500);
+// RAIN FOR RIGHT SIDE ONLY
+const rc=document.getElementById('rainCanvas'),rx=rc.getContext('2d');
+let drops=[];
+function rResize(){rc.width=rc.offsetWidth;rc.height=rc.offsetHeight}
+rResize();addEventListener('resize',rResize);
+for(let i=0;i<120;i++)drops.push({x:Math.random()*800,y:Math.random()*800,l:10+Math.random()*15,s:8+Math.random()*9});
+(function rLoop(){
+  rx.clearRect(0,0,rc.width,rc.height);
+  rx.strokeStyle='rgba(174,194,224,0.55)';rx.lineWidth=1.3;rx.beginPath();
+  drops.forEach(d=>{
+    rx.moveTo(d.x,d.y);rx.lineTo(d.x,d.y+d.l);
+    d.y+=d.s;
+    if(d.y>rc.height){d.y=-20;d.x=Math.random()*rc.width}
+  });
+  rx.stroke();requestAnimationFrame(rLoop);
 })();
 </script>
 </body></html>
