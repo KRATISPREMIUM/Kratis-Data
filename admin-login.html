@@ -6,77 +6,100 @@
 <script src="firebase.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{min-height:100vh;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:#050505}
-body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,170,0,.07) 0%,transparent 55%),repeating-linear-gradient(0deg,transparent 0 46px,rgba(255,200,80,.045) 46px 47px),repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,200,80,.045) 46px 47px),radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.75) 100%);z-index:0}
-.gear{position:absolute;z-index:1;pointer-events:none;animation:floaty 8s ease-in-out infinite,spin 22s linear infinite;filter:drop-shadow(0 0 14px rgba(255,170,0,.45))}
-.gear svg{display:block;width:100%;height:100%}
-.g1{top:8%;left:4%;width:170px;height:170px;opacity:.9}
-.g2{top:14%;right:5%;width:120px;height:120px;opacity:.75;animation-delay:1.2s;animation-duration:9s,28s}
-.g3{bottom:10%;left:7%;width:95px;height:95px;opacity:.6;animation-delay:2.4s;animation-duration:7s,18s}
-.g4{bottom:14%;right:6%;width:150px;height:150px;opacity:.85;animation-delay:.6s}
-.g5{top:46%;left:1%;width:60px;height:60px;opacity:.35;filter:blur(1px);animation-delay:3s}
-.g6{top:48%;right:1%;width:70px;height:70px;opacity:.35;filter:blur(1px);animation-delay:1.8s}
-.g7{top:38%;left:16%;width:45px;height:45px;opacity:.4;animation-delay:4s}
-.g8{bottom:38%;right:16%;width:50px;height:50px;opacity:.4;animation-delay:2s}
-@keyframes floaty{0%,100%{margin-top:0}50%{margin-top:-26px}}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFD700;box-shadow:0 0 10px #FFB300;z-index:1;animation:rise 6s linear infinite;opacity:0}
-@keyframes rise{0%{transform:translateY(20px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-90vh);opacity:0}}
-.fire-text{text-align:center;font-size:clamp(30px,6.5vw,60px);font-weight:900;letter-spacing:2px;line-height:1.12;margin-bottom:22px;background:linear-gradient(180deg,#fffbe6 0%,#ffe95e 25%,#ffb300 55%,#ff6a00 85%,#ff2d00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:burn 1.6s infinite alternate;z-index:2}
-@keyframes burn{from{filter:drop-shadow(0 0 10px rgba(255,140,0,.7)) brightness(1)}to{filter:drop-shadow(0 0 32px rgba(255,100,0,1)) brightness(1.35)}}
-.box{background:rgba(18,18,18,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:34px 30px;border-radius:22px;width:92%;max-width:430px;border:1px solid rgba(255,215,0,.4);box-shadow:0 0 60px rgba(255,140,0,.3),inset 0 1px 0 rgba(255,255,255,.15);z-index:2}
-.box h2{text-align:center;font-size:28px;margin-bottom:8px}
-.box h2 span{color:#FFD700}
-.sub{text-align:center;color:#bbb;font-size:13px;margin-bottom:22px}
-label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
-input{width:100%;padding:14px 16px;border-radius:10px;background:rgba(0,0,0,.6);border:1px solid rgba(255,215,0,.3);color:#fff;outline:none}
-input:focus{border-color:#FFD700;box-shadow:0 0 0 3px rgba(255,215,0,.18)}
-.row{display:flex;justify-content:space-between;font-size:12px;color:#aaa;margin:14px 0 18px}
+body{min-height:100vh;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;position:relative;overflow:hidden;background:#030303}
+body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(255,170,0,.14),transparent 45%),radial-gradient(ellipse at 85% 20%,rgba(255,140,0,.12),transparent 40%),radial-gradient(ellipse at 80% 85%,rgba(255,170,0,.1),transparent 45%),repeating-linear-gradient(0deg,transparent 0 52px,rgba(255,210,110,.05) 52px 53px),repeating-linear-gradient(90deg,transparent 0 52px,rgba(255,210,110,.05) 52px 53px),radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.8) 100%);z-index:0}
+.gear{position:absolute;z-index:1;pointer-events:none}
+.gear svg{display:block;width:100%;height:100%;overflow:visible}
+.spin{animation:spin 26s linear infinite}
+.spin-r{animation:spinr 32s linear infinite}
+.float{animation:floaty 7s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes floaty{0%,100%{margin-top:0}50%{margin-top:-20px}}
+.g1{top:16%;left:9%;width:210px;height:210px;opacity:.95}
+.g2{top:9%;left:5%;width:110px;height:110px;opacity:.35;filter:blur(2px)}
+.g3{top:18%;right:10%;width:150px;height:150px;opacity:.9}
+.g4{top:30%;right:4%;width:110px;height:110px;opacity:.85}
+.g5{top:40%;right:13%;width:180px;height:180px;opacity:.5;filter:blur(1px)}
+.g6{bottom:24%;left:20%;width:130px;height:130px;opacity:.9}
+.g7{bottom:8%;left:3%;width:90px;height:90px;opacity:.5}
+.g8{bottom:16%;right:20%;width:110px;height:110px;opacity:.9}
+.g9{bottom:2%;right:2%;width:190px;height:190px;opacity:.55;filter:blur(2px)}
+.g10{top:44%;left:26%;width:70px;height:70px;opacity:.8}
+.g11{top:58%;right:26%;width:55px;height:55px;opacity:.7}
+.spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFD700;box-shadow:0 0 12px #FFB300;z-index:1;animation:rise 7s linear infinite;opacity:0}
+@keyframes rise{0%{transform:translateY(30px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-85vh);opacity:0}}
+.fire-wrap{position:relative;z-index:2;text-align:center;margin-bottom:28px}
+.flames{position:absolute;left:50%;top:-34px;transform:translateX(-50%);font-size:30px;letter-spacing:18px;filter:blur(.4px);animation:flame .9s infinite alternate;white-space:nowrap}
+@keyframes flame{from{transform:translateX(-50%) scale(1) translateY(0)}to{transform:translateX(-50%) scale(1.12) translateY(-4px)}}
+.fire-text{font-size:clamp(30px,6.2vw,58px);font-weight:900;letter-spacing:2px;line-height:1.12;background:linear-gradient(180deg,#fff8d6 0%,#ffe95e 30%,#ffb300 60%,#ff6a00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:burn 1.5s infinite alternate}
+@keyframes burn{from{filter:drop-shadow(0 0 8px rgba(255,140,0,.65)) drop-shadow(0 4px 18px rgba(255,80,0,.5)) brightness(1)}to{filter:drop-shadow(0 0 22px rgba(255,150,0,.95)) drop-shadow(0 4px 26px rgba(255,80,0,.8)) brightness(1.3)}}
+.box{position:relative;background:linear-gradient(160deg,rgba(70,70,70,.55),rgba(20,20,20,.72));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:36px 32px;border-radius:24px;width:94%;max-width:500px;border:1px solid rgba(255,220,150,.45);box-shadow:0 0 70px rgba(255,160,0,.22),inset 0 1px 0 rgba(255,255,255,.25);z-index:2}
+.box::before,.box::after{content:'';position:absolute;width:34px;height:34px;border:2px solid rgba(255,215,0,.7)}
+.box::before{top:10px;left:10px;border-right:none;border-bottom:none;border-radius:14px 0 0 0}
+.box::after{bottom:10px;right:10px;border-left:none;border-top:none;border-radius:0 0 14px 0}
+.box h2{text-align:center;font-size:32px;font-weight:800;margin-bottom:10px}
+.sub{text-align:center;color:#ddd;font-size:14px;margin-bottom:28px}
+label{display:block;font-size:14px;font-weight:700;margin:16px 0 8px}
+.field{position:relative}
+.field .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.85}
+.field .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:4px}
+input{width:100%;padding:15px 44px 15px 42px;border-radius:12px;background:rgba(0,0,0,.45);border:1px solid rgba(255,220,150,.35);color:#fff;outline:none;font-size:15px}
+input:focus{border-color:#FFD700;box-shadow:0 0 0 3px rgba(255,215,0,.15)}
+.row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);padding:13px 16px;border-radius:12px;font-size:13px;color:#ccc;margin:18px 0}
 .row a{color:#FFD700;text-decoration:none;font-weight:700}
-button{width:100%;padding:15px;background:linear-gradient(90deg,#FFD700,#FFB300);border:none;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;color:#000}
-button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,215,0,.5)}
-.foot{text-align:center;color:#999;font-size:11px;margin-top:16px}
-.footer{margin-top:20px;color:#d4af37;font-size:12px;z-index:2;text-align:center}
-.conf{color:#555;font-size:10px;text-align:center;margin-top:12px;z-index:2}
+button.main{width:100%;padding:17px;background:linear-gradient(90deg,#FFE14d,#FFC400);border:none;border-radius:14px;font-weight:900;font-size:18px;cursor:pointer;color:#000;box-shadow:0 8px 28px rgba(255,200,0,.35)}
+button.main:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,200,0,.5)}
+.foot{text-align:center;color:#ccc;font-size:12px;margin-top:20px}
+.footer{margin-top:26px;color:#e8c87a;font-size:13px;z-index:2;text-align:center}
+.conf{color:#777;font-size:11px;text-align:center;margin-top:10px;z-index:2}
+@media(max-width:600px){.g1{width:130px;height:130px;left:2%}.g3{width:95px;height:95px;right:3%}.g9{display:none}}
 </style>
 </head><body>
 
 <svg width="0" height="0" style="position:absolute"><defs>
-<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe95e"/><stop offset=".55" stop-color="#c8911a"/><stop offset="1" stop-color="#7a5200"/></linearGradient>
-<symbol id="gear" viewBox="0 0 100 100"><path fill="url(#gold)" d="M50 12l3.2 7.1 7.4-2.4 1.5 7.7 7.6.8-1.7 7.6 5.4 5.4-5.4 5.4 1.7 7.6-7.6.8-1.5 7.7-7.4-2.4L50 88l-3.2-7.1-7.4 2.4-1.5-7.7-7.6-.8 1.7-7.6-5.4-5.4 5.4-5.4-1.7-7.6 7.6-.8 1.5-7.7 7.4 2.4z"/><circle cx="50" cy="50" r="17" fill="#0a0a0a" stroke="url(#gold)" stroke-width="5"/><circle cx="50" cy="50" r="7" fill="none" stroke="#ffe95e" stroke-width="2"/></symbol>
-</defs></svg>
+<radialGradient id="metal" cx=".38" cy=".32" r=".85"><stop offset="0" stop-color="#fff3b0"/><stop offset=".35" stop-color="#e8b84b"/><stop offset=".7" stop-color="#9c6b12"/><stop offset="1" stop-color="#5c3d05"/></radialGradient>
+<symbol id="gear" viewBox="0 0 100 100">
+<circle cx="50" cy="50" r="37" fill="none" stroke="url(#metal)" stroke-width="17" stroke-dasharray="9.7 9.7"/>
+<circle cx="50" cy="50" r="38" fill="none" stroke="#3a2600" stroke-width="2"/>
+<circle cx="50" cy="50" r="28" fill="none" stroke="url(#metal)" stroke-width="5"/>
+<g stroke="url(#metal)" stroke-width="7" stroke-linecap="round"><line x1="50" y1="50" x2="50" y2="24"/><line x1="50" y1="50" x2="72.5" y2="63"/><line x1="50" y1="50" x2="27.5" y2="63"/><line x1="50" y1="50" x2="72.5" y2="37"/><line x1="50" y1="50" x2="27.5" y2="37"/></g>
+<circle cx="50" cy="50" r="13" fill="#111" stroke="url(#metal)" stroke-width="5"/>
+<circle cx="50" cy="50" r="5" fill="url(#metal)"/>
+</symbol></defs></svg>
 
-<div class="gear g1"><svg><use href="#gear"/></svg></div>
-<div class="gear g2"><svg><use href="#gear"/></svg></div>
-<div class="gear g3"><svg><use href="#gear"/></svg></div>
-<div class="gear g4"><svg><use href="#gear"/></svg></div>
-<div class="gear g5"><svg><use href="#gear"/></svg></div>
-<div class="gear g6"><svg><use href="#gear"/></svg></div>
-<div class="gear g7"><svg><use href="#gear"/></svg></div>
-<div class="gear g8"><svg><use href="#gear"/></svg></div>
-<div class="spark" style="left:18%;bottom:10%;animation-delay:0s"></div>
-<div class="spark" style="left:32%;bottom:5%;animation-delay:2s"></div>
-<div class="spark" style="left:55%;bottom:8%;animation-delay:1s"></div>
-<div class="spark" style="left:72%;bottom:5%;animation-delay:3s"></div>
-<div class="spark" style="left:86%;bottom:12%;animation-delay:.5s"></div>
+<div class="gear g2"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="gear g1 float"><svg class="spin"><use href="#gear"/></svg></div>
+<div class="gear g3 float"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="gear g4"><svg class="spin"><use href="#gear"/></svg></div>
+<div class="gear g5"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="gear g6 float"><svg class="spin"><use href="#gear"/></svg></div>
+<div class="gear g7"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="gear g8 float"><svg class="spin"><use href="#gear"/></svg></div>
+<div class="gear g9"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="gear g10"><svg class="spin"><use href="#gear"/></svg></div>
+<div class="gear g11"><svg class="spin-r"><use href="#gear"/></svg></div>
+<div class="spark" style="left:15%;bottom:10%"></div><div class="spark" style="left:28%;bottom:5%;animation-delay:2s"></div><div class="spark" style="left:48%;bottom:8%;animation-delay:1s"></div><div class="spark" style="left:68%;bottom:5%;animation-delay:3s"></div><div class="spark" style="left:84%;bottom:12%;animation-delay:.5s"></div>
 
-<div class="fire-text">YOUR IDEAL SUCCESS<br>IS OUR GOAL</div>
+<div class="fire-wrap"><div class="flames">🔥 🔥 🔥 🔥 🔥</div><div class="fire-text">YOUR IDEAL SUCCESS<br>IS OUR GOAL</div></div>
+
 <div class="box">
-<h2>Manager <span>Access</span></h2>
+<h2>Manager Access</h2>
 <p class="sub">Sign in to your manager dashboard</p>
 <label>Email Address</label>
-<input id="email" type="email" placeholder="manager@company.gh">
+<div class="field"><span class="ico">✉️</span><input id="email" type="email" placeholder="manager@company.gh"></div>
 <label>Password</label>
-<input id="pass" type="password" placeholder="••••••••••">
+<div class="field"><span class="ico">🔒</span><input id="pass" type="password" placeholder="••••••••••"><button type="button" class="eye" onclick="togglePass()">👁️</button></div>
 <div id="err" style="color:#ff6b6b;font-size:12px;display:none;margin:10px 0"></div>
-<div class="row"><span>☐ Remember me</span><a href="#" onclick="return false">Forgot password?</a></div>
-<button onclick="login()">Secure Login</button>
-<p class="foot">Secured with 256-bit encryption • Trusted by Ghana Startups 🇬🇭</p>
+<div class="row"><span>☐ &nbsp;Remember me</span><a href="#" onclick="return false">Forgot password?</a></div>
+<button class="main" onclick="login()">Secure Login</button>
+<p class="foot">Secured with 256-bit encryption &nbsp;•&nbsp; Trusted by Ghana Startups 🇬🇭</p>
 </div>
 <p class="footer">© 2026 • Accra, Ghana • Kratis Premium • Privacy • Terms</p>
 <p class="conf">Confidential - Authorized Personnel Only</p>
 
 <script>
+function togglePass(){const p=document.getElementById('pass');p.type=p.type==='password'?'text':'password'}
 const ROLE_PAGE = {
   complaint_manager: "complaint-manager.html",
   transaction_manager: "transaction-manager.html",
