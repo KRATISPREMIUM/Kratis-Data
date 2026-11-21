@@ -2,7 +2,26 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
-<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px}</style>
+<style>
+body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px;box-sizing:border-box}
+*{box-sizing:border-box}
+h2{font-size:18px;margin:6px 0}
+.card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0}
+button{background:#FFD700;border:none;padding:10px 12px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:13px;margin:4px 4px 4px 0}
+select,input,textarea{width:100%;padding:11px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444;font-size:16px}
+#list{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #222;border-radius:12px;margin-top:10px}
+table{width:100%;min-width:720px;font-size:12px;border-collapse:collapse}
+td,th{border:1px solid #333;padding:8px;word-break:break-word}
+th{background:#16161f;position:sticky;top:0}
+@media(max-width:900px){
+  body{padding:12px}
+  h2{font-size:16px}
+  button{width:100%;padding:12px;font-size:14px;margin:5px 0}
+  td button{width:auto;padding:8px 10px;font-size:11px}
+  table{font-size:11px}
+  td,th{padding:7px 6px}
+}
+</style>
 </head><body>
 <h2>📊 Data Manager - Ghana GB</h2>
 <p id="who" style="color:#FFD700"></p>
