@@ -118,7 +118,7 @@ body{background:#060606;color:#fff;display:flex;min-height:100vh}
 .menu button.active{background:linear-gradient(90deg,#FFD700,#FFC700);color:#000;border-color:#FFD700;font-weight:900;box-shadow:0 6px 18px rgba(255,215,0,0.2)}
 .menu button .badge{margin-left:auto;background:#222;color:#999;font-size:8px;padding:2px 6px;border-radius:20px}
 .main{margin-left:190px;flex:1;min-width:0}
-.topbar{background:rgba(18,18,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid #1e1e1e;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:90}
+.topbar{background:rgba(18,18,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid #1e1e1e;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:38px;z-index:90}
 .tier-switch{display:flex;gap:6px;background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:5px}
 .tier-switch button{padding:7px 14px;border-radius:9px;border:1px solid transparent;background:transparent;color:#666;font-weight:800;font-size:10px;cursor:pointer}
 .tier-switch button.active{background:#FFD700;color:#000}
@@ -172,7 +172,7 @@ radial-gradient(1px 1px at 94% 12%,#FF6B00,transparent),
 radial-gradient(1px 1px at 35% 92%,#fff,transparent);
 animation:twinkle 3s ease-in-out infinite alternate}
 @keyframes twinkle{from{opacity:.4}to{opacity:1}}
-.main,.sidebar,.topbar{position:relative;z-index:1}
+.main,.sidebar{position:relative;z-index:1}
 .fireFloat{position:fixed;bottom:-20px;width:6px;height:6px;border-radius:50%;background:#FF6B00;box-shadow:0 0 12px #FF2D00,0 0 20px #FFD700;pointer-events:none;z-index:0;animation:rise 7s linear infinite}
 @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}100%{transform:translateY(-110vh) translateX(40px);opacity:0}}
  /* BURNING FIRE TEXT */
@@ -1083,6 +1083,7 @@ const SERVICES=[
 ];
 
 function go(view){
+  window.scrollTo(0,0);
   if(view==='wallet'){renderWallet();return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
   document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
@@ -1102,7 +1103,7 @@ function go(view){
   if(view==='services') renderServices();
   if(view==='history') renderHistory();
   if(view==='referral') renderReferral();
-  if(view==='wallet'){renderwallet();
+  if(view==='wallet'){renderWallet();
 }
 }
  var _oldGo = go;
