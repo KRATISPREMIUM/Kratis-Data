@@ -6,19 +6,25 @@
 <script src="firebase.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{min-height:100vh;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:#050505 url('gears-bg.jpeg') center/cover no-repeat fixed}
-body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.6) 100%);z-index:0}
-.float-gear{position:absolute;z-index:1;opacity:.85;filter:drop-shadow(0 0 12px rgba(255,180,0,.7));animation:floaty 7s ease-in-out infinite;pointer-events:none}
-.f1{top:18%;left:6%;font-size:90px;animation-delay:0s}
-.f2{top:22%;right:7%;font-size:70px;animation-delay:1.5s}
-.f3{bottom:18%;left:10%;font-size:60px;animation-delay:3s}
-.f4{bottom:22%;right:9%;font-size:85px;animation-delay:2s}
-.f5{top:48%;left:2%;font-size:45px;opacity:.5;animation-delay:4s}
-.f6{top:50%;right:2%;font-size:50px;opacity:.5;animation-delay:.8s}
-@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-28px) rotate(180deg)}}
-.fire-text{text-align:center;font-size:clamp(30px,6.5vw,60px);font-weight:900;letter-spacing:2px;line-height:1.12;margin-bottom:26px;background:linear-gradient(180deg,#fffbe6 0%,#ffe95e 25%,#ffb300 55%,#ff6a00 85%,#ff2d00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:burn 1.6s infinite alternate;z-index:2}
+body{min-height:100vh;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;background:#050505}
+body::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,170,0,.07) 0%,transparent 55%),repeating-linear-gradient(0deg,transparent 0 46px,rgba(255,200,80,.045) 46px 47px),repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,200,80,.045) 46px 47px),radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.75) 100%);z-index:0}
+.gear{position:absolute;z-index:1;pointer-events:none;animation:floaty 8s ease-in-out infinite,spin 22s linear infinite;filter:drop-shadow(0 0 14px rgba(255,170,0,.45))}
+.gear svg{display:block;width:100%;height:100%}
+.g1{top:8%;left:4%;width:170px;height:170px;opacity:.9}
+.g2{top:14%;right:5%;width:120px;height:120px;opacity:.75;animation-delay:1.2s;animation-duration:9s,28s}
+.g3{bottom:10%;left:7%;width:95px;height:95px;opacity:.6;animation-delay:2.4s;animation-duration:7s,18s}
+.g4{bottom:14%;right:6%;width:150px;height:150px;opacity:.85;animation-delay:.6s}
+.g5{top:46%;left:1%;width:60px;height:60px;opacity:.35;filter:blur(1px);animation-delay:3s}
+.g6{top:48%;right:1%;width:70px;height:70px;opacity:.35;filter:blur(1px);animation-delay:1.8s}
+.g7{top:38%;left:16%;width:45px;height:45px;opacity:.4;animation-delay:4s}
+.g8{bottom:38%;right:16%;width:50px;height:50px;opacity:.4;animation-delay:2s}
+@keyframes floaty{0%,100%{margin-top:0}50%{margin-top:-26px}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFD700;box-shadow:0 0 10px #FFB300;z-index:1;animation:rise 6s linear infinite;opacity:0}
+@keyframes rise{0%{transform:translateY(20px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-90vh);opacity:0}}
+.fire-text{text-align:center;font-size:clamp(30px,6.5vw,60px);font-weight:900;letter-spacing:2px;line-height:1.12;margin-bottom:22px;background:linear-gradient(180deg,#fffbe6 0%,#ffe95e 25%,#ffb300 55%,#ff6a00 85%,#ff2d00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:burn 1.6s infinite alternate;z-index:2}
 @keyframes burn{from{filter:drop-shadow(0 0 10px rgba(255,140,0,.7)) brightness(1)}to{filter:drop-shadow(0 0 32px rgba(255,100,0,1)) brightness(1.35)}}
-.box{background:rgba(18,18,18,.68);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:34px 30px;border-radius:22px;width:92%;max-width:430px;border:1px solid rgba(255,215,0,.4);box-shadow:0 0 60px rgba(255,140,0,.3),inset 0 1px 0 rgba(255,255,255,.15);z-index:2}
+.box{background:rgba(18,18,18,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:34px 30px;border-radius:22px;width:92%;max-width:430px;border:1px solid rgba(255,215,0,.4);box-shadow:0 0 60px rgba(255,140,0,.3),inset 0 1px 0 rgba(255,255,255,.15);z-index:2}
 .box h2{text-align:center;font-size:28px;margin-bottom:8px}
 .box h2 span{color:#FFD700}
 .sub{text-align:center;color:#bbb;font-size:13px;margin-bottom:22px}
@@ -30,12 +36,32 @@ input:focus{border-color:#FFD700;box-shadow:0 0 0 3px rgba(255,215,0,.18)}
 button{width:100%;padding:15px;background:linear-gradient(90deg,#FFD700,#FFB300);border:none;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;color:#000}
 button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,215,0,.5)}
 .foot{text-align:center;color:#999;font-size:11px;margin-top:16px}
-.footer{margin-top:20px;color:#d4af37;font-size:12px;z-index:2}
+.footer{margin-top:20px;color:#d4af37;font-size:12px;z-index:2;text-align:center}
+.conf{color:#555;font-size:10px;text-align:center;margin-top:12px;z-index:2}
 </style>
 </head><body>
-<div class="float-gear f1">⚙️</div><div class="float-gear f2">⚙️</div><div class="float-gear f3">⚙️</div><div class="float-gear f4">⚙️</div><div class="float-gear f5">⚙️</div><div class="float-gear f6">⚙️</div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe95e"/><stop offset=".55" stop-color="#c8911a"/><stop offset="1" stop-color="#7a5200"/></linearGradient>
+<symbol id="gear" viewBox="0 0 100 100"><path fill="url(#gold)" d="M50 12l3.2 7.1 7.4-2.4 1.5 7.7 7.6.8-1.7 7.6 5.4 5.4-5.4 5.4 1.7 7.6-7.6.8-1.5 7.7-7.4-2.4L50 88l-3.2-7.1-7.4 2.4-1.5-7.7-7.6-.8 1.7-7.6-5.4-5.4 5.4-5.4-1.7-7.6 7.6-.8 1.5-7.7 7.4 2.4z"/><circle cx="50" cy="50" r="17" fill="#0a0a0a" stroke="url(#gold)" stroke-width="5"/><circle cx="50" cy="50" r="7" fill="none" stroke="#ffe95e" stroke-width="2"/></symbol>
+</defs></svg>
+
+<div class="gear g1"><svg><use href="#gear"/></svg></div>
+<div class="gear g2"><svg><use href="#gear"/></svg></div>
+<div class="gear g3"><svg><use href="#gear"/></svg></div>
+<div class="gear g4"><svg><use href="#gear"/></svg></div>
+<div class="gear g5"><svg><use href="#gear"/></svg></div>
+<div class="gear g6"><svg><use href="#gear"/></svg></div>
+<div class="gear g7"><svg><use href="#gear"/></svg></div>
+<div class="gear g8"><svg><use href="#gear"/></svg></div>
+<div class="spark" style="left:18%;bottom:10%;animation-delay:0s"></div>
+<div class="spark" style="left:32%;bottom:5%;animation-delay:2s"></div>
+<div class="spark" style="left:55%;bottom:8%;animation-delay:1s"></div>
+<div class="spark" style="left:72%;bottom:5%;animation-delay:3s"></div>
+<div class="spark" style="left:86%;bottom:12%;animation-delay:.5s"></div>
+
 <div class="fire-text">YOUR IDEAL SUCCESS<br>IS OUR GOAL</div>
-<div class="box">  
+<div class="box">
 <h2>Manager <span>Access</span></h2>
 <p class="sub">Sign in to your manager dashboard</p>
 <label>Email Address</label>
@@ -48,8 +74,8 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,215,0,.5
 <p class="foot">Secured with 256-bit encryption • Trusted by Ghana Startups 🇬🇭</p>
 </div>
 <p class="footer">© 2026 • Accra, Ghana • Kratis Premium • Privacy • Terms</p>
-<p style="color:#444;font-size:10px;text-align:center;margin-top:15px">Confidential - Authorized Personnel Only</p>
-</div>
+<p class="conf">Confidential - Authorized Personnel Only</p>
+
 <script>
 const ROLE_PAGE = {
   complaint_manager: "complaint-manager.html",
@@ -68,7 +94,6 @@ async function login(){
     const doc=await db.collection('kratis_users').doc(email).get();
     if(!doc.exists){ err.style.color='#ff6b6b'; err.innerText='❌ Account no dey. Contact CEO.'; return; }
     const u=doc.data();
-    // For now, password check for demo - later we go use Firebase Auth
     if(u.pass && u.pass!==pass){ err.style.color='#ff6b6b'; err.innerText='❌ Wrong password'; return; }
     const role=u.role||u.tier||'';
     if(!ROLE_PAGE[role]){ err.style.color='#ff6b6b'; err.innerText='❌ You no be Manager. Role: '+role; return; }
