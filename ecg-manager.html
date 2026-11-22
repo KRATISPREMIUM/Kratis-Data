@@ -2,7 +2,34 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
-<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} button{background:#FFD700;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px} .red{background:#c00;color:#fff} .green{background:#0a0;color:#fff} select,input,textarea{width:100%;padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px;vertical-align:top} .tab{background:#222;color:#fff;padding:10px;border-radius:8px} .tab.active{background:#FFD700;color:#000}</style>
+<style>
+body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;padding:15px;box-sizing:border-box}
+*{box-sizing:border-box}
+h2{font-size:18px;margin:6px 0}
+h3{font-size:15px;margin:6px 0}
+.card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0}
+button{background:#FFD700;border:none;padding:10px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px;font-size:13px}
+.red{background:#c00;color:#fff}
+.green{background:#0a0;color:#fff}
+select,input,textarea{width:100%;padding:11px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444;font-size:16px}
+#ecgList,#utilList{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #222;border-radius:12px;margin-top:10px}
+table{width:100%;min-width:760px;font-size:12px;border-collapse:collapse}
+td,th{border:1px solid #333;padding:8px;vertical-align:top;word-break:break-word}
+th{background:#16161f}
+td input{min-width:180px}
+.tab{background:#222;color:#fff;padding:12px;border-radius:8px;font-size:13px}
+.tab.active{background:#FFD700;color:#000}
+@media(max-width:900px){
+  body{padding:12px}
+  h2{font-size:16px}
+  .card{padding:12px}
+  button{padding:12px;font-size:14px}
+  .tab{width:100%;margin:5px 0;padding:13px}
+  td button{width:100%;margin:5px 0;padding:11px}
+  table{font-size:11px}
+  td,th{padding:7px 6px}
+}
+</style>
 </head><body>
 <h2>⚡ ECG / Utility Manager</h2>
 <p id="who" style="color:#FFD700"></p>
