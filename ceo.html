@@ -2,7 +2,37 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
-<style>body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0} aside{position:fixed;left:0;top:0;width:250px;height:100%;background:#111;padding:15px} aside button{display:block;width:100%;margin:6px 0;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;text-align:left;cursor:pointer} main{margin-left:270px;padding:15px} .card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0} .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px} .stat{background:#111;padding:12px;border-radius:10px;text-align:center} .stat b{display:block;color:#FFD700;font-size:18px} button.btn{background:#FFD700;border:none;padding:9px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px} .green{background:#0a0;color:#fff;border:none;padding:8px 12px;border-radius:8px} .red{background:#c00;color:#fff;border:none;padding:8px 12px;border-radius:8px} select,input,textarea{padding:9px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444} table{width:100%;font-size:12px;border-collapse:collapse} td,th{border:1px solid #333;padding:7px} .hidden{display:none} canvas{width:100%;background:#111;border-radius:10px}</style>
+<style>
+body{background:#0a0a0f;color:#fff;font-family:Arial;margin:0;box-sizing:border-box}
+*{box-sizing:border-box}
+aside{position:fixed;left:0;top:0;width:250px;height:100%;background:#111;padding:15px;overflow-y:auto}
+aside button{display:block;width:100%;margin:6px 0;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;text-align:left;cursor:pointer;font-size:13px}
+main{margin-left:270px;padding:15px}
+.card{background:#16161f;padding:15px;border-radius:12px;border:1px solid #222;margin:10px 0;overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.stat{background:#111;padding:12px;border-radius:10px;text-align:center}
+.stat b{display:block;color:#FFD700;font-size:18px}
+button.btn{background:#FFD700;border:none;padding:10px 12px;border-radius:8px;font-weight:bold;cursor:pointer;margin:3px;font-size:13px}
+.green{background:#0a0;color:#fff;border:none;padding:10px 12px;border-radius:8px;font-weight:bold;cursor:pointer}
+.red{background:#c00;color:#fff;border:none;padding:10px 12px;border-radius:8px;font-weight:bold;cursor:pointer}
+select,input,textarea{padding:11px;margin:5px 0;border-radius:8px;background:#222;color:#fff;border:1px solid #444;font-size:16px;width:100%}
+table{width:100%;min-width:700px;font-size:12px;border-collapse:collapse}
+td,th{border:1px solid #333;padding:8px;word-break:break-word}
+.hidden{display:none}
+canvas{width:100%;max-width:100%;background:#111;border-radius:10px}
+@media(max-width:900px){
+  aside{position:static;width:100%;height:auto;display:flex;overflow-x:auto;padding:10px;gap:6px}
+  aside h2{font-size:15px;white-space:nowrap;margin:6px}
+  aside p{display:none}
+  aside button{width:auto;white-space:nowrap;padding:11px 12px;margin:0;font-size:12px}
+  main{margin-left:0;padding:12px}
+  .card{padding:12px}
+  button.btn{width:100%;padding:12px;margin:5px 0}
+  td button,td .green,td .red{width:100%;margin:4px 0;padding:11px}
+  table{font-size:11px}
+  canvas{height:160px}
+}
+</style>
 </head><body>
 <aside>
 <h2 style="color:#FFD700">👑 CEO Dashboard</h2>
