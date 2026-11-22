@@ -10,8 +10,14 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#fff;font-family:Arial;padding:15px}
 .card{background:#151515;border:1px solid #333;border-radius:12px;padding:20px;max-width:600px;margin:20px auto;text-align:center}
-.btn{background:#FFD700;color:#000;padding:12px 20px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin:5px}
+.btn{background:#FFD700;color:#000;padding:14px 20px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin:5px;font-size:14px}
 .btn-red{background:#ff3333;color:#fff}
+#agentList{word-break:break-all;max-height:200px;overflow-y:auto;text-align:left}
+@media(max-width:900px){
+  body{padding:12px}
+  .card{padding:16px;margin:10px auto}
+  .btn{width:100%;padding:15px;margin:6px 0;font-size:15px}
+}
 </style>
 </head>
 <body>
